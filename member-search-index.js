@@ -1,0 +1,1 @@
+memberSearchIndex = [{"p":"tutorial.showcase","c":"ExampleService","l":"doSomethingCool()"}]

@@ -1,0 +1,4 @@
+name: TutorialPlugin
+main: tutorial.showcase.TutorialPlugin
+version: ${project.version}
+depend: [ELDependenci]

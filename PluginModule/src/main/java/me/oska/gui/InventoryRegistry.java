@@ -1,10 +1,14 @@
-package tutorial.showcase;
+package me.oska.gui;
 
 import com.ericlam.mc.eld.registrations.CommandRegistry;
 import com.ericlam.mc.eld.registrations.ComponentsRegistry;
 import com.ericlam.mc.eld.registrations.ListenerRegistry;
+import me.oska.gui.listener.InventoryListener;
 
-public class TutorialRegistry implements ComponentsRegistry {
+import java.util.Collections;
+import java.util.List;
+
+public class InventoryRegistry implements ComponentsRegistry {
 
     @Override
     public void registerCommand(CommandRegistry commandRegistry) {
@@ -13,7 +17,7 @@ public class TutorialRegistry implements ComponentsRegistry {
 
     @Override
     public void registerListeners(ListenerRegistry listenerRegistry) {
-        // no listeners
+        listenerRegistry.listeners(List.of(InventoryListener.class));
     }
 
 }

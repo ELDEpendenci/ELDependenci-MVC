@@ -1,40 +1,13 @@
 package me.oska.gui.service;
 
+import me.oska.gui.InventoryUI;
+import me.oska.gui.InventoryWrapper;
 import org.bukkit.entity.Player;
-import me.oska.gui.InventoryNode;
 
-/**
- * GUI Navigator Service
- */
 public interface InventoryService {
 
-    /**
-     *
-     * @param player
-     * @return
-     */
-    InventoryNavigator holder(Player player);
+    <P, S> InventoryUI<P, S> buildInventory(P prop, S state);
 
-    interface InventoryNavigator {
+    InventoryWrapper createWrapper(String key);
 
-        /**
-         *
-         */
-        void navigate(InventoryNode node);
-
-        /**
-         *
-         */
-        void replace(InventoryNode node);
-
-        /**
-         *
-         */
-        void goBack();
-
-        /**
-         *
-         */
-        void goBack(int num);
-    }
 }

@@ -1,18 +1,10 @@
 package me.oska.gui.listener;
 
-import me.oska.gui.InventoryNode;
-import me.oska.gui.service.ELDInventoryService;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-
-import java.util.Stack;
 
 public class InventoryListener implements Listener {
 
+    /*
     @EventHandler(priority = EventPriority.MONITOR)
     public void onClick(InventoryClickEvent event) {
         String uuid = event.getWhoClicked().getUniqueId().toString();
@@ -44,5 +36,7 @@ public class InventoryListener implements Listener {
         InventoryNode inventory = inventoryList.peek();
         player.openInventory(inventory.getInventory());
     }
+    *?
+     */
 
 }

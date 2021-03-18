@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+@Deprecated
 public abstract class InventoryNode<P, S> implements Cloneable {
 
     private final Map<Integer, Consumer<InventoryClickEvent>> actions;

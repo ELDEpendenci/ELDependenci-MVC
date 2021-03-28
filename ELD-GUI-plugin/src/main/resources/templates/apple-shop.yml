@@ -1,0 +1,44 @@
+name: "&cApple Shop"
+rows: 2
+pattern:
+  - AZBZCZDZE
+  - MMMMZMMMM
+items:
+  A:
+    material: APPLE
+    name: "&cBuy Apple x1"
+    amount: 1
+    lore:
+      - "&ePrice: &fStone x5"
+      - "&eClick to buy it"
+  B:
+    material: APPLE
+    name: "&6Buy Apple x3"
+    amount: 3
+    lore:
+      - "&ePrice: &fStone x15"
+      - "&eClick to buy it"
+  C:
+    material: APPLE
+    name: "&6Buy Apple x5"
+    amount: 5
+    lore:
+      - "&ePrice: &fStone x25"
+      - "&eClick to buy it"
+  D:
+    material: APPLE
+    name: "&6Buy Apple x7"
+    amount: 7
+    lore:
+      - "&ePrice: &fStone x35"
+      - "&eClick to buy it"
+  F:
+    material: APPLE
+    name: "&6Buy Apple x10"
+    amount: 10
+    lore:
+      - "&ePrice: &fStone x50"
+      - "&eClick to buy it"
+  Z:
+    material: APPLE
+    name: "&6Decoration"

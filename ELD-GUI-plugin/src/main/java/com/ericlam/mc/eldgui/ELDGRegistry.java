@@ -1,10 +1,10 @@
-package tutorial.showcase;
+package com.ericlam.mc.eldgui;
 
 import com.ericlam.mc.eld.registrations.CommandRegistry;
 import com.ericlam.mc.eld.registrations.ComponentsRegistry;
 import com.ericlam.mc.eld.registrations.ListenerRegistry;
 
-public class TutorialRegistry implements ComponentsRegistry {
+public class ELDGRegistry implements ComponentsRegistry {
 
     @Override
     public void registerCommand(CommandRegistry commandRegistry) {

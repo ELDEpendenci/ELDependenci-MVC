@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>APIModule</artifactId>
+    <artifactId>eld-gui</artifactId>
 
     <build>
         <resources>
@@ -18,7 +18,7 @@
                 <filtering>true</filtering>
             </resource>
         </resources>
-        <testSourceDirectory>src/test/java</testSourceDirectory>
+        <!--testSourceDirectory>src/test/java</testSourceDirectory-->
         <sourceDirectory>src/main/java</sourceDirectory>
         <plugins>
             <plugin>

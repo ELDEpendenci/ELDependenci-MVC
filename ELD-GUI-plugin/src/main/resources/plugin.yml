@@ -1,4 +1,4 @@
-name: TutorialPlugin
+name: ELDepdendenci-GUI
 main: tutorial.showcase.TutorialPlugin
 version: ${project.version}
 depend: [ELDependenci]

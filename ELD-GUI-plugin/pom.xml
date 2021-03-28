@@ -9,18 +9,14 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>PluginModule</artifactId>
+    <artifactId>ELD-GUI-plugin</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>org.eldependenci</groupId>
-            <artifactId>APIModule</artifactId>
+            <artifactId>eld-gui</artifactId>
             <version>${project.parent.version}</version>
             <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eldependenci</groupId>
-            <artifactId>eldependenci-framework</artifactId>
         </dependency>
     </dependencies>
 

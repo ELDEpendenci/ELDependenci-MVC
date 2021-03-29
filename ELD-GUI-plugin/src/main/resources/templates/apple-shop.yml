@@ -1,8 +1,8 @@
 name: "&cApple Shop"
 rows: 2
 pattern:
-  - AZBZCZDZE
-  - MMMMZMMMM
+  - AMBMCMDME
+  - MMMMZMMMX
 items:
   A:
     material: APPLE
@@ -32,13 +32,24 @@ items:
     lore:
       - "&ePrice: &fStone x35"
       - "&eClick to buy it"
-  F:
+  E:
     material: APPLE
     name: "&6Buy Apple x10"
     amount: 10
     lore:
       - "&ePrice: &fStone x50"
       - "&eClick to buy it"
+  M:
+    material: BLACK_STAINED_GLASS_PANE
   Z:
-    material: APPLE
-    name: "&6Decoration"
+    material: PAPER
+    name: "&e資料加載中"
+    amount: 1
+    lore:
+      - "&e資料加載中"
+      - "&e資料加載中"
+      - "&e資料加載中"
+  X:
+    material: DIAMOND
+    name: "&e跳到下一個背包"
+

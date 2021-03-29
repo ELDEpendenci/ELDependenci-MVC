@@ -1,14 +1,18 @@
 package com.ericlam.mc.eldgui;
 
-import com.ericlam.mc.eld.components.GroupConfiguration;
+import com.ericlam.mc.eldgui.exceptions.RendererNotFoundException;
+import com.ericlam.mc.eldgui.exceptions.TemplateNotFoundException;
 
 public interface InventoryFactoryService {
 
-    InventoryUI generateFromTemplate(String template);
+    UIDispatcher getDispatcher(String template, String renderer) throws TemplateNotFoundException, RendererNotFoundException;
 
-    InventoryUI generateFromTemplate(GroupConfiguration config);
+    UIDispatcher getDispatcher(String identifier) throws TemplateNotFoundException, RendererNotFoundException;
 
-    InventoryUI generateInventory(String[][] pattern);
+    UIDispatcher getDispatcher(InventoryTemplate config, String renderer) throws RendererNotFoundException;
 
-    InventoryWrapper createWrapper();
+    UIDispatcher getDispatcher(InventoryTemplate config) throws RendererNotFoundException;
+
+    UIDispatcher generateInventory(String[][] pattern, String renderer) throws RendererNotFoundException;
+
 }

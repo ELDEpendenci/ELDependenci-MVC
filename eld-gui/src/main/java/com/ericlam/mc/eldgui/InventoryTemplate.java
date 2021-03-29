@@ -29,6 +29,8 @@ public abstract class InventoryTemplate extends GroupConfiguration {
 
         public boolean glowing = false;
 
+        public boolean cancelMove = true;
+
     }
 }
 

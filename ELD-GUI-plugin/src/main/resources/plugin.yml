@@ -1,4 +1,4 @@
 name: ELDepdendenci-GUI
-main: tutorial.showcase.TutorialPlugin
+main: com.ericlam.mc.eldgui.ELDGPlugin
 version: ${project.version}
 depend: [ELDependenci]

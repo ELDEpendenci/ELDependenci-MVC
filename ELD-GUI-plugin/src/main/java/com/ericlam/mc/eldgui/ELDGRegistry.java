@@ -3,12 +3,16 @@ package com.ericlam.mc.eldgui;
 import com.ericlam.mc.eld.registrations.CommandRegistry;
 import com.ericlam.mc.eld.registrations.ComponentsRegistry;
 import com.ericlam.mc.eld.registrations.ListenerRegistry;
+import com.ericlam.mc.eldgui.commands.ELDGCommand;
+import com.ericlam.mc.eldgui.commands.ELDGDemoCommand;
 
 public class ELDGRegistry implements ComponentsRegistry {
 
     @Override
     public void registerCommand(CommandRegistry commandRegistry) {
-        // no command
+        commandRegistry.command(ELDGCommand.class, c -> {
+            c.command(ELDGDemoCommand.class);
+        });
     }
 
     @Override

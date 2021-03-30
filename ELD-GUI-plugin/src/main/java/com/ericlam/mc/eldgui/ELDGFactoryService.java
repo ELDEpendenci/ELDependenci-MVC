@@ -2,10 +2,9 @@ package com.ericlam.mc.eldgui;
 
 import com.ericlam.mc.eld.services.ConfigPoolService;
 import com.ericlam.mc.eld.services.ItemStackService;
-import com.ericlam.mc.eldgui.exceptions.RendererNotFoundException;
-import com.ericlam.mc.eldgui.exceptions.TemplateNotFoundException;
+import com.ericlam.mc.eldgui.exception.RendererNotFoundException;
+import com.ericlam.mc.eldgui.exception.TemplateNotFoundException;
 import com.ericlam.mc.eldgui.resources.DemoInventories;
-import org.bukkit.Bukkit;
 
 import javax.inject.Inject;
 import java.util.Map;
@@ -61,6 +60,6 @@ public final class ELDGFactoryService implements InventoryFactoryService{
 
     @Override
     public UIDispatcher generateInventory(String[][] pattern, String renderer) throws RendererNotFoundException {
-        return null;
+        throw new UnsupportedOperationException();
     }
 }

@@ -1,7 +1,7 @@
 package com.ericlam.mc.eldgui;
 
-import com.ericlam.mc.eldgui.exceptions.RendererNotFoundException;
-import com.ericlam.mc.eldgui.exceptions.TemplateNotFoundException;
+import com.ericlam.mc.eldgui.exception.RendererNotFoundException;
+import com.ericlam.mc.eldgui.exception.TemplateNotFoundException;
 
 public interface InventoryFactoryService {
 

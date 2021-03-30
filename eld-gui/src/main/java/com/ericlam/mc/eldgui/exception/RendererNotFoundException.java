@@ -1,4 +1,4 @@
-package com.ericlam.mc.eldgui.exceptions;
+package com.ericlam.mc.eldgui.exception;
 
 public class RendererNotFoundException extends Exception {
 

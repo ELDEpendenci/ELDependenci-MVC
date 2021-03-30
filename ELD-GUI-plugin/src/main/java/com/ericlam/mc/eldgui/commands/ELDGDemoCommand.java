@@ -4,13 +4,12 @@ import com.ericlam.mc.eld.annotations.CommandArg;
 import com.ericlam.mc.eld.annotations.Commander;
 import com.ericlam.mc.eld.components.CommandNode;
 import com.ericlam.mc.eldgui.InventoryFactoryService;
-import com.ericlam.mc.eldgui.exceptions.RendererNotFoundException;
-import com.ericlam.mc.eldgui.exceptions.TemplateNotFoundException;
+import com.ericlam.mc.eldgui.exception.RendererNotFoundException;
+import com.ericlam.mc.eldgui.exception.TemplateNotFoundException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import javax.inject.Inject;
-import java.util.HashMap;
 
 @Commander(
         name = "demo",

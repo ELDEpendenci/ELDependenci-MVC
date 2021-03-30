@@ -2,8 +2,10 @@ package com.ericlam.mc.eldgui.testdemo;
 
 import com.ericlam.mc.eld.services.ItemStackService;
 import com.ericlam.mc.eldgui.*;
-import com.ericlam.mc.eldgui.exceptions.RendererNotFoundException;
-import com.ericlam.mc.eldgui.exceptions.TemplateNotFoundException;
+import com.ericlam.mc.eldgui.event.UIClickEvent;
+import com.ericlam.mc.eldgui.event.UIHandler;
+import com.ericlam.mc.eldgui.exception.RendererNotFoundException;
+import com.ericlam.mc.eldgui.exception.TemplateNotFoundException;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -32,31 +34,31 @@ public class CraftTableRenderer implements UIRenderer {
     @Inject
     private InventoryFactoryService factoryService;
 
+
+    @UIHandler(patterns = {'B'})
+    public void onCraft(UIClickEvent e){
+        var items = e.getUIAction().getItems('A');
+        items.forEach(i -> e.getOwner().sendMessage(i.getType().toString())); //
+        if (is9Diamond(items)){
+            e.getOwner().sendMessage("is diamond"); //
+            e.getUIAction().addItem('X', new ItemStack(Material.DIAMOND_BLOCK));
+            e.getUIAction().fillItem('A', new ItemStack(Material.AIR));
+        }else if (is9Iron(items)){
+            e.getOwner().sendMessage("is iron"); //
+            e.getUIAction().addItem('X', new ItemStack(Material.IRON_BLOCK));
+            e.getUIAction().fillItem('A', new ItemStack(Material.AIR));
+        }else{
+            e.getOwner().sendMessage("nothing crafted");
+        }
+    }
+
+    @UIHandler(patterns = 'X', filterActions = {InventoryAction.PLACE_ONE, InventoryAction.PLACE_ALL, InventoryAction.PLACE_SOME})
+    public void onCancel(UIClickEvent e){
+        e.getOriginEvent().setCancelled(true);
+    }
+
     @Override
-    public void render(InventoryScope attributes, UIOperation operation, Player player) {
-
-        operation.addClickEvent('B', ClickCondition.name("craft"), e -> {
-            var items = operation.getItems('A');
-            items.forEach(i -> player.sendMessage(i.getType().toString())); //
-            if (is9Diamond(items)){
-                player.sendMessage("is diamond"); //
-                operation.addItem('X', new ItemStack(Material.DIAMOND_BLOCK));
-                operation.fillItem('A', new ItemStack(Material.AIR));
-            }else if (is9Iron(items)){
-                player.sendMessage("is iron"); //
-                operation.addItem('X', new ItemStack(Material.IRON_BLOCK));
-                operation.fillItem('A', new ItemStack(Material.AIR));
-            }else{
-                player.sendMessage("nothing crafted");
-            }
-        });
-
-        operation.addClickEvent('X', ClickCondition.name("cancel-place").setActions(List.of(
-                InventoryAction.PLACE_ONE,
-                InventoryAction.PLACE_ALL,
-                InventoryAction.PLACE_SOME
-        )), e -> e.setCancelled(true));
-
+    public void render(InventoryScope attributes, UIAction operation, Player player) {
 
         operation.setItem('W', 0, itemStackService.build(Material.PAPER)
         .display("數值")
@@ -65,14 +67,11 @@ public class CraftTableRenderer implements UIRenderer {
                 "&b上一個背包: "+attributes.getSessionScope().getAttribute("last", "NONE")
         )).getItem());
 
-        operation.addClickEvent('M', ClickCondition.clickType(List.of(ClickType.LEFT, ClickType.RIGHT)), e -> {
-            e.setCancelled(true);
-            try {
-                operation.redirect(factoryService.getDispatcher("apple-shop"));
-            } catch (TemplateNotFoundException | RendererNotFoundException ex) {
-                e.getWhoClicked().sendMessage("redirect failed.");
-            }
-        });
+        try {
+            operation.setDirectItem('M', factoryService.getDispatcher("apple-shop"));
+        } catch (TemplateNotFoundException | RendererNotFoundException ex) {
+            throw new IllegalStateException("unknown shop apple-shop", ex);
+        }
     }
 
     @Override
@@ -82,7 +81,7 @@ public class CraftTableRenderer implements UIRenderer {
     }
 
     @Override
-    public void onDestroy(InventoryScope scope, UIOperation operation, Player player) {
+    public void onDestroy(InventoryScope scope, UIAction operation, Player player) {
         player.sendMessage("crafttable, on destroy");
         scope.getSessionScope().setAttribute("last", "crafttable");
         operation.getItems('A').forEach(item -> player.getInventory().addItem(item));

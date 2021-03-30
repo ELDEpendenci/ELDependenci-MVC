@@ -11,22 +11,20 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
-import java.util.function.Consumer;
 
 public final class ELDGUI implements Listener {
 
     private final UIRenderer renderer;
     private final Inventory nativeInventory;
-    private final ELDGOperation eldgOperation = new ELDGOperation();
+    private final ELDGAction eldgOperation = new ELDGAction();
     private final InventoryScope attributes;
     private final Map<Character, List<Integer>> patternMasks = new LinkedHashMap<>();
-    private final Map<Character, Map<ClickCondition, Consumer<InventoryClickEvent>>> clickMap = new LinkedHashMap<>();
     private final ItemStackService itemStackService;
+    private final ELDGEventHandler eventHandler;
     private final Player owner;
 
     public ELDGUI(InventoryTemplate demoInventories,
@@ -38,9 +36,11 @@ public final class ELDGUI implements Listener {
         this.attributes = attributes;
         this.renderer = renderer;
         this.owner = owner;
-        this.nativeInventory = Bukkit.createInventory(null, demoInventories.rows * 9, ChatColor.translateAlternateColorCodes('&', demoInventories.name));
+        this.nativeInventory = Bukkit.createInventory(owner, demoInventories.rows * 9, ChatColor.translateAlternateColorCodes('&', demoInventories.name));
         renderer.onCreate(attributes, owner);
         this.renderFromTemplate(demoInventories);
+        this.eventHandler = new ELDGEventHandler();
+        this.eventHandler.loadAllHandlers(renderer);
         Bukkit.getServer().getPluginManager().registerEvents(this, ELDGPlugin.getPlugin(ELDGPlugin.class));
     }
 
@@ -52,6 +52,8 @@ public final class ELDGUI implements Listener {
     private void renderFromTemplate(InventoryTemplate demoInventories) {
         this.patternMasks.clear();
         int line = 0;
+        if (demoInventories.pattern.size() != demoInventories.rows)
+            throw new IllegalStateException("界面模版的rows數量跟pattern行數不同。");
         for (String mask : demoInventories.pattern) {
             var masks = Arrays.copyOf(mask.toCharArray(), 9);
             for (int i = 0; i < masks.length; i++) {
@@ -75,8 +77,8 @@ public final class ELDGUI implements Listener {
             for (Integer slot : slots) {
                 this.nativeInventory.setItem(slot, item);
             }
-            if (itemDescriptor.cancelMove){
-                eldgOperation.addClickEvent(pattern.charAt(0), ClickCondition.name("cancel-move"), e -> e.setCancelled(true));
+            if (itemDescriptor.cancelMove) {
+                eventHandler.addCancelClick(pattern.charAt(0));
             }
         }
     }
@@ -86,79 +88,32 @@ public final class ELDGUI implements Listener {
     }
 
     @EventHandler
-    public void onInventoryClick(InventoryClickEvent e) {
-        var target = (Player)e.getWhoClicked();
-        if (target != owner) return;
-        if (this.nativeInventory != e.getClickedInventory()) return;
-        if (e.getSlotType() != InventoryType.SlotType.CONTAINER) return;
-        // owner.sendMessage(e.getAction().toString()); //
-        char key = '\0';
-        for (Character ch : patternMasks.keySet()) {
-            if (patternMasks.get(ch).contains(e.getSlot())) {
-                key = ch;
-                break;
-            }
-        }
-        if (key == '\0') return;
-        if (!clickMap.containsKey(key)) return;
-        var map = clickMap.get(key);
-        map.forEach((c, ex) -> {
-            if(!matchForHandler(c, e)) return;
-            // owner.sendMessage("executing handler: "+c.getName()); //
-            ex.accept(e);
-        });
-
-    }
-
-    private boolean matchForHandler(ClickCondition c, InventoryClickEvent e){
-        boolean equal;
-        if (c.getActions().isEmpty() && c.getClickType().isEmpty()){
-            equal = true;
-        }else if (c.getActions().isEmpty()){
-            equal = c.getClickType().contains(e.getClick());
-        }else if (c.getClickType().isEmpty()){
-            equal = c.getActions().contains(e.getAction());
-        }else{
-            equal = c.getActions().contains(e.getAction()) && c.getClickType().contains(e.getClick());
-        }
-        return equal;
-    }
-
-    private boolean matchForDelete(ClickCondition source, ClickCondition target){
-        var name = source.getName() != null && target.getName() != null && source.getName().equals(target.getName());
-        var actionEqual =  source.getActions().stream().anyMatch(c -> target.getActions().contains(c));
-        var clickEqual = source.getClickType().stream().anyMatch(c -> target.getClickType().contains(c));
-        return name || actionEqual || clickEqual;
+    public void onInventoryClick(InventoryClickEvent e){
+        eventHandler.onInventoryClick(e,
+                owner,
+                nativeInventory,
+                patternMasks,
+                eldgOperation,
+                attributes
+        );
     }
 
     @EventHandler
-    public void onInventoryClose(InventoryCloseEvent e){
+    public void onInventoryClose(InventoryCloseEvent e) {
+        if (e.getPlayer() != this.owner) return;
         if (e.getInventory() != this.nativeInventory) return;
         destroy();
     }
 
     public void destroy() {
+        eventHandler.unloadAllHandlers();
         HandlerList.unregisterAll(this);
         renderer.onDestroy(attributes, eldgOperation, owner);
-        clickMap.clear();
         patternMasks.clear();
         nativeInventory.clear();
     }
 
-    private final class ELDGOperation implements UIOperation {
-
-        @Override
-        public void addClickEvent(char pattern, ClickCondition clickCondition, Consumer<InventoryClickEvent> consumer) {
-            clickMap.putIfAbsent(pattern, new LinkedHashMap<>());
-            clickMap.get(pattern).put(clickCondition, consumer);
-        }
-
-        @Override
-        public void removeClickEvent(char pattern, ClickCondition clickCondition) {
-            if (!clickMap.containsKey(pattern)) return;
-            var eventHandlers = clickMap.get(pattern);
-            eventHandlers.keySet().stream().filter(k -> matchForDelete(k, clickCondition)).forEach(eventHandlers::remove);
-        }
+    private final class ELDGAction implements UIAction {
 
         @Override
         public boolean setItem(char pattern, int slot, ItemStack itemStack) {
@@ -219,10 +174,16 @@ public final class ELDGUI implements Listener {
         }
 
         @Override
-        public void redirect(UIDispatcher dispatcher) {
+        public void directTo(UIDispatcher dispatcher) {
             destroy();
             ((ELDGDispatcher) dispatcher).forward(owner, attributes.getSessionScope());
         }
+
+        @Override
+        public void setDirectItem(char pattern, UIDispatcher dispatcher) {
+            eventHandler.addJumpTo(pattern, (ELDGDispatcher) dispatcher);
+        }
+
     }
 
 }

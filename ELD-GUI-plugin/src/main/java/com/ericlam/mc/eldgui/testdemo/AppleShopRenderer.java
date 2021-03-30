@@ -1,13 +1,17 @@
 package com.ericlam.mc.eldgui.testdemo;
 
 import com.ericlam.mc.eld.services.ItemStackService;
-import com.ericlam.mc.eldgui.*;
-import com.ericlam.mc.eldgui.exceptions.RendererNotFoundException;
-import com.ericlam.mc.eldgui.exceptions.TemplateNotFoundException;
+import com.ericlam.mc.eldgui.InventoryFactoryService;
+import com.ericlam.mc.eldgui.InventoryScope;
+import com.ericlam.mc.eldgui.UIAction;
+import com.ericlam.mc.eldgui.UIRenderer;
+import com.ericlam.mc.eldgui.event.UIClickEvent;
+import com.ericlam.mc.eldgui.event.UIHandler;
+import com.ericlam.mc.eldgui.exception.RendererNotFoundException;
+import com.ericlam.mc.eldgui.exception.TemplateNotFoundException;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -30,87 +34,70 @@ public class AppleShopRenderer implements UIRenderer {
 
     private final Map<UUID, Integer> totalSold = new ConcurrentHashMap<>();
 
-    private static class State {
-        private char renderer = '\0';
+
+    @UIHandler(patterns = {'A'}, filterClicks = {ClickType.LEFT, ClickType.RIGHT})
+    public void onAClick(final UIClickEvent e) {
+        if (e.getOriginEvent().getClick() == ClickType.LEFT) {
+            handleBuy(e, 5, 1);
+        } else {
+            handleSell(e, 1, 5);
+        }
+    }
+
+    @UIHandler(patterns = {'B'}, filterClicks = {ClickType.LEFT, ClickType.RIGHT})
+    public void onBClick(final UIClickEvent e) {
+        if (e.getOriginEvent().getClick() == ClickType.LEFT) {
+            handleBuy(e, 15, 3);
+        } else {
+            handleSell(e, 3, 15);
+        }
+    }
+
+    @UIHandler(patterns = {'C'}, filterClicks = {ClickType.LEFT, ClickType.RIGHT})
+    public void onCClick(final UIClickEvent e) {
+        if (e.getOriginEvent().getClick() == ClickType.LEFT) {
+            handleBuy(e, 25, 5);
+        } else {
+            handleSell(e, 5, 25);
+        }
+    }
+
+    @UIHandler(patterns = {'D'}, filterClicks = {ClickType.LEFT, ClickType.RIGHT})
+    public void onDClick(final UIClickEvent e) {
+        if (e.getOriginEvent().getClick() == ClickType.LEFT) {
+            handleBuy(e, 35, 7);
+        } else {
+            handleSell(e, 7, 35);
+        }
+    }
+
+    @UIHandler(patterns = {'E'}, filterClicks = {ClickType.LEFT, ClickType.RIGHT})
+    public void onEClick(final UIClickEvent e) {
+        if (e.getOriginEvent().getClick() == ClickType.LEFT) {
+            handleBuy(e, 50, 10);
+        } else {
+            handleSell(e, 10, 50);
+        }
     }
 
     @Override
-    public void render(InventoryScope attributes, UIOperation operation, Player player) {
-        attributes.setAttributeIfAbsent("renderer", new State());
-        var state = attributes.getAttribute("renderer", State.class);
-        if (state.renderer != 'Z') {
-            Runnable callback = () -> {
-                attributes.getAttribute("renderer", State.class).renderer = 'Z';
-                operation.rerender();
-            };
-            operation.addClickEvent('A',
-                    ClickCondition
-                            .name("take-stone-5-1")
-                            .setClickType(List.of(ClickType.LEFT)),
-                    e -> handleBuy(e, 5, 1, callback));
-            operation.addClickEvent('A', ClickCondition
-                            .name("give-stone-5-1")
-                            .setClickType(List.of(ClickType.RIGHT)),
-                    e -> handleSell(e, 1, 5, callback));
-
-            operation.addClickEvent('B',
-                    ClickCondition
-                            .name("take-stone-3-15")
-                            .setClickType(List.of(ClickType.LEFT)),
-                    e -> handleBuy(e, 15, 3, callback));
-            operation.addClickEvent('B', ClickCondition
-                            .name("give-stone-3-15")
-                            .setClickType(List.of(ClickType.RIGHT)),
-                    e -> handleSell(e, 3, 15, callback));
-
-            operation.addClickEvent('C',
-                    ClickCondition
-                            .name("take-stone-5-25")
-                            .setClickType(List.of(ClickType.LEFT)),
-                    e -> handleBuy(e, 25, 5, callback));
-            operation.addClickEvent('C', ClickCondition
-                            .name("give-stone-5-25")
-                            .setClickType(List.of(ClickType.RIGHT)),
-                    e -> handleSell(e, 5, 25, callback));
-
-            operation.addClickEvent('D',
-                    ClickCondition
-                            .name("take-stone-7-35")
-                            .setClickType(List.of(ClickType.LEFT)),
-                    e -> handleBuy(e, 35, 7, callback));
-            operation.addClickEvent('D', ClickCondition
-                            .name("give-stone-7-35")
-                            .setClickType(List.of(ClickType.RIGHT)),
-                    e -> handleSell(e, 7, 35, callback));
-
-            operation.addClickEvent('E',
-                    ClickCondition
-                            .name("take-stone-10-50")
-                            .setClickType(List.of(ClickType.LEFT)),
-                    e -> handleBuy(e, 50, 10, callback));
-            operation.addClickEvent('E', ClickCondition
-                            .name("give-stone-10-50")
-                            .setClickType(List.of(ClickType.RIGHT)),
-                    e -> handleSell(e, 10, 50, callback));
-        }
+    public void render(InventoryScope attributes, UIAction operation, Player player) {
 
         operation.setItem('Z', 0, itemStackService.build(Material.PAPER)
                 .display("&a你的交易記錄")
                 .lore(List.of(
                         "&e - 總購買數: " + totalBought.getOrDefault(player.getUniqueId(), 0),
                         "&e - 總售賣數: " + totalSold.getOrDefault(player.getUniqueId(), 0),
-                        "&6 [傳遞數值]: "+attributes.getSessionScope().getAttribute("pass", -1),
-                        "&b [上一個背包名稱]: "+attributes.getSessionScope().getAttribute("last", "NONE")
+                        "&6 [傳遞數值]: " + attributes.getSessionScope().getAttribute("pass", -1),
+                        "&b [上一個背包名稱]: " + attributes.getSessionScope().getAttribute("last", "NONE")
                 )).getItem());
 
-        operation.addClickEvent('X', ClickCondition.clickType(List.of(ClickType.LEFT, ClickType.RIGHT)), e -> {
-            e.setCancelled(true);
-            try {
-                operation.redirect(factoryService.getDispatcher("crafttable"));
-            } catch (TemplateNotFoundException | RendererNotFoundException ex) {
-                e.getWhoClicked().sendMessage("redirect failed.");
-            }
-        });
+        try {
+            operation.setDirectItem('X', factoryService.getDispatcher("crafttable"));
+        } catch (TemplateNotFoundException | RendererNotFoundException e) {
+           throw new IllegalStateException("cannot find crafttable inventory", e);
+        }
+
     }
 
     @Override
@@ -120,30 +107,31 @@ public class AppleShopRenderer implements UIRenderer {
     }
 
     @Override
-    public void onDestroy(InventoryScope scope, UIOperation operation, Player player) {
+    public void onDestroy(InventoryScope scope, UIAction operation, Player player) {
         player.sendMessage("apple-shop, on destroy");
         scope.getSessionScope().setAttribute("last", "apple-shop");
     }
 
-    private void handleBuy(InventoryClickEvent e, int take, int give, Runnable call) {
-        tradeItem(e, take, give, Material.STONE, Material.APPLE, totalBought, call);
+    private void handleBuy(UIClickEvent e, int take, int give) {
+        tradeItem(e, take, give, Material.STONE, Material.APPLE, totalBought);
     }
 
-    private void tradeItem(InventoryClickEvent e, int take, int give, Material takeMaterial, Material giveMaterial, Map<UUID, Integer> totalMap, Runnable callback) {
+    private void tradeItem(UIClickEvent ex, int take, int give, Material takeMaterial, Material giveMaterial, Map<UUID, Integer> totalMap) {
+        var e = ex.getOriginEvent();
         e.setCancelled(true);
         if (playerTakeItem(e.getWhoClicked().getInventory(), takeMaterial, take)) {
             e.getWhoClicked().sendMessage("successfully traded");
             playerGiveItem(e.getWhoClicked().getInventory(), giveMaterial, give);
             var uuid = e.getWhoClicked().getUniqueId();
             totalMap.put(uuid, totalMap.getOrDefault(uuid, 0) + 1);
-            callback.run();
+            ex.getUIAction().rerender();
         } else {
             e.getWhoClicked().sendMessage("trade failed");
         }
     }
 
-    private void handleSell(InventoryClickEvent e, int take, int give, Runnable call) {
-        tradeItem(e, take, give, Material.APPLE, Material.STONE, totalSold, call);
+    private void handleSell(UIClickEvent e, int take, int give) {
+        tradeItem(e, take, give, Material.APPLE, Material.STONE, totalSold);
     }
 
     private boolean playerHasItem(PlayerInventory inv, Material m, int amount) {
@@ -160,10 +148,10 @@ public class AppleShopRenderer implements UIRenderer {
         var beforeContent = inv.getContents().clone();
         for (ItemStack content : inv.getContents()) {
             if (content == null || content.getType() != m) continue;
-            if (content.getAmount() > a){
+            if (content.getAmount() > a) {
                 content.setAmount(content.getAmount() - a);
                 return true;
-            }else{
+            } else {
                 inv.remove(content);
                 a -= content.getAmount();
                 if (a == 0) return true;
@@ -173,8 +161,8 @@ public class AppleShopRenderer implements UIRenderer {
         return false;
     }
 
-    private void playerGiveItem(PlayerInventory inv, Material m, int amount){
-        while (amount > 64){
+    private void playerGiveItem(PlayerInventory inv, Material m, int amount) {
+        while (amount > 64) {
             playerGiveItem(inv, m, amount -= 64);
         }
         var items = new ItemStack(m, amount);

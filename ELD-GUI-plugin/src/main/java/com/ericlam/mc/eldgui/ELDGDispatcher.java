@@ -1,84 +1,91 @@
 package com.ericlam.mc.eldgui;
 
 import com.ericlam.mc.eld.services.ItemStackService;
+import com.ericlam.mc.eldgui.controller.UIController;
+import com.ericlam.mc.eldgui.model.Model;
+import com.ericlam.mc.eldgui.view.View;
 import org.bukkit.entity.Player;
 
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
-@SuppressWarnings("unchecked")
-public final class ELDGDispatcher implements UIDispatcher {
+public class ELDGDispatcher<E extends Model> implements UIDispatcher {
 
-    private final InventoryTemplate demoInventories;
-
-    private final UIRenderer uiRenderer;
-
+    private final View<E> view;
+    private final UIController controller;
+    private final MethodParseFactory methodParseFactory;
     private final ItemStackService itemStackService;
+    private final InventoryTemplate inventoryTemplate;
+    private final ViewJumper goTo;
+    private final Map<Player, ELDGUI<E>> guiSessionMap = new ConcurrentHashMap<>();
+    private final Map<Player, UISession> uiSessionMap = new ConcurrentHashMap<>();
 
-    public ELDGDispatcher(InventoryTemplate demoInventories, UIRenderer uiRenderer, ItemStackService itemStackService) {
-        this.demoInventories = demoInventories;
-        this.uiRenderer = uiRenderer;
+    public ELDGDispatcher(
+            View<E> view,
+            UIController controller,
+            MethodParseFactory factory,
+            ItemStackService itemStackService,
+            InventoryTemplate inventoryTemplate,
+            ViewJumper goTo
+    ) {
+        this.view = view;
+        this.controller = controller;
+        this.methodParseFactory = factory;
+        this.inventoryTemplate = inventoryTemplate;
         this.itemStackService = itemStackService;
+        this.goTo = (session, player, ui) -> {
+            uiSessionMap.put(player, session);
+            goTo.onJump(session, player, ui);
+        };
     }
+
 
     @Override
-    public void forward(Player player) {
-        var scope = new GUIScope();
-        scope.setSessionScope(new GUIScope());
-        this.forward(player, scope);
-    }
-
-    public void forward(Player player, InventoryScope scope){
-        var guiScope = new GUIScope();
-        guiScope.setSessionScope(scope);
-        ELDGUI eldgui = new ELDGUI(
-                demoInventories,
-                uiRenderer,
+    public void openFor(Player player) {
+        if (guiSessionMap.containsKey(player)) {
+            player.openInventory(guiSessionMap.get(player).getNativeInventory());
+            return;
+        }
+        UISession session = Optional.ofNullable(uiSessionMap.remove(player)).orElseGet(ELDGUISession::new);
+        ELDGUI<E> eldgui = new ELDGUI<>(
+                inventoryTemplate,
+                view,
+                controller,
                 itemStackService,
-                guiScope,
-                player);
-        eldgui.render();
+                session,
+                player,
+                methodParseFactory,
+                guiSessionMap::remove,
+                goTo
+        );
+        this.guiSessionMap.put(player, eldgui);
         player.openInventory(eldgui.getNativeInventory());
     }
 
-    private static class GUIScope implements InventoryScope {
+    @Override
+    public void openForGlobal(Player player) {
+        this.guiSessionMap.values().stream().findFirst().ifPresentOrElse(
+                g -> player.openInventory(g.getNativeInventory()),
+                () -> openFor(player)
+        );
+    }
 
-        private InventoryScope scope;
+    private final static class ELDGUISession implements UISession{
+
         private final Map<String, Object> attributes = new ConcurrentHashMap<>();
 
+        @SuppressWarnings("unchecked")
         @Override
-        public void setAttributeIfAbsent(String key, Object value) {
-            attributes.putIfAbsent(key, value);
+        public <T> T getAttribute(String key) {
+            return (T)attributes.get(key);
         }
 
         @Override
-        public void setAttribute(String key, Object value) {
-            attributes.put(key, value);
-        }
-
-        @Override
-        public Object getAttribute(String key) {
-            return attributes.get(key);
-        }
-
-        @Override
-        public <T> T getAttribute(String key, T defaultValue) {
-            return (T) attributes.getOrDefault(key, defaultValue);
-        }
-
-        @Override
-        public <T> T getAttribute(String key, Class<T> type) {
-            return type.cast(attributes.get(key));
-        }
-
-        @Override
-        public InventoryScope getSessionScope() {
-            return Optional.ofNullable(scope).orElseThrow(() -> new UnsupportedOperationException("this is already session scope"));
-        }
-
-        public void setSessionScope(InventoryScope scope) {
-            this.scope = scope;
+        public void setAttribute(String key, Object item) {
+            this.attributes.put(key, item);
         }
     }
 }

@@ -10,16 +10,12 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface UIHandler {
+public @interface ClickHandler {
 
-    char[] patterns() default {};
+    BaseHandler base();
 
-    InventoryAction[] filterActions() default {};
+    ClickType[] clicks() default {};
 
-    ClickType[] filterClicks() default {};
-
-    int order() default 1;
-
-    boolean ignoreCancelled() default false;
+    InventoryAction[] actions() default {};
 
 }

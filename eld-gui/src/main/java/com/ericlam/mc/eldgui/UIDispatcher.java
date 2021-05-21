@@ -1,9 +1,13 @@
 package com.ericlam.mc.eldgui;
 
+import com.google.common.annotations.Beta;
 import org.bukkit.entity.Player;
 
 public interface UIDispatcher {
 
-    void forward(Player player);
+    void openFor(Player player);
+
+    @Beta
+    void openForGlobal(Player player);
 
 }

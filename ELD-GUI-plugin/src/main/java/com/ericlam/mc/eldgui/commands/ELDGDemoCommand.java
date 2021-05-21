@@ -3,9 +3,8 @@ package com.ericlam.mc.eldgui.commands;
 import com.ericlam.mc.eld.annotations.CommandArg;
 import com.ericlam.mc.eld.annotations.Commander;
 import com.ericlam.mc.eld.components.CommandNode;
-import com.ericlam.mc.eldgui.InventoryFactoryService;
-import com.ericlam.mc.eldgui.exception.RendererNotFoundException;
-import com.ericlam.mc.eldgui.exception.TemplateNotFoundException;
+import com.ericlam.mc.eldgui.InventoryService;
+import com.ericlam.mc.eldgui.UINotFoundException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -19,24 +18,18 @@ import javax.inject.Inject;
 public class ELDGDemoCommand implements CommandNode {
 
     @Inject
-    private InventoryFactoryService factoryService;
+    private InventoryService inventoryService;
 
     @CommandArg(order = 1)
-    private String demo;
-
-    @CommandArg(order = 1, optional = true)
-    private String renderer;
+    private String gui;
 
     @Override
     public void execute(CommandSender commandSender) {
        var player = (Player) commandSender;
         try {
-            var ui = factoryService.getDispatcher(demo, renderer == null ? demo : renderer);
-            ui.forward(player);
-        } catch (TemplateNotFoundException | RendererNotFoundException e) {
-            var reason = e instanceof TemplateNotFoundException ? "template" : "renderer";
-            var arg = e instanceof TemplateNotFoundException ? demo : renderer;
-            player.sendMessage("§c找不到 "+reason+": "+arg);
+            inventoryService.getUIDispatcher(gui).openFor(player);
+        } catch (UINotFoundException e) {
+            player.sendMessage(e.getMessage());
         }
     }
 }

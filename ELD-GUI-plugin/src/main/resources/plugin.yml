@@ -1,0 +1,4 @@
+name: ELDepdendenci-GUI
+main: com.ericlam.mc.eldgui.ELDGPlugin
+version: ${project.version}
+depend: [ELDependenci]

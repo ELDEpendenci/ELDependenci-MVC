@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.eldependenci</groupId>
-    <artifactId>Template-For-ELDependenci-Addon</artifactId>
+    <artifactId>ELDependenci-GUI</artifactId>
     <packaging>pom</packaging>
     <version>0.0.1</version>
     <modules>
-        <module>APIModule</module>
-        <module>PluginModule</module>
+        <module>eld-gui</module>
+        <module>ELD-GUI-plugin</module>
     </modules>
 
     <repositories>
@@ -28,6 +28,10 @@
         <dependency>
             <groupId>com.destroystokyo.paper</groupId>
             <artifactId>paper-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eldependenci</groupId>
+            <artifactId>eldependenci-framework</artifactId>
         </dependency>
     </dependencies>
 

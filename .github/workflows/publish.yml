@@ -1,6 +1,7 @@
 env:
   version: 0.0.1 # 你的版本名稱
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  plugin_name: ELD-GUI-plugin
 
 name: Publish Process
 
@@ -48,8 +49,8 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-          asset_path: ./PluginModule/target/PluginModule-${{env.version}}.jar # 請根據你插件名稱進行的修改
-          asset_name: PluginModule-${{ env.version }}.jar # 請根據你插件名稱進行的修改
+          asset_path: ./${{env.plugin_name}}/target/${{env.plugin_name}}-${{env.version}}.jar # 請根據你插件名稱進行的修改
+          asset_name: ${{env.plugin_name}}-${{ env.version }}.jar # 請根據你插件名稱進行的修改
           asset_content_type: application/java-archive
       - name: 'Update javadocs'
         id: update-javadoc

@@ -1,11 +1,13 @@
-package com.ericlam.mc.eldgui.demo;
+package com.ericlam.mc.eldgui.demo.crafttable;
 
-import com.ericlam.mc.eldgui.LiveData;
+import com.ericlam.mc.eldgui.UISession;
 import com.ericlam.mc.eldgui.controller.ControllerForView;
 import com.ericlam.mc.eldgui.controller.FromPattern;
 import com.ericlam.mc.eldgui.controller.UIController;
+import com.ericlam.mc.eldgui.controller.UIRequest;
 import com.ericlam.mc.eldgui.event.BaseHandler;
 import com.ericlam.mc.eldgui.event.ClickHandler;
+import com.ericlam.mc.eldgui.view.JumpToView;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -16,19 +18,14 @@ import java.util.List;
 public class CraftTableController implements UIController {
 
     @ClickHandler(base = @BaseHandler(patterns = {'B'}))
-    public void onClickCraft(@FromPattern('A') List<ItemStack> items, LiveData<CraftTableModel> data, Player player) {
-        player.sendMessage("crafting....");
-        data.update(model -> {
-            if (is9Diamond(items)) {
-                model.setCraftResult(new ItemStack(Material.DIAMOND_BLOCK));
-                model.setChanged(true);
-                player.sendMessage("crafted diamond block!");
-            } else if (is9Iron(items)) {
-                model.setCraftResult(new ItemStack(Material.IRON_BLOCK));
-                model.setChanged(true);
-                player.sendMessage("crafted iron block!");
-            }
-        });
+    public JumpToView onClickCraft(@FromPattern('A') List<ItemStack> items, UISession session, Player player) {
+        if (is9Diamond(items)) {
+            session.setAttribute("craft_result", Material.DIAMOND_BLOCK);
+        } else if (is9Iron(items)) {
+            session.setAttribute("craft_result", Material.IRON_BLOCK);
+        }
+
+        return new JumpToView("confirm", true);
     }
 
     @ClickHandler(base = @BaseHandler(patterns = {'M'}))
@@ -36,6 +33,11 @@ public class CraftTableController implements UIController {
         return "apple-shop";
     }
 
+
+    @Override
+    public void onDestroy(UIRequest request, Player player) {
+        request.getItems('A').forEach(p -> player.getInventory().addItem(p));
+    }
 
     private boolean is9Diamond(List<ItemStack> itemStacks) {
         return itemStacks.stream().allMatch(i -> i.getType() == Material.DIAMOND);

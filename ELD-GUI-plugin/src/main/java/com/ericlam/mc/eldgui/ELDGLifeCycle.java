@@ -12,6 +12,9 @@ public class ELDGLifeCycle implements ELDLifeCycle {
     @Inject
     private MethodParseFactory parseFactory;
 
+    @Inject
+    private InventoryService inventoryService;
+
     @Override
     public void onEnable(JavaPlugin javaPlugin) {
         parseFactory.registerParseManager(InventoryClickEvent.class, ClickEventParseManager.class);
@@ -19,6 +22,6 @@ public class ELDGLifeCycle implements ELDLifeCycle {
 
     @Override
     public void onDisable(JavaPlugin javaPlugin) {
-
+        ((ELDGInventoryService)inventoryService).onClose();
     }
 }

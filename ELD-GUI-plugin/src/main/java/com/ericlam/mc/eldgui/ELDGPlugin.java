@@ -5,7 +5,8 @@ import com.ericlam.mc.eld.ManagerProvider;
 import com.ericlam.mc.eld.ServiceCollection;
 import com.ericlam.mc.eld.annotations.ELDPlugin;
 import com.ericlam.mc.eldgui.controller.UIController;
-import com.ericlam.mc.eldgui.demo.CraftTableController;
+import com.ericlam.mc.eldgui.demo.confirm.ConfirmUIController;
+import com.ericlam.mc.eldgui.demo.crafttable.CraftTableController;
 import com.ericlam.mc.eldgui.demo.DemoInventories;
 
 import java.io.File;
@@ -19,14 +20,11 @@ public class ELDGPlugin extends ELDBukkitPlugin {
 
     @Override
     protected void bindServices(ServiceCollection serviceCollection) {
-        var tempFolder = new File(this.getDataFolder(), "/templates");
-        File crafttable = new File(tempFolder, "crafttable.yml");
-        if (!crafttable.exists()) {
-            this.saveResource("templates/crafttable.yml", true);
-        }
+        saveGroupResource("crafttable", "confirm");
         serviceCollection.bindService(InventoryService.class, ELDGInventoryService.class);
         serviceCollection.addServices(UIController.class, Map.of(
-                "crafttable", CraftTableController.class // demo
+                "crafttable", CraftTableController.class, // demo
+                "confirm", ConfirmUIController.class
         ));
         serviceCollection.addSingleton(MethodParseFactory.class);
         serviceCollection.addGroupConfiguration(DemoInventories.class);
@@ -37,5 +35,15 @@ public class ELDGPlugin extends ELDBukkitPlugin {
     @Override
     protected void manageProvider(ManagerProvider managerProvider) {
 
+    }
+
+    private void saveGroupResource(String... ymls){
+        for (String yml : ymls) {
+            var tempFolder = new File(this.getDataFolder(), "/templates");
+            File crafttable = new File(tempFolder, yml+".yml");
+            if (!crafttable.exists()) {
+                this.saveResource("templates/"+yml+".yml", true);
+            }
+        }
     }
 }

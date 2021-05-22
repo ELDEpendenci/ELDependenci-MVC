@@ -30,21 +30,25 @@ public class CraftTableView extends View<CraftTableModel> {
     @Override
     public void onResume(UISession session, UIContext context, Player player) {
         Boolean confirm = session.getAttribute("confirm");
-        if (confirm == null) return;
-        if (confirm){
-            player.sendMessage("you clicked confirm!");
-            Material m = session.getAttribute("craft_result");
-            if (m == null){
-                player.sendMessage("Nothing Crafted.");
-                return;
+        if (confirm != null){
+            if (confirm){
+                player.sendMessage("you clicked confirm!");
+                Material m = session.getAttribute("craft_result");
+                if (m == null){
+                    player.sendMessage("Nothing Crafted.");
+                    return;
+                }
+                ItemStack result = new ItemStack(m);
+                context.setItem('X', 0, result);
+                context.fillItem('A', null);
+                player.sendMessage("you crafted ".concat(m.name()));
+            }else{
+                player.sendMessage("you clicked cancel, nothing changed.");
             }
-            ItemStack result = new ItemStack(m);
-            context.setItem('X', 0, result);
-            context.fillItem('A', null);
-            player.sendMessage("you crafted ".concat(m.name()));
-        }else{
-            player.sendMessage("you clicked cancel, nothing changed.");
         }
+        // delete old attributes after resume
+        session.removeAttribute("confirm");
+        session.removeAttribute("craft_result");
     }
 
     @Override

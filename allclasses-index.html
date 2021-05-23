@@ -26,6 +26,12 @@
     catch(err) {
     }
 //-->
+var data = {"i0":32,"i1":32,"i2":32,"i3":32,"i4":1,"i5":2,"i6":2,"i7":2,"i8":1,"i9":2,"i10":1,"i11":32,"i12":32,"i13":1,"i14":1,"i15":1,"i16":8,"i17":1,"i18":1,"i19":32,"i20":2,"i21":32};
+var tabs = {65535:["t0","All Classes"],1:["t1","Interface Summary"],2:["t2","Class Summary"],8:["t4","Exception Summary"],32:["t6","Annotation Types Summary"]};
+var altColor = "altColor";
+var rowColor = "rowColor";
+var tableTab = "tableTab";
+var activeTableTab = "activeTableTab";
 var pathtoroot = "./";
 var useModuleDirectories = true;
 loadScripts(document, 'script');</script>
@@ -44,10 +50,11 @@ loadScripts(document, 'script');</script>
 <!--   -->
 </a>
 <ul class="navList" title="Navigation">
-<li><a href="tutorial/showcase/package-summary.html">Package</a></li>
+<li><a href="index.html">Overview</a></li>
+<li>Package</li>
 <li>Class</li>
 <li>Use</li>
-<li><a href="tutorial/showcase/package-tree.html">Tree</a></li>
+<li><a href="overview-tree.html">Tree</a></li>
 <li><a href="deprecated-list.html">Deprecated</a></li>
 <li><a href="index-all.html">Index</a></li>
 <li><a href="help-doc.html">Help</a></li>
@@ -98,16 +105,98 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <ul class="blockList">
 <li class="blockList">
 <table class="typeSummary">
-<caption><span>Interface Summary</span><span class="tabEnd">&nbsp;</span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Classes</span><span class="tabEnd">&nbsp;</span></span><span id="t1" class="tableTab"><span><a href="javascript:show(1);">Interface Summary</a></span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Class Summary</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Exception Summary</a></span><span class="tabEnd">&nbsp;</span></span><span id="t6" class="tableTab"><span><a href="javascript:show(32);">Annotation Types Summary</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Class</th>
 <th class="colLast" scope="col">Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><a href="tutorial/showcase/ExampleService.html" title="interface in tutorial.showcase">ExampleService</a></td>
-<th class="colLast" scope="row">
-<div class="block">範例服務</div>
-</th>
+<td class="colFirst"><a href="com/ericlam/mc/eldgui/event/BaseHandler.html" title="annotation in com.ericlam.mc.eldgui.event">BaseHandler</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr id="i1" class="rowColor">
+<td class="colFirst"><a href="com/ericlam/mc/eldgui/event/ClickHandler.html" title="annotation in com.ericlam.mc.eldgui.event">ClickHandler</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr id="i2" class="altColor">
+<td class="colFirst"><a href="com/ericlam/mc/eldgui/controller/ControllerForView.html" title="annotation in com.ericlam.mc.eldgui.controller">ControllerForView</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><a href="com/ericlam/mc/eldgui/controller/FromPattern.html" title="annotation in com.ericlam.mc.eldgui.controller">FromPattern</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr id="i4" class="altColor">
+<td class="colFirst"><a href="com/ericlam/mc/eldgui/InventoryService.html" title="interface in com.ericlam.mc.eldgui">InventoryService</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr id="i5" class="rowColor">
+<td class="colFirst"><a href="com/ericlam/mc/eldgui/InventoryTemplate.html" title="class in com.ericlam.mc.eldgui">InventoryTemplate</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr id="i6" class="altColor">
+<td class="colFirst"><a href="com/ericlam/mc/eldgui/InventoryTemplate.ItemDescriptor.html" title="class in com.ericlam.mc.eldgui">InventoryTemplate.ItemDescriptor</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr id="i7" class="rowColor">
+<td class="colFirst"><a href="com/ericlam/mc/eldgui/view/JumpToView.html" title="class in com.ericlam.mc.eldgui.view">JumpToView</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr id="i8" class="altColor">
+<td class="colFirst"><a href="com/ericlam/mc/eldgui/LiveData.html" title="interface in com.ericlam.mc.eldgui">LiveData</a>&lt;<a href="com/ericlam/mc/eldgui/LiveData.html" title="type parameter in LiveData">M</a> extends <a href="com/ericlam/mc/eldgui/model/Model.html" title="class in com.ericlam.mc.eldgui.model">Model</a>&gt;</td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr id="i9" class="rowColor">
+<td class="colFirst"><a href="com/ericlam/mc/eldgui/model/Model.html" title="class in com.ericlam.mc.eldgui.model">Model</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr id="i10" class="altColor">
+<td class="colFirst"><a href="com/ericlam/mc/eldgui/MutableLiveData.html" title="interface in com.ericlam.mc.eldgui">MutableLiveData</a>&lt;<a href="com/ericlam/mc/eldgui/MutableLiveData.html" title="type parameter in MutableLiveData">M</a> extends <a href="com/ericlam/mc/eldgui/model/Model.html" title="class in com.ericlam.mc.eldgui.model">Model</a>&gt;</td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr id="i11" class="rowColor">
+<td class="colFirst"><a href="com/ericlam/mc/eldgui/lifecycle/OnDestroy.html" title="annotation in com.ericlam.mc.eldgui.lifecycle">OnDestroy</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr id="i12" class="altColor">
+<td class="colFirst"><a href="com/ericlam/mc/eldgui/lifecycle/OnRendered.html" title="annotation in com.ericlam.mc.eldgui.lifecycle">OnRendered</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr id="i13" class="rowColor">
+<td class="colFirst"><a href="com/ericlam/mc/eldgui/UIContext.html" title="interface in com.ericlam.mc.eldgui">UIContext</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr id="i14" class="altColor">
+<td class="colFirst"><a href="com/ericlam/mc/eldgui/controller/UIController.html" title="interface in com.ericlam.mc.eldgui.controller">UIController</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr id="i15" class="rowColor">
+<td class="colFirst"><a href="com/ericlam/mc/eldgui/UIDispatcher.html" title="interface in com.ericlam.mc.eldgui">UIDispatcher</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr id="i16" class="altColor">
+<td class="colFirst"><a href="com/ericlam/mc/eldgui/UINotFoundException.html" title="class in com.ericlam.mc.eldgui">UINotFoundException</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr id="i17" class="rowColor">
+<td class="colFirst"><a href="com/ericlam/mc/eldgui/controller/UIRequest.html" title="interface in com.ericlam.mc.eldgui.controller">UIRequest</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr id="i18" class="altColor">
+<td class="colFirst"><a href="com/ericlam/mc/eldgui/UISession.html" title="interface in com.ericlam.mc.eldgui">UISession</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr id="i19" class="rowColor">
+<td class="colFirst"><a href="com/ericlam/mc/eldgui/view/UseTemplate.html" title="annotation in com.ericlam.mc.eldgui.view">UseTemplate</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr id="i20" class="altColor">
+<td class="colFirst"><a href="com/ericlam/mc/eldgui/view/View.html" title="class in com.ericlam.mc.eldgui.view">View</a>&lt;<a href="com/ericlam/mc/eldgui/view/View.html" title="type parameter in View">T</a> extends <a href="com/ericlam/mc/eldgui/model/Model.html" title="class in com.ericlam.mc.eldgui.model">Model</a>&gt;</td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr id="i21" class="rowColor">
+<td class="colFirst"><a href="com/ericlam/mc/eldgui/view/ViewDescriptor.html" title="annotation in com.ericlam.mc.eldgui.view">ViewDescriptor</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
 </tr>
 </table>
 </li>
@@ -125,10 +214,11 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <!--   -->
 </a>
 <ul class="navList" title="Navigation">
-<li><a href="tutorial/showcase/package-summary.html">Package</a></li>
+<li><a href="index.html">Overview</a></li>
+<li>Package</li>
 <li>Class</li>
 <li>Use</li>
-<li><a href="tutorial/showcase/package-tree.html">Tree</a></li>
+<li><a href="overview-tree.html">Tree</a></li>
 <li><a href="deprecated-list.html">Deprecated</a></li>
 <li><a href="index-all.html">Index</a></li>
 <li><a href="help-doc.html">Help</a></li>

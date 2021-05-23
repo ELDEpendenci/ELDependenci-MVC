@@ -1,1 +1,6 @@
-tutorial.showcase
+com.ericlam.mc.eldgui
+com.ericlam.mc.eldgui.controller
+com.ericlam.mc.eldgui.event
+com.ericlam.mc.eldgui.lifecycle
+com.ericlam.mc.eldgui.model
+com.ericlam.mc.eldgui.view

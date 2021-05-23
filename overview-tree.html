@@ -44,6 +44,7 @@ loadScripts(document, 'script');</script>
 <!--   -->
 </a>
 <ul class="navList" title="Navigation">
+<li><a href="index.html">Overview</a></li>
 <li>Package</li>
 <li>Class</li>
 <li>Use</li>
@@ -95,14 +96,73 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <h1 class="title">Hierarchy For All Packages</h1>
 <span class="packageHierarchyLabel">Package Hierarchies:</span>
 <ul class="horizontal">
-<li><a href="tutorial/showcase/package-tree.html">tutorial.showcase</a></li>
+<li><a href="com/ericlam/mc/eldgui/package-tree.html">com.ericlam.mc.eldgui</a>, </li>
+<li><a href="com/ericlam/mc/eldgui/controller/package-tree.html">com.ericlam.mc.eldgui.controller</a>, </li>
+<li><a href="com/ericlam/mc/eldgui/event/package-tree.html">com.ericlam.mc.eldgui.event</a>, </li>
+<li><a href="com/ericlam/mc/eldgui/lifecycle/package-tree.html">com.ericlam.mc.eldgui.lifecycle</a>, </li>
+<li><a href="com/ericlam/mc/eldgui/model/package-tree.html">com.ericlam.mc.eldgui.model</a>, </li>
+<li><a href="com/ericlam/mc/eldgui/view/package-tree.html">com.ericlam.mc.eldgui.view</a></li>
 </ul>
 </div>
 <div class="contentContainer">
 <section role="region">
+<h2 title="Class Hierarchy">Class Hierarchy</h2>
+<ul>
+<li class="circle">java.lang.<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink"><span class="typeNameLink">Object</span></a>
+<ul>
+<li class="circle">com.ericlam.mc.eld.components.Configuration
+<ul>
+<li class="circle">com.ericlam.mc.eld.components.GroupConfiguration
+<ul>
+<li class="circle">com.ericlam.mc.eldgui.<a href="com/ericlam/mc/eldgui/InventoryTemplate.html" title="class in com.ericlam.mc.eldgui"><span class="typeNameLink">InventoryTemplate</span></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="circle">com.ericlam.mc.eldgui.<a href="com/ericlam/mc/eldgui/InventoryTemplate.ItemDescriptor.html" title="class in com.ericlam.mc.eldgui"><span class="typeNameLink">InventoryTemplate.ItemDescriptor</span></a></li>
+<li class="circle">com.ericlam.mc.eldgui.view.<a href="com/ericlam/mc/eldgui/view/JumpToView.html" title="class in com.ericlam.mc.eldgui.view"><span class="typeNameLink">JumpToView</span></a></li>
+<li class="circle">com.ericlam.mc.eldgui.model.<a href="com/ericlam/mc/eldgui/model/Model.html" title="class in com.ericlam.mc.eldgui.model"><span class="typeNameLink">Model</span></a></li>
+<li class="circle">java.lang.<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Throwable.html?is-external=true" title="class or interface in java.lang" class="externalLink"><span class="typeNameLink">Throwable</span></a> (implements java.io.<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/io/Serializable.html?is-external=true" title="class or interface in java.io" class="externalLink">Serializable</a>)
+<ul>
+<li class="circle">java.lang.<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Exception.html?is-external=true" title="class or interface in java.lang" class="externalLink"><span class="typeNameLink">Exception</span></a>
+<ul>
+<li class="circle">com.ericlam.mc.eldgui.<a href="com/ericlam/mc/eldgui/UINotFoundException.html" title="class in com.ericlam.mc.eldgui"><span class="typeNameLink">UINotFoundException</span></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="circle">com.ericlam.mc.eldgui.view.<a href="com/ericlam/mc/eldgui/view/View.html" title="class in com.ericlam.mc.eldgui.view"><span class="typeNameLink">View</span></a>&lt;T&gt;</li>
+</ul>
+</li>
+</ul>
+</section>
+<section role="region">
 <h2 title="Interface Hierarchy">Interface Hierarchy</h2>
 <ul>
-<li class="circle">tutorial.showcase.<a href="tutorial/showcase/ExampleService.html" title="interface in tutorial.showcase"><span class="typeNameLink">ExampleService</span></a></li>
+<li class="circle">com.ericlam.mc.eldgui.<a href="com/ericlam/mc/eldgui/InventoryService.html" title="interface in com.ericlam.mc.eldgui"><span class="typeNameLink">InventoryService</span></a></li>
+<li class="circle">com.ericlam.mc.eldgui.<a href="com/ericlam/mc/eldgui/LiveData.html" title="interface in com.ericlam.mc.eldgui"><span class="typeNameLink">LiveData</span></a>&lt;M&gt;
+<ul>
+<li class="circle">com.ericlam.mc.eldgui.<a href="com/ericlam/mc/eldgui/MutableLiveData.html" title="interface in com.ericlam.mc.eldgui"><span class="typeNameLink">MutableLiveData</span></a>&lt;M&gt;</li>
+</ul>
+</li>
+<li class="circle">com.ericlam.mc.eldgui.<a href="com/ericlam/mc/eldgui/UIContext.html" title="interface in com.ericlam.mc.eldgui"><span class="typeNameLink">UIContext</span></a></li>
+<li class="circle">com.ericlam.mc.eldgui.controller.<a href="com/ericlam/mc/eldgui/controller/UIController.html" title="interface in com.ericlam.mc.eldgui.controller"><span class="typeNameLink">UIController</span></a></li>
+<li class="circle">com.ericlam.mc.eldgui.<a href="com/ericlam/mc/eldgui/UIDispatcher.html" title="interface in com.ericlam.mc.eldgui"><span class="typeNameLink">UIDispatcher</span></a></li>
+<li class="circle">com.ericlam.mc.eldgui.controller.<a href="com/ericlam/mc/eldgui/controller/UIRequest.html" title="interface in com.ericlam.mc.eldgui.controller"><span class="typeNameLink">UIRequest</span></a></li>
+<li class="circle">com.ericlam.mc.eldgui.<a href="com/ericlam/mc/eldgui/UISession.html" title="interface in com.ericlam.mc.eldgui"><span class="typeNameLink">UISession</span></a></li>
+</ul>
+</section>
+<section role="region">
+<h2 title="Annotation Type Hierarchy">Annotation Type Hierarchy</h2>
+<ul>
+<li class="circle">com.ericlam.mc.eldgui.event.<a href="com/ericlam/mc/eldgui/event/BaseHandler.html" title="annotation in com.ericlam.mc.eldgui.event"><span class="typeNameLink">BaseHandler</span></a> (implements java.lang.annotation.<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/annotation/Annotation.html?is-external=true" title="class or interface in java.lang.annotation" class="externalLink">Annotation</a>)</li>
+<li class="circle">com.ericlam.mc.eldgui.event.<a href="com/ericlam/mc/eldgui/event/ClickHandler.html" title="annotation in com.ericlam.mc.eldgui.event"><span class="typeNameLink">ClickHandler</span></a> (implements java.lang.annotation.<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/annotation/Annotation.html?is-external=true" title="class or interface in java.lang.annotation" class="externalLink">Annotation</a>)</li>
+<li class="circle">com.ericlam.mc.eldgui.controller.<a href="com/ericlam/mc/eldgui/controller/ControllerForView.html" title="annotation in com.ericlam.mc.eldgui.controller"><span class="typeNameLink">ControllerForView</span></a> (implements java.lang.annotation.<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/annotation/Annotation.html?is-external=true" title="class or interface in java.lang.annotation" class="externalLink">Annotation</a>)</li>
+<li class="circle">com.ericlam.mc.eldgui.controller.<a href="com/ericlam/mc/eldgui/controller/FromPattern.html" title="annotation in com.ericlam.mc.eldgui.controller"><span class="typeNameLink">FromPattern</span></a> (implements java.lang.annotation.<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/annotation/Annotation.html?is-external=true" title="class or interface in java.lang.annotation" class="externalLink">Annotation</a>)</li>
+<li class="circle">com.ericlam.mc.eldgui.lifecycle.<a href="com/ericlam/mc/eldgui/lifecycle/OnDestroy.html" title="annotation in com.ericlam.mc.eldgui.lifecycle"><span class="typeNameLink">OnDestroy</span></a> (implements java.lang.annotation.<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/annotation/Annotation.html?is-external=true" title="class or interface in java.lang.annotation" class="externalLink">Annotation</a>)</li>
+<li class="circle">com.ericlam.mc.eldgui.lifecycle.<a href="com/ericlam/mc/eldgui/lifecycle/OnRendered.html" title="annotation in com.ericlam.mc.eldgui.lifecycle"><span class="typeNameLink">OnRendered</span></a> (implements java.lang.annotation.<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/annotation/Annotation.html?is-external=true" title="class or interface in java.lang.annotation" class="externalLink">Annotation</a>)</li>
+<li class="circle">com.ericlam.mc.eldgui.view.<a href="com/ericlam/mc/eldgui/view/UseTemplate.html" title="annotation in com.ericlam.mc.eldgui.view"><span class="typeNameLink">UseTemplate</span></a> (implements java.lang.annotation.<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/annotation/Annotation.html?is-external=true" title="class or interface in java.lang.annotation" class="externalLink">Annotation</a>)</li>
+<li class="circle">com.ericlam.mc.eldgui.view.<a href="com/ericlam/mc/eldgui/view/ViewDescriptor.html" title="annotation in com.ericlam.mc.eldgui.view"><span class="typeNameLink">ViewDescriptor</span></a> (implements java.lang.annotation.<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/annotation/Annotation.html?is-external=true" title="class or interface in java.lang.annotation" class="externalLink">Annotation</a>)</li>
 </ul>
 </section>
 </div>
@@ -118,6 +178,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <!--   -->
 </a>
 <ul class="navList" title="Navigation">
+<li><a href="index.html">Overview</a></li>
 <li>Package</li>
 <li>Class</li>
 <li>Use</li>

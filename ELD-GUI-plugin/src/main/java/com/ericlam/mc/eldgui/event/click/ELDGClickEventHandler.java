@@ -17,7 +17,7 @@ import java.util.Map;
 public final class ELDGClickEventHandler extends ELDGEventHandler<ClickHandler, InventoryClickEvent> {
 
 
-    public ELDGClickEventHandler(UIController controller, MethodParseManager<InventoryClickEvent> parseManager, ReturnTypeManager returnTypeManager) {
+    public ELDGClickEventHandler(UIController controller, MethodParseManager parseManager, ReturnTypeManager returnTypeManager) {
         super(controller, parseManager, returnTypeManager);
     }
 

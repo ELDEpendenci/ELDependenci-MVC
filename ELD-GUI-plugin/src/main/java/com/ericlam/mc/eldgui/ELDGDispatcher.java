@@ -9,31 +9,32 @@ import org.bukkit.entity.Player;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public class ELDGDispatcher<E extends Model> implements UIDispatcher {
 
+    private static final Map<Player, UISession> uiSessionMap = new ConcurrentHashMap<>();
+
+
     private final View<E> view;
     private final UIController controller;
-    private final MethodParseFactory methodParseFactory;
+    private final ManagerFactory managerFactory;
     private final ItemStackService itemStackService;
     private final InventoryTemplate inventoryTemplate;
     private final ViewJumper goTo;
     private final Map<Player, ELDGUI<E>> guiSessionMap = new ConcurrentHashMap<>();
-    private final Map<Player, UISession> uiSessionMap = new ConcurrentHashMap<>();
+
 
     public ELDGDispatcher(
             View<E> view,
             UIController controller,
-            MethodParseFactory factory,
+            ManagerFactory factory,
             ItemStackService itemStackService,
             InventoryTemplate inventoryTemplate,
             ViewJumper goTo
     ) {
         this.view = view;
         this.controller = controller;
-        this.methodParseFactory = factory;
+        this.managerFactory = factory;
         this.inventoryTemplate = inventoryTemplate;
         this.itemStackService = itemStackService;
         this.goTo = (session, player, ui) -> {
@@ -46,7 +47,9 @@ public class ELDGDispatcher<E extends Model> implements UIDispatcher {
     @Override
     public void openFor(Player player) {
         if (guiSessionMap.containsKey(player)) {
-            player.openInventory(guiSessionMap.get(player).getNativeInventory());
+            ELDGUI<E> eldgui = guiSessionMap.get(player);
+            eldgui.resume();
+            player.openInventory(eldgui.getNativeInventory());
             return;
         }
         UISession session = Optional.ofNullable(uiSessionMap.remove(player)).orElseGet(ELDGUISession::new);
@@ -57,7 +60,7 @@ public class ELDGDispatcher<E extends Model> implements UIDispatcher {
                 itemStackService,
                 session,
                 player,
-                methodParseFactory,
+                managerFactory,
                 guiSessionMap::remove,
                 goTo
         );
@@ -73,19 +76,29 @@ public class ELDGDispatcher<E extends Model> implements UIDispatcher {
         );
     }
 
-    private final static class ELDGUISession implements UISession{
+    private final static class ELDGUISession implements UISession {
 
         private final Map<String, Object> attributes = new ConcurrentHashMap<>();
 
         @SuppressWarnings("unchecked")
         @Override
         public <T> T getAttribute(String key) {
-            return (T)attributes.get(key);
+            return (T) attributes.get(key);
         }
 
         @Override
         public void setAttribute(String key, Object item) {
             this.attributes.put(key, item);
         }
+
+        @Override
+        public boolean removeAttribute(String key) {
+            return this.attributes.remove(key) != null;
+        }
+    }
+
+
+    public synchronized void onClose(){
+        this.guiSessionMap.values().forEach(ELDGUI::destroy);
     }
 }

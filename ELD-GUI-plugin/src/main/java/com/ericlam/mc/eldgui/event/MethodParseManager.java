@@ -1,7 +1,5 @@
 package com.ericlam.mc.eldgui.event;
 
-import org.bukkit.event.inventory.InventoryEvent;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -12,7 +10,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public abstract class MethodParseManager<E extends InventoryEvent> {
+public final class MethodParseManager {
 
     private final Map<BiFunction<Type, Annotation[], Boolean>, Function<Annotation[], Object>> supplierMap = new ConcurrentHashMap<>();
 

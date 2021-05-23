@@ -20,11 +20,11 @@ public abstract class ELDGEventHandler<A extends Annotation, E extends Inventory
     protected final Map<A, Method> eventMap = new ConcurrentHashMap<>();
     private final Set<Character> cancellable = new HashSet<>();
     private final UIController uiController;
-    private final MethodParseManager<E> parseManager;
+    private final MethodParseManager parseManager;
     private final ReturnTypeManager returnTypeManager;
 
 
-    public ELDGEventHandler(UIController controller, MethodParseManager<E> parseManager, ReturnTypeManager returnTypeManager) {
+    public ELDGEventHandler(UIController controller, MethodParseManager parseManager, ReturnTypeManager returnTypeManager) {
         this.uiController = controller;
         this.parseManager = parseManager;
         this.returnTypeManager = returnTypeManager;

@@ -5,9 +5,12 @@ import com.ericlam.mc.eldgui.controller.UIController;
 import com.ericlam.mc.eldgui.controller.FromPattern;
 import com.ericlam.mc.eldgui.controller.UIRequest;
 import com.ericlam.mc.eldgui.event.ELDGEventHandler;
+import com.ericlam.mc.eldgui.event.LifeCycleManager;
 import com.ericlam.mc.eldgui.event.MethodParseManager;
 import com.ericlam.mc.eldgui.event.ReturnTypeManager;
 import com.ericlam.mc.eldgui.event.click.ELDGClickEventHandler;
+import com.ericlam.mc.eldgui.lifecycle.OnDestroy;
+import com.ericlam.mc.eldgui.lifecycle.OnRendered;
 import com.ericlam.mc.eldgui.model.Model;
 import com.ericlam.mc.eldgui.view.JumpToView;
 import com.ericlam.mc.eldgui.view.View;
@@ -35,7 +38,6 @@ public final class ELDGUI<T extends Model> implements Listener {
 
     private final View<T> view;
     private final Inventory nativeInventory;
-    private final UIController controller;
     private final ELDGContext eldgContext = new ELDGContext();
     private final UISession session;
     private final Map<Character, List<Integer>> patternMasks = new LinkedHashMap<>();
@@ -46,6 +48,7 @@ public final class ELDGUI<T extends Model> implements Listener {
     private final Class<? extends Model> modelClass;
     private final Consumer<Player> onDestroy;
     private final ViewJumper goTo;
+    private final LifeCycleManager lifeCycleManager;
     private transient boolean holdInventory = false;
 
     public ELDGUI(InventoryTemplate demoInventories,
@@ -54,27 +57,28 @@ public final class ELDGUI<T extends Model> implements Listener {
                   ItemStackService itemStackService,
                   UISession session,
                   Player owner,
-                  MethodParseFactory methodParseFactory,
+                  ManagerFactory managerFactory,
                   Consumer<Player> onDestroy,
                   ViewJumper goTo
     ) {
         this.itemStackService = itemStackService;
         this.session = session;
-        this.controller = controller;
         this.view = view;
         this.owner = owner;
         this.onDestroy = onDestroy;
         this.goTo = goTo;
         this.nativeInventory = Bukkit.createInventory(owner, demoInventories.rows * 9, ChatColor.translateAlternateColorCodes('&', demoInventories.name));
+        MethodParseManager methodParseManager = managerFactory.buildParseManager(this::initMethodParseManager);
+        this.lifeCycleManager = new LifeCycleManager(controller, methodParseManager);
         this.eventHandlerMap.put(InventoryClickEvent.class,
                 new ELDGClickEventHandler(controller,
-                        methodParseFactory.buildParseManager(InventoryClickEvent.class, this::initializeParsers),
-                        createReturnTypeManager()));
+                        methodParseManager,
+                        managerFactory.buildReturnTypeManager(this::initReturnTypeManager)));
         this.renderFromTemplate(demoInventories);
         T model = view.renderAndCreateModel(session, eldgContext, owner);
-        controller.onViewRendered(eldgContext, owner);
         this.modelClass = model.getClass();
         this.liveData = new ELDGLiveData<>(model, this::updateView);
+        lifeCycleManager.onLifeCycle(OnRendered.class);
         Bukkit.getServer().getPluginManager().registerEvents(this, ELDGPlugin.getPlugin(ELDGPlugin.class));
     }
 
@@ -86,8 +90,7 @@ public final class ELDGUI<T extends Model> implements Listener {
         owner.updateInventory();
     }
 
-    private ReturnTypeManager createReturnTypeManager(){
-        ReturnTypeManager returnTypeManager = new ReturnTypeManager();
+    private void initReturnTypeManager(ReturnTypeManager returnTypeManager){
         returnTypeManager.registerReturnType(type -> type.equals(void.class), (o) -> {});
         returnTypeManager.registerReturnType(type -> type.equals(String.class), (o) -> {
             if (!view.persist()) this.onDestroy.accept(owner);
@@ -113,10 +116,9 @@ public final class ELDGUI<T extends Model> implements Listener {
             }
             if (!view.persist() && !toView.isKeepPreviousUI()) this.destroy();
         });
-        return returnTypeManager;
     }
 
-    private void initializeParsers(MethodParseManager<? extends InventoryEvent> parser){
+    private void initMethodParseManager(MethodParseManager parser){
         parser.registerParser((t, annos) -> {
             if (t instanceof ParameterizedType){
                 var parat = (ParameterizedType) t;
@@ -204,7 +206,7 @@ public final class ELDGUI<T extends Model> implements Listener {
     public void destroy() {
         eventHandlerMap.values().forEach(ELDGEventHandler::unloadAllHandlers);
         HandlerList.unregisterAll(this);
-        controller.onDestroy(eldgContext, owner);
+        lifeCycleManager.onLifeCycle(OnDestroy.class);
         patternMasks.clear();
         nativeInventory.clear();
         this.onDestroy.accept(owner);

@@ -7,6 +7,7 @@ import com.ericlam.mc.eldgui.controller.UIController;
 import com.ericlam.mc.eldgui.controller.UIRequest;
 import com.ericlam.mc.eldgui.event.BaseHandler;
 import com.ericlam.mc.eldgui.event.ClickHandler;
+import com.ericlam.mc.eldgui.lifecycle.OnDestroy;
 import com.ericlam.mc.eldgui.view.JumpToView;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -34,7 +35,7 @@ public class CraftTableController implements UIController {
     }
 
 
-    @Override
+    @OnDestroy
     public void onDestroy(UIRequest request, Player player) {
         request.getItems('A').forEach(p -> player.getInventory().addItem(p));
     }

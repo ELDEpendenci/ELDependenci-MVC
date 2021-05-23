@@ -17,7 +17,7 @@ public class ELDGDispatcher<E extends Model> implements UIDispatcher {
 
     private final View<E> view;
     private final UIController controller;
-    private final MethodParseFactory methodParseFactory;
+    private final ManagerFactory managerFactory;
     private final ItemStackService itemStackService;
     private final InventoryTemplate inventoryTemplate;
     private final ViewJumper goTo;
@@ -27,14 +27,14 @@ public class ELDGDispatcher<E extends Model> implements UIDispatcher {
     public ELDGDispatcher(
             View<E> view,
             UIController controller,
-            MethodParseFactory factory,
+            ManagerFactory factory,
             ItemStackService itemStackService,
             InventoryTemplate inventoryTemplate,
             ViewJumper goTo
     ) {
         this.view = view;
         this.controller = controller;
-        this.methodParseFactory = factory;
+        this.managerFactory = factory;
         this.inventoryTemplate = inventoryTemplate;
         this.itemStackService = itemStackService;
         this.goTo = (session, player, ui) -> {
@@ -60,7 +60,7 @@ public class ELDGDispatcher<E extends Model> implements UIDispatcher {
                 itemStackService,
                 session,
                 player,
-                methodParseFactory,
+                managerFactory,
                 guiSessionMap::remove,
                 goTo
         );

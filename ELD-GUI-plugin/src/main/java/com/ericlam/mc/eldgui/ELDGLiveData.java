@@ -17,6 +17,7 @@ public class ELDGLiveData<E extends Model> implements MutableLiveData<E>{
 
     @Override
     public void update(Consumer<E> consumer) {
+        data.setChanged(true);
         consumer.accept(data);
         this.updateView.accept(data);
     }

@@ -23,7 +23,7 @@ public class ELDGInventoryService implements InventoryService{
     private Map<String, UIController> uiControllerMap;
 
     @Inject
-    private MethodParseFactory methodParseFactory;
+    private ManagerFactory managerFactory;
 
     @Inject
     private ItemStackService itemStackService;
@@ -59,7 +59,7 @@ public class ELDGInventoryService implements InventoryService{
         try {
             Constructor<? extends View<? extends Model>> constructor = viewCls.getConstructor(ItemStackService.class);
             View<? extends Model> view = constructor.newInstance(itemStackService);
-            UIDispatcher dispatcher = new ELDGDispatcher<>(view, controller, methodParseFactory, itemStackService, template, (s, player, ui) -> this.getUIDispatcher(ui.getView()).openFor(player));
+            UIDispatcher dispatcher = new ELDGDispatcher<>(view, controller, managerFactory, itemStackService, template, (s, player, ui) -> this.getUIDispatcher(ui.getView()).openFor(player));
             this.uiDispatcherMap.put(name, dispatcher);
             return dispatcher;
         } catch (NoSuchMethodException e) {

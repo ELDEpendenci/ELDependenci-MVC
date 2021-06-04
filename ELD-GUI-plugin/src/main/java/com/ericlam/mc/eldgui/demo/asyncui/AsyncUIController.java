@@ -19,7 +19,7 @@ public class AsyncUIController implements UIController {
     private ELDGPlugin eldgPlugin;
 
     @OnRendered
-    public void onRendered(LiveData<AsyncUIModel> asyncUIModelLiveData){
+    public void onRendered(LiveData<AsyncUIModel> asyncUIModelLiveData) {
         scheduleService.callAsync(eldgPlugin, () -> {
             Thread.sleep(5000);
             return "Hello World!!";

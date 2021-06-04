@@ -36,8 +36,8 @@ public class CraftTableController implements UIController {
 
 
     @OnDestroy
-    public void onDestroy(UIRequest request, Player player) {
-        request.getItems('A').forEach(p -> player.getInventory().addItem(p));
+    public void onDestroy(@FromPattern('A') List<ItemStack> items, Player player) {
+        items.forEach(p -> player.getInventory().addItem(p));
     }
 
     private boolean is9Diamond(List<ItemStack> itemStacks) {

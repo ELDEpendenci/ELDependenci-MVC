@@ -22,7 +22,7 @@ public final class ReturnTypeManager {
                 .findFirst()
                 .ifPresentOrElse(
                         key -> supplierMap.get(key).accept(result),
-                        () -> Bukkit.getLogger().warning("[ELDepdendenci-GUI] Unknown return type "+returnType+", ignore handling.")
+                        () -> Bukkit.getLogger().warning("[ELDepdendenci-GUI] Unknown return type " + returnType + ", ignore handling.")
                 );
     }
 

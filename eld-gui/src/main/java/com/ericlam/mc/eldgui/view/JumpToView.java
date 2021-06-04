@@ -10,7 +10,7 @@ public final class JumpToView {
         this.keepPreviousUI = keepPreviousUI;
     }
 
-    public JumpToView(String view){
+    public JumpToView(String view) {
         this(view, false);
     }
 

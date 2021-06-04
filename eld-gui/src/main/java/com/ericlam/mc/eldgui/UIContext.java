@@ -10,5 +10,7 @@ public interface UIContext {
 
     void fillItem(char pattern, ItemStack itemStack);
 
+    <C> void setAttribute(Class<C> type, ItemStack itemStack, String key, C value);
+
 
 }

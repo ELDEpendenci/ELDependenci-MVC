@@ -1,8 +1,6 @@
 package com.ericlam.mc.eldgui.event;
 
 import com.ericlam.mc.eldgui.controller.UIController;
-import com.ericlam.mc.eldgui.model.Model;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.inventory.InventoryEvent;
@@ -46,8 +44,8 @@ public abstract class ELDGEventHandler<A extends Annotation, E extends Inventory
             Player player,
             Inventory nativeInventory,
             Map<Character, List<Integer>> patternMasks
-    ){
-        if (e instanceof InventoryInteractEvent){
+    ) {
+        if (e instanceof InventoryInteractEvent) {
             if (((InventoryInteractEvent) e).getWhoClicked() != player) return;
         }
         if (!e.getViewers().contains(player)) return;
@@ -73,7 +71,7 @@ public abstract class ELDGEventHandler<A extends Annotation, E extends Inventory
                 .map(Map.Entry::getValue)
                 .forEachOrdered(m -> {
                     try {
-                        Object[] results = parseManager.getMethodParameters(m);
+                        Object[] results = parseManager.getMethodParameters(m, e);
                         var returnType = m.invoke(uiController, results);
                         returnTypeManager.handleReturnResult(m.getGenericReturnType(), returnType);
                     } catch (IllegalAccessException | InvocationTargetException ex) {
@@ -87,12 +85,12 @@ public abstract class ELDGEventHandler<A extends Annotation, E extends Inventory
 
     protected abstract boolean annotationFilter(A annotate, E event);
 
-    protected BaseHandler getBaseHandler(A annotation){
+    protected BaseHandler getBaseHandler(A annotation) {
         try {
             Method m = annotation.getClass().getMethod("base");
             return (BaseHandler) m.invoke(annotation);
         } catch (NoSuchMethodException e) {
-            throw new IllegalStateException("annotation handler "+annotation.getClass()+" is lack of base = @BaseHandler property.", e);
+            throw new IllegalStateException("annotation handler " + annotation.getClass() + " is lack of base = @BaseHandler property.", e);
         } catch (InvocationTargetException | IllegalAccessException e) {
             throw new IllegalStateException(e);
         }

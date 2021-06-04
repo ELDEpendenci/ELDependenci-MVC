@@ -76,6 +76,10 @@ public class ELDGDispatcher<E extends Model> implements UIDispatcher {
         );
     }
 
+    public synchronized void onClose() {
+        this.guiSessionMap.values().forEach(ELDGUI::destroy);
+    }
+
     private final static class ELDGUISession implements UISession {
 
         private final Map<String, Object> attributes = new ConcurrentHashMap<>();
@@ -95,10 +99,5 @@ public class ELDGDispatcher<E extends Model> implements UIDispatcher {
         public boolean removeAttribute(String key) {
             return this.attributes.remove(key) != null;
         }
-    }
-
-
-    public synchronized void onClose(){
-        this.guiSessionMap.values().forEach(ELDGUI::destroy);
     }
 }

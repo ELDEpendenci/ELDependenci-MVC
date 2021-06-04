@@ -25,7 +25,7 @@ public class ELDGDemoCommand implements CommandNode {
 
     @Override
     public void execute(CommandSender commandSender) {
-       var player = (Player) commandSender;
+        var player = (Player) commandSender;
         try {
             inventoryService.getUIDispatcher(gui).openFor(player);
         } catch (UINotFoundException e) {

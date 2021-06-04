@@ -5,11 +5,10 @@ import org.bukkit.Material;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 public final class CodeInventoryTemplate extends InventoryTemplate {
 
-    public CodeInventoryTemplate(ViewDescriptor viewDescriptor){
+    public CodeInventoryTemplate(ViewDescriptor viewDescriptor) {
         this.name = viewDescriptor.name();
         this.rows = viewDescriptor.rows();
         this.pattern = Arrays.asList(viewDescriptor.patterns());

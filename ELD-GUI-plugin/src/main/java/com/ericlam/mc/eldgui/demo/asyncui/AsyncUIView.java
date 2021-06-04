@@ -11,8 +11,8 @@ import org.bukkit.entity.Player;
 @ViewDescriptor(
         rows = 1,
         name = "&aAsyncUI Demo",
-        patterns = { "ZZZZAZZZZ" },
-        cancelMove = { 'A', 'Z' }
+        patterns = {"ZZZZAZZZZ"},
+        cancelMove = {'A', 'Z'}
 )
 public class AsyncUIView extends View<AsyncUIModel> {
 

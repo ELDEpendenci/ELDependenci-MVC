@@ -29,7 +29,8 @@ public class ConfirmUIView extends View<ConfirmModel> {
                         .build(Material.DIAMOND_PICKAXE)
                         .display("&b即將合成: ".concat(m != null ? m.name().toLowerCase(Locale.ROOT) : "無"))
                         .lore("&e確定合成?")
-        .getItem());
+                        .getItem());
+        itemStackService.build(Material.PAPER).getItem().getItemMeta().getPersistentDataContainer();
         return new ConfirmModel();
     }
 

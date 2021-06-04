@@ -1,5 +1,8 @@
 package com.ericlam.mc.eldgui.event;
 
+import org.bukkit.event.inventory.InventoryEvent;
+
+import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -7,18 +10,17 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public final class MethodParseManager {
 
-    private final Map<BiFunction<Type, Annotation[], Boolean>, Function<Annotation[], Object>> supplierMap = new ConcurrentHashMap<>();
+    private final Map<BiFunction<Type, Annotation[], Boolean>, MethodParser> supplierMap = new ConcurrentHashMap<>();
 
-    public void registerParser(BiFunction<Type, Annotation[], Boolean> define, Function<Annotation[], Object> supplier) {
-        supplierMap.put(define, supplier);
+    public void registerParser(BiFunction<Type, Annotation[], Boolean> define, MethodParser parser) {
+        supplierMap.put(define, parser);
     }
 
-    public Object[] getMethodParameters(Method method) {
+    public Object[] getMethodParameters(Method method, @Nullable InventoryEvent event) {
         Type[] paras = method.getGenericParameterTypes();
         Object[] results = new Object[paras.length];
         Annotation[][] annotations = method.getParameterAnnotations();
@@ -35,7 +37,7 @@ public final class MethodParseManager {
             }
             if (key == null)
                 throw new IllegalArgumentException("unknown parameter " + cls + " with annotations: " + annoStr);
-            var result = supplierMap.get(key).apply(annos);
+            var result = supplierMap.get(key).parseParameter(annos, cls, event);
             if (result == null)
                 throw new IllegalArgumentException("the result of " + cls + " is null with annotations: " + annoStr);
             results[i] = result;

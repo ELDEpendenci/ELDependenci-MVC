@@ -1,7 +1,6 @@
 package com.ericlam.mc.eldgui;
 
 import com.ericlam.mc.eld.ELDLifeCycle;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.inject.Inject;
@@ -17,6 +16,6 @@ public class ELDGLifeCycle implements ELDLifeCycle {
 
     @Override
     public void onDisable(JavaPlugin javaPlugin) {
-        ((ELDGInventoryService)inventoryService).onClose();
+        ((ELDGInventoryService) inventoryService).onClose();
     }
 }

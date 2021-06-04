@@ -5,10 +5,10 @@ import org.bukkit.Bukkit;
 
 import java.util.function.Consumer;
 
-public class ELDGLiveData<E extends Model> implements MutableLiveData<E>{
+public class ELDGLiveData<E extends Model> implements MutableLiveData<E> {
 
-    private E data;
     private final Consumer<E> updateView;
+    private E data;
 
     public ELDGLiveData(E data, Consumer<E> updateView) {
         this.data = data;

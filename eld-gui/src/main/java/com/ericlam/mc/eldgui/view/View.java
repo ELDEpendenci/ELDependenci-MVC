@@ -18,7 +18,8 @@ public abstract class View<T extends Model> {
 
     public abstract void onModelChanged(T model, UIContext context, Player player);
 
-    public void onResume(UISession session, UIContext context, Player player){}
+    public void onResume(UISession session, UIContext context, Player player) {
+    }
 
     public boolean persist() {
         return false;

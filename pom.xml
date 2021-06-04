@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -17,6 +17,10 @@
         <repository>
             <id>papermc</id>
             <url>https://papermc.io/repo/repository/maven-public/</url>
+        </repository>
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
         <repository>
             <id>chu77</id>
@@ -38,6 +42,12 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>org.spigotmc</groupId>
+                <artifactId>spigot-api</artifactId>
+                <version>1.16.5-R0.1-SNAPSHOT</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
                 <groupId>com.destroystokyo.paper</groupId>
                 <artifactId>paper-api</artifactId>
                 <version>1.16.3-R0.1-SNAPSHOT</version>
@@ -46,7 +56,7 @@
             <dependency>
                 <groupId>org.eldependenci</groupId>
                 <artifactId>eldependenci-framework</artifactId>
-                <version>0.0.7</version>
+                <version>0.0.8</version>
                 <scope>provided</scope>
             </dependency>
         </dependencies>
@@ -102,7 +112,7 @@
                         <version>true</version>
                         <linksource>true</linksource>
                         <notimestamp>true</notimestamp>
-                        <bottom><![CDATA[<b>© ELDependenci - 2020</b>]]></bottom>
+                        <bottom><![CDATA[<b>© ELDependenci-GUI - 2021</b>]]></bottom>
                         <reportOutputDirectory>${project.build.directory}</reportOutputDirectory>
                         <outputDirectory>../javadocs</outputDirectory>
                         <detectJavaApiLink>true</detectJavaApiLink>

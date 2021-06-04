@@ -17,7 +17,7 @@ public abstract class InventoryTemplate extends GroupConfiguration {
 
     public Map<String, ItemDescriptor> items;
 
-    public static class ItemDescriptor{
+    public static class ItemDescriptor {
 
         public Material material = Material.STONE;
 

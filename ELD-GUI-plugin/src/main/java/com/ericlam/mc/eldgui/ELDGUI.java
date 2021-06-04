@@ -1,8 +1,9 @@
 package com.ericlam.mc.eldgui;
 
 import com.ericlam.mc.eld.services.ItemStackService;
-import com.ericlam.mc.eldgui.controller.UIController;
 import com.ericlam.mc.eldgui.controller.FromPattern;
+import com.ericlam.mc.eldgui.controller.ItemAttribute;
+import com.ericlam.mc.eldgui.controller.UIController;
 import com.ericlam.mc.eldgui.controller.UIRequest;
 import com.ericlam.mc.eldgui.event.ELDGEventHandler;
 import com.ericlam.mc.eldgui.event.LifeCycleManager;
@@ -17,6 +18,7 @@ import com.ericlam.mc.eldgui.view.View;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -24,9 +26,12 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
@@ -90,8 +95,9 @@ public final class ELDGUI<T extends Model> implements Listener {
         owner.updateInventory();
     }
 
-    private void initReturnTypeManager(ReturnTypeManager returnTypeManager){
-        returnTypeManager.registerReturnType(type -> type.equals(void.class), (o) -> {});
+    private void initReturnTypeManager(ReturnTypeManager returnTypeManager) {
+        returnTypeManager.registerReturnType(type -> type.equals(void.class), (o) -> {
+        });
         returnTypeManager.registerReturnType(type -> type.equals(String.class), (o) -> {
             if (!view.persist()) this.onDestroy.accept(owner);
             try {
@@ -111,37 +117,53 @@ public final class ELDGUI<T extends Model> implements Listener {
             } catch (UINotFoundException e) {
                 owner.sendMessage(e.getMessage());
                 return;
-            }finally {
+            } finally {
                 this.holdInventory = false;
             }
             if (!view.persist() && !toView.isKeepPreviousUI()) this.destroy();
         });
     }
 
-    private void initMethodParseManager(MethodParseManager parser){
+    private void initMethodParseManager(MethodParseManager parser) {
         parser.registerParser((t, annos) -> {
-            if (t instanceof ParameterizedType){
+            if (t instanceof ParameterizedType) {
                 var parat = (ParameterizedType) t;
                 return parat.getActualTypeArguments()[0] == modelClass && (parat.getRawType() == LiveData.class || parat.getRawType() == MutableLiveData.class);
             }
             return false;
-        }, annotations -> liveData);
-        parser.registerParser((t, annos) -> t.equals(UISession.class), annotations -> session);
+        }, (annotations, t, e) -> liveData);
+        parser.registerParser((t, annos) -> t.equals(UISession.class), (annotations, t, e) -> session);
         parser.registerParser((t, annos) -> {
-            if (t instanceof ParameterizedType){
+            if (t instanceof ParameterizedType) {
                 var parat = (ParameterizedType) t;
                 return parat.getActualTypeArguments()[0] == ItemStack.class && parat.getRawType() == List.class;
             }
             return false;
-        }, annotations -> {
+        }, (annotations, t, e) -> {
             FromPattern pattern = (FromPattern) Arrays.stream(annotations).filter(a -> a.annotationType() == FromPattern.class).findAny().orElseThrow(() -> new IllegalStateException("cannot find @FromPattern in List<ItemStack> parameters"));
             return eldgContext.getItems(pattern.value());
         });
-        parser.registerParser((t, annos) -> t.equals(UIRequest.class), annotations -> eldgContext);
-        parser.registerParser((t, annos) -> t.equals(Player.class), annotations -> owner);
+        parser.registerParser((t, annos) -> t.equals(UIRequest.class), (annotations, t, e) -> eldgContext);
+        parser.registerParser((t, annos) -> t.equals(Player.class), (annotations, t, e) -> owner);
+        parser.registerParser((t, annos) -> t.equals(ItemStack.class), (anno, t, e) -> getItemByEvent(e));
+        parser.registerParser((t, annos) -> Arrays.stream(annos).anyMatch(a -> a.annotationType() == ItemAttribute.class) && t.equals(String.class), (annos, t, e) -> {
+            var item = getItemByEvent(e);
+            ItemAttribute attribute = (ItemAttribute) Arrays.stream(annos).filter(a -> a.annotationType() == ItemAttribute.class).findAny().orElseThrow(() -> new IllegalStateException("cannot find @ItemAttribute"));
+            return eldgContext.getAttribute((Class<?>) t, item, attribute.value());
+        });
     }
 
-    public void resume(){
+    private ItemStack getItemByEvent(InventoryEvent e){
+        if (e instanceof InventoryClickEvent) {
+            return ((InventoryClickEvent) e).getCurrentItem();
+        } else if (e instanceof InventoryDragEvent) {
+            return ((InventoryDragEvent) e).getCursor();
+        } else {
+            throw new IllegalStateException("no item return by the event or the event is null");
+        }
+    }
+
+    public void resume() {
         view.onResume(session, eldgContext, owner);
     }
 
@@ -185,7 +207,7 @@ public final class ELDGUI<T extends Model> implements Listener {
 
     @SuppressWarnings("unchecked")
     @EventHandler
-    public void onInventoryClick(InventoryClickEvent e){
+    public void onInventoryClick(InventoryClickEvent e) {
         var handler = (ELDGEventHandler<? extends Annotation, InventoryClickEvent>) eventHandlerMap.get(e.getClass());
         if (handler == null) return;
         handler.onEventHandle(e,
@@ -230,8 +252,36 @@ public final class ELDGUI<T extends Model> implements Listener {
             return false;
         }
 
+        public <C> C getAttribute(Class<C> type, ItemStack itemStack, String key){
+            var meta = itemStack.getItemMeta();
+            if (meta == null) throw new IllegalStateException("cannot get attribute: "+key+", this item has no item meta.");
+            var container = meta.getPersistentDataContainer();
+            try{
+                var con = PersistentDataType.PrimitivePersistentDataType.class.getDeclaredConstructor(type);
+                con.setAccessible(true);
+                PersistentDataType<C, C> o = con.newInstance(type);
+                return container.get(new NamespacedKey(ELDGPlugin.getPlugin(ELDGPlugin.class), key), o);
+            }catch (Exception e){
+                throw new IllegalStateException(e);
+            }
+        }
 
-        @Override
+        public <C> void setAttribute(Class<C> type, ItemStack itemStack, String key, C value){
+            var meta = itemStack.getItemMeta();
+            if (meta == null) throw new IllegalStateException("cannot get attribute: "+key+", this item has no item meta.");
+            var container = meta.getPersistentDataContainer();
+            try{
+                var con = PersistentDataType.PrimitivePersistentDataType.class.getDeclaredConstructor(type);
+                con.setAccessible(true);
+                PersistentDataType<C, C> o = con.newInstance(type);
+                container.set(new NamespacedKey(ELDGPlugin.getPlugin(ELDGPlugin.class), key), o, value);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
+
+
         public List<ItemStack> getItems(char pattern) {
             var slots = patternMasks.get(pattern);
             if (slots == null) return List.of();

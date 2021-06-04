@@ -10,8 +10,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.List;
-
 @UseTemplate(
         template = "crafttable",
         groupResource = DemoInventories.class
@@ -30,11 +28,11 @@ public class CraftTableView extends View<CraftTableModel> {
     @Override
     public void onResume(UISession session, UIContext context, Player player) {
         Boolean confirm = session.getAttribute("confirm");
-        if (confirm != null){
-            if (confirm){
+        if (confirm != null) {
+            if (confirm) {
                 player.sendMessage("you clicked confirm!");
                 Material m = session.getAttribute("craft_result");
-                if (m == null){
+                if (m == null) {
                     player.sendMessage("Nothing Crafted.");
                     return;
                 }
@@ -42,7 +40,7 @@ public class CraftTableView extends View<CraftTableModel> {
                 context.setItem('X', 0, result);
                 context.fillItem('A', null);
                 player.sendMessage("you crafted ".concat(m.name()));
-            }else{
+            } else {
                 player.sendMessage("you clicked cancel, nothing changed.");
             }
         }

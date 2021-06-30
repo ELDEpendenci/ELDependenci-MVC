@@ -17,6 +17,7 @@ public final class ReturnTypeManager {
     }
 
     public void handleReturnResult(Type returnType, Object result) {
+        if (result == null) return;
         supplierMap.keySet().stream()
                 .filter(key -> key.apply(returnType))
                 .findFirst()

@@ -6,12 +6,14 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 public abstract class ELDGEventHandler<A extends Annotation, E extends InventoryEvent> {
 
@@ -50,7 +52,7 @@ public abstract class ELDGEventHandler<A extends Annotation, E extends Inventory
         }
         if (!e.getViewers().contains(player)) return;
         if (e.getInventory() != nativeInventory) return;
-        Optional<Character> chOpt = patternMasks.keySet().stream().filter(ch -> Arrays.binarySearch(patternMasks.get(ch).toArray(new Integer[0]), getSlotFromEvent(e)) >= 0).findAny();
+        Optional<Character> chOpt = patternMasks.keySet().stream().filter(ch -> slotTrigger(patternMasks.get(ch), e)).findAny();
         if (chOpt.isEmpty()) return;
         final var patternClicked = chOpt.get();
         if (cancellable.contains(patternClicked) && e instanceof Cancellable) {
@@ -81,7 +83,7 @@ public abstract class ELDGEventHandler<A extends Annotation, E extends Inventory
                 });
     }
 
-    protected abstract int getSlotFromEvent(E event);
+    protected abstract boolean slotTrigger(List<Integer> slots, E event);
 
     protected abstract boolean annotationFilter(A annotate, E event);
 

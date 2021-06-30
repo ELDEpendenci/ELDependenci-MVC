@@ -35,8 +35,8 @@ public final class ELDGClickEventHandler extends ELDGEventHandler<ClickHandler, 
     }
 
     @Override
-    protected int getSlotFromEvent(InventoryClickEvent event) {
-        return event.getSlot();
+    protected boolean slotTrigger(List<Integer> slots, InventoryClickEvent event) {
+        return slots.contains(event.getSlot());
     }
 
     @Override

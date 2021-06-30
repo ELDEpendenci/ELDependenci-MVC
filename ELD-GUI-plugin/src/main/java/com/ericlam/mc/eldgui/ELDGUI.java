@@ -10,6 +10,7 @@ import com.ericlam.mc.eldgui.event.LifeCycleManager;
 import com.ericlam.mc.eldgui.event.MethodParseManager;
 import com.ericlam.mc.eldgui.event.ReturnTypeManager;
 import com.ericlam.mc.eldgui.event.click.ELDGClickEventHandler;
+import com.ericlam.mc.eldgui.event.drag.ELDGDragEventHandler;
 import com.ericlam.mc.eldgui.lifecycle.OnDestroy;
 import com.ericlam.mc.eldgui.lifecycle.OnRendered;
 import com.ericlam.mc.eldgui.model.Model;
@@ -21,16 +22,13 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.event.inventory.InventoryEvent;
+import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.lang.annotation.Annotation;
@@ -38,6 +36,8 @@ import java.lang.reflect.ParameterizedType;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public final class ELDGUI<T extends Model> implements Listener {
 
@@ -49,6 +49,7 @@ public final class ELDGUI<T extends Model> implements Listener {
     private final ItemStackService itemStackService;
     private final Player owner;
     private final Map<Class<? extends InventoryEvent>, ELDGEventHandler<? extends Annotation, ? extends InventoryEvent>> eventHandlerMap = new ConcurrentHashMap<>();
+    private final Map<String, Function<InventoryEvent, ItemStack>> itemGetterMap = new ConcurrentHashMap<>();
     private final ELDGLiveData<T> liveData;
     private final Class<? extends Model> modelClass;
     private final Consumer<Player> onDestroy;
@@ -79,6 +80,12 @@ public final class ELDGUI<T extends Model> implements Listener {
                 new ELDGClickEventHandler(controller,
                         methodParseManager,
                         managerFactory.buildReturnTypeManager(this::initReturnTypeManager)));
+        this.eventHandlerMap.put(InventoryDragEvent.class,
+                new ELDGDragEventHandler(controller,
+                        methodParseManager,
+                        managerFactory.buildReturnTypeManager(this::initReturnTypeManager)));
+        this.itemGetterMap.put(InventoryClickEvent.class.getSimpleName(), e -> ((InventoryClickEvent) e).getCurrentItem());
+        this.itemGetterMap.put(InventoryDragEvent.class.getSimpleName(), e -> ((InventoryDragEvent) e).getOldCursor());
         this.renderFromTemplate(demoInventories);
         T model = view.renderAndCreateModel(session, eldgContext, owner);
         this.modelClass = model.getClass();
@@ -86,6 +93,7 @@ public final class ELDGUI<T extends Model> implements Listener {
         lifeCycleManager.onLifeCycle(OnRendered.class);
         Bukkit.getServer().getPluginManager().registerEvents(this, ELDGPlugin.getPlugin(ELDGPlugin.class));
     }
+
 
     public void updateView(T model) {
         if (!model.isChanged()) return;
@@ -141,6 +149,10 @@ public final class ELDGUI<T extends Model> implements Listener {
             return false;
         }, (annotations, t, e) -> {
             FromPattern pattern = (FromPattern) Arrays.stream(annotations).filter(a -> a.annotationType() == FromPattern.class).findAny().orElseThrow(() -> new IllegalStateException("cannot find @FromPattern in List<ItemStack> parameters"));
+            if (pattern.fromDrag() && e instanceof InventoryDragEvent){
+                Map<Integer, ItemStack> map = ((InventoryDragEvent) e).getNewItems();
+                return map.entrySet().stream().filter(en -> Optional.ofNullable(patternMasks.get(pattern.value())).map(list -> list.contains(en.getKey())).orElse(false)).map(Map.Entry::getValue).collect(Collectors.toList());
+            }
             return eldgContext.getItems(pattern.value());
         });
         parser.registerParser((t, annos) -> t.equals(UIRequest.class), (annotations, t, e) -> eldgContext);
@@ -151,20 +163,29 @@ public final class ELDGUI<T extends Model> implements Listener {
             ItemAttribute attribute = (ItemAttribute) Arrays.stream(annos).filter(a -> a.annotationType() == ItemAttribute.class).findAny().orElseThrow(() -> new IllegalStateException("cannot find @ItemAttribute"));
             return eldgContext.getAttribute((Class<?>) t, item, attribute.value());
         });
+        parser.registerParser((t, annos) -> t instanceof Class && InventoryInteractEvent.class.isAssignableFrom((Class<?>) t), (anno, t, e) -> e);
+        parser.registerParser((t, annos) -> {
+            if (t instanceof ParameterizedType){
+                var parat = (ParameterizedType) t;
+                return parat.getRawType() == Map.class && parat.getActualTypeArguments()[0] == Integer.class && parat.getActualTypeArguments()[1] == ItemStack.class;
+            }
+            return false;
+        }, (annos, t, e) -> {
+            if (e instanceof InventoryDragEvent){
+                return ((InventoryDragEvent) e).getNewItems();
+            }else{
+                throw new IllegalStateException("not inventory drag event.");
+            }
+        });
     }
 
-    private ItemStack getItemByEvent(InventoryEvent e){
-        if (e instanceof InventoryClickEvent) {
-            return ((InventoryClickEvent) e).getCurrentItem();
-        } else if (e instanceof InventoryDragEvent) {
-            return ((InventoryDragEvent) e).getCursor();
-        } else {
-            throw new IllegalStateException("no item return by the event or the event is null");
-        }
+    private ItemStack getItemByEvent(InventoryEvent e) {
+        return Optional.ofNullable(e).map(ee -> itemGetterMap.get(ee.getEventName())).map(f -> f.apply(e)).orElseThrow(() -> new IllegalStateException("no item return by the event or the event is null"));
     }
 
     public void resume() {
         view.onResume(session, eldgContext, owner);
+        owner.updateInventory();
     }
 
     private void renderFromTemplate(InventoryTemplate demoInventories) {
@@ -217,6 +238,18 @@ public final class ELDGUI<T extends Model> implements Listener {
         );
     }
 
+    @SuppressWarnings("unchecked")
+    @EventHandler
+    public void onInventoryDrag(InventoryDragEvent e){
+        var handler = (ELDGEventHandler<? extends Annotation, InventoryDragEvent>) eventHandlerMap.get(e.getClass());
+        if (handler == null) return;
+        handler.onEventHandle(e,
+                owner,
+                nativeInventory,
+                patternMasks
+        );
+    }
+
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent e) {
         if (e.getPlayer() != this.owner) return;
@@ -244,7 +277,6 @@ public final class ELDGUI<T extends Model> implements Listener {
             for (Integer s : slots) {
                 if (order == slot) {
                     nativeInventory.setItem(s, itemStack);
-                    owner.updateInventory();
                     return true;
                 }
                 order++;
@@ -252,34 +284,35 @@ public final class ELDGUI<T extends Model> implements Listener {
             return false;
         }
 
-        public <C> C getAttribute(Class<C> type, ItemStack itemStack, String key){
+        public <C> C getAttribute(Class<C> type, ItemStack itemStack, String key) {
             var meta = itemStack.getItemMeta();
-            if (meta == null) throw new IllegalStateException("cannot get attribute: "+key+", this item has no item meta.");
+            if (meta == null)
+                throw new IllegalStateException("cannot get attribute: " + key + ", this item has no item meta.");
             var container = meta.getPersistentDataContainer();
-            try{
+            try {
                 var con = PersistentDataType.PrimitivePersistentDataType.class.getDeclaredConstructor(type);
                 con.setAccessible(true);
                 PersistentDataType<C, C> o = con.newInstance(type);
                 return container.get(new NamespacedKey(ELDGPlugin.getPlugin(ELDGPlugin.class), key), o);
-            }catch (Exception e){
+            } catch (Exception e) {
                 throw new IllegalStateException(e);
             }
         }
 
-        public <C> void setAttribute(Class<C> type, ItemStack itemStack, String key, C value){
+        public <C> void setAttribute(Class<C> type, ItemStack itemStack, String key, C value) {
             var meta = itemStack.getItemMeta();
-            if (meta == null) throw new IllegalStateException("cannot get attribute: "+key+", this item has no item meta.");
+            if (meta == null)
+                throw new IllegalStateException("cannot get attribute: " + key + ", this item has no item meta.");
             var container = meta.getPersistentDataContainer();
-            try{
+            try {
                 var con = PersistentDataType.PrimitivePersistentDataType.class.getDeclaredConstructor(type);
                 con.setAccessible(true);
                 PersistentDataType<C, C> o = con.newInstance(type);
                 container.set(new NamespacedKey(ELDGPlugin.getPlugin(ELDGPlugin.class), key), o, value);
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-
 
 
         public List<ItemStack> getItems(char pattern) {
@@ -289,7 +322,6 @@ public final class ELDGUI<T extends Model> implements Listener {
             for (int s : slots) {
                 var item = Optional.ofNullable(nativeInventory.getItem(s)).orElseGet(() -> new ItemStack(Material.AIR));
                 items.add(item);
-                owner.updateInventory();
             }
             return List.copyOf(items);
         }
@@ -302,7 +334,6 @@ public final class ELDGUI<T extends Model> implements Listener {
                 var slotItem = nativeInventory.getItem(s);
                 if (slotItem != null && slotItem.getType() != Material.AIR) continue;
                 nativeInventory.setItem(s, itemStack);
-                owner.updateInventory();
                 return true;
             }
             return false;
@@ -314,7 +345,6 @@ public final class ELDGUI<T extends Model> implements Listener {
             if (slots == null) return;
             for (Integer s : slots) {
                 nativeInventory.setItem(s, itemStack);
-                owner.updateInventory();
             }
         }
 

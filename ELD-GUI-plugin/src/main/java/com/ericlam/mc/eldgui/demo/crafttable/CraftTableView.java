@@ -38,7 +38,6 @@ public class CraftTableView extends View<CraftTableModel> {
                 }
                 ItemStack result = new ItemStack(m);
                 context.setItem('X', 0, result);
-                context.fillItem('A', null);
                 player.sendMessage("you crafted ".concat(m.name()));
             } else {
                 player.sendMessage("you clicked cancel, nothing changed.");
@@ -51,5 +50,16 @@ public class CraftTableView extends View<CraftTableModel> {
 
     @Override
     public void onModelChanged(CraftTableModel model, UIContext context, Player player) {
+        if (model.getCraftResult() != null){
+            context.setItem('X', 0, model.getCraftResult());
+            player.sendMessage("you crafted ".concat(model.getCraftResult().getType().name()));
+            model.setCraftResult(null);
+        }
+
+        if (model.isResultGet()){
+            context.fillItem('A', null);
+            player.sendMessage("you got the result item.");
+            model.setResultGet(false);
+        }
     }
 }

@@ -11,4 +11,6 @@ public @interface FromPattern {
 
     char value();
 
+    boolean fromDrag() default false;
+
 }

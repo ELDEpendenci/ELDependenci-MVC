@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.eldependenci</groupId>
-    <artifactId>ELDependenci-GUI</artifactId>
+    <artifactId>ELDependenci-GUI-Module</artifactId>
     <packaging>pom</packaging>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
     <modules>
-        <module>eld-gui</module>
-        <module>ELD-GUI-plugin</module>
+        <module>eldependenci-gui</module>
+        <module>ELDependenci-GUI-plugin</module>
     </modules>
 
     <repositories>
@@ -56,7 +56,13 @@
             <dependency>
                 <groupId>org.eldependenci</groupId>
                 <artifactId>eldependenci-framework</artifactId>
-                <version>0.0.8</version>
+                <version>0.1.1</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.eldependenci</groupId>
+                <artifactId>eldependenci-addon</artifactId>
+                <version>0.1.1</version>
                 <scope>provided</scope>
             </dependency>
         </dependencies>

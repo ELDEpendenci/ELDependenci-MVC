@@ -12,6 +12,10 @@ public class UserService {
     private final Map<String, User> fakeUserTables = new ConcurrentHashMap<>();
 
     public UserService() {
+        this.reset();
+    }
+
+    public void reset() {
         this.fakeUserTables.put("user1", new User("user1", "Lam", "TF", 11));
         this.fakeUserTables.put("user2", new User("user2", "Chan", "ZF", 21));
         this.fakeUserTables.put("user3", new User("user3", "Tai", "ZZ", 55));
@@ -19,9 +23,12 @@ public class UserService {
         this.fakeUserTables.put("user5", new User("user5", "Lai", "LL", 19));
     }
 
-
     public List<User> findAll() {
         return new ArrayList<>(fakeUserTables.values());
+    }
+
+    public List<String> findAllUsernames() {
+        return new ArrayList<>(fakeUserTables.keySet());
     }
 
 

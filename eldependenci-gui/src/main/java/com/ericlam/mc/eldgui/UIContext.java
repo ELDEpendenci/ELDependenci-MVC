@@ -12,5 +12,5 @@ public interface UIContext {
 
     <C> void setAttribute(Class<C> type, ItemStack itemStack, String key, C value);
 
-
+    <C> void setAttribute(Class<C> type, char pattern, String key, C value);
 }

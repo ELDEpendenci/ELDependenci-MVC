@@ -1,0 +1,14 @@
+name: "&bUser List"
+rows: 3
+pattern:
+  - LLLLLLLLL
+  - LLLLLLLLL
+  - ZZZZMZZZZ
+items:
+  L:
+    cancelMove: true
+  Z:
+    material: BLACK_STAINED_GLASS_PANE
+  M:
+    material: DIAMOND_SWORD
+    name: "&bReset"

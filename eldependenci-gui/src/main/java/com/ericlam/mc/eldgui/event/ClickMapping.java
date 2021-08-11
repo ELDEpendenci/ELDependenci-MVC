@@ -17,6 +17,4 @@ public @interface ClickMapping {
 
     boolean ignoreCancelled() default false;
 
-    int order() default 1;
-
 }

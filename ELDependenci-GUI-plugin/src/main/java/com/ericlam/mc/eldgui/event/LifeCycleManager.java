@@ -1,6 +1,5 @@
 package com.ericlam.mc.eldgui.event;
 
-import com.ericlam.mc.eldgui.controller.UIController_Legacy;
 import com.ericlam.mc.eldgui.lifecycle.OnDestroy;
 import com.ericlam.mc.eldgui.lifecycle.OnRendered;
 import org.apache.commons.lang.Validate;
@@ -18,12 +17,12 @@ import java.util.stream.Collectors;
 @Deprecated
 public final class LifeCycleManager {
 
-    private final UIController_Legacy controller;
+    private final Object controller;
     private final MethodParseManager methodParseManager;
 
     private final Map<Class<? extends Annotation>, Method> lifeCycleMap = new ConcurrentHashMap<>();
 
-    public LifeCycleManager(UIController_Legacy controller, MethodParseManager methodParseManager) {
+    public LifeCycleManager(Object controller, MethodParseManager methodParseManager) {
         this.controller = controller;
         this.methodParseManager = methodParseManager;
         this.loadLifeCycle(OnRendered.class);

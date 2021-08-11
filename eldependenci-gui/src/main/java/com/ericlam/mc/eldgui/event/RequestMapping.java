@@ -20,6 +20,4 @@ public @interface RequestMapping {
 
     boolean ignoreCancelled() default false;
 
-    int order() default 1;
-
 }

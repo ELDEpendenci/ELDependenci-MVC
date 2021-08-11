@@ -14,21 +14,21 @@ public class ELDGDispatcher implements UIDispatcher {
 
 
     private final Object controller;
-    private final ManagerFactory managerFactory;
     private final ViewJumper goTo;
     private final Map<Player, ELDGUI> guiSessionMap = new ConcurrentHashMap<>();
 
     @Inject
     private Injector injector;
-
+    @Inject
+    private ManagerFactory managerFactory;
+    @Inject
+    private ELDGMVCInstallation eldgmvcInstallation;
 
     public ELDGDispatcher(
             Object controller,
-            ManagerFactory factory,
             ViewJumper goTo
     ) {
         this.controller = controller;
-        this.managerFactory = factory;
         this.goTo = (session, player, ui) -> {
             uiSessionMap.put(player, session);
             goTo.onJump(session, player, ui);
@@ -39,13 +39,15 @@ public class ELDGDispatcher implements UIDispatcher {
     @Override
     public void openFor(Player player) {
         UISession session = Optional.ofNullable(uiSessionMap.remove(player)).orElseGet(ELDGUISession::new);
+
         ELDGUI eldgui = new ELDGUI(
                 controller,
                 session,
                 player,
                 managerFactory,
                 guiSessionMap::remove,
-                goTo
+                goTo,
+                eldgmvcInstallation
         );
         injector.injectMembers(eldgui);
         this.guiSessionMap.put(player, eldgui);

@@ -1,5 +1,7 @@
-package com.ericlam.mc.eldgui.event.click;
+package com.ericlam.mc.eldgui.event;
 
+import com.ericlam.mc.eldgui.ELDGView;
+import com.ericlam.mc.eldgui.MVCInstallation;
 import com.ericlam.mc.eldgui.event.*;
 import com.ericlam.mc.eldgui.view.View;
 import org.bukkit.entity.Player;
@@ -13,13 +15,14 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
 public final class ELDGClickEventHandler extends ELDGEventHandler<ClickMapping, InventoryClickEvent> {
 
 
-    public ELDGClickEventHandler(Object controller, MethodParseManager parseManager, ReturnTypeManager returnTypeManager) {
-        super(controller, parseManager, returnTypeManager);
+    public ELDGClickEventHandler(Object controller, MethodParseManager parseManager, ReturnTypeManager returnTypeManager, Map<Class<? extends Annotation>, MVCInstallation.QualifierFilter<? extends Annotation>> customQualifier) {
+        super(controller, parseManager, returnTypeManager, customQualifier);
     }
 
     @Override
@@ -31,10 +34,10 @@ public final class ELDGClickEventHandler extends ELDGEventHandler<ClickMapping, 
 
 
     @Override
-    public void onEventHandle(InventoryClickEvent e, Player player, Inventory nativeInventory, Map<Character, List<Integer>> patternMasks, View<?> currentView) {
-        if (nativeInventory != e.getClickedInventory()) return;
+    public void onEventHandle(InventoryClickEvent e, Player player, ELDGView<?> eldgView) throws Exception{
+        if (eldgView.getNativeInventory() != e.getClickedInventory()) return;
         if (e.getSlotType() != InventoryType.SlotType.CONTAINER) return;
-        super.onEventHandle(e, player, nativeInventory, patternMasks, currentView);
+        super.onEventHandle(e, player, eldgView);
     }
 
     @Override
@@ -64,11 +67,6 @@ public final class ELDGClickEventHandler extends ELDGEventHandler<ClickMapping, 
             @Override
             public boolean ignoreCancelled() {
                 return annotation.ignoreCancelled();
-            }
-
-            @Override
-            public int order() {
-                return annotation.order();
             }
 
             @Override

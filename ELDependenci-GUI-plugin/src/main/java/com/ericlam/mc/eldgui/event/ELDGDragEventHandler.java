@@ -1,6 +1,6 @@
-package com.ericlam.mc.eldgui.event.drag;
+package com.ericlam.mc.eldgui.event;
 
-import com.ericlam.mc.eldgui.event.*;
+import com.ericlam.mc.eldgui.MVCInstallation;
 import com.ericlam.mc.eldgui.view.View;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryInteractEvent;
@@ -14,8 +14,9 @@ import java.util.stream.Collectors;
 
 public final class ELDGDragEventHandler extends ELDGEventHandler<DragMapping, InventoryDragEvent> {
 
-    public ELDGDragEventHandler(Object controller, MethodParseManager parseManager, ReturnTypeManager returnTypeManager) {
-        super(controller, parseManager, returnTypeManager);
+
+    public ELDGDragEventHandler(Object controller, MethodParseManager parseManager, ReturnTypeManager returnTypeManager, Map<Class<? extends Annotation>, MVCInstallation.QualifierFilter<? extends Annotation>> customQualifier) {
+        super(controller, parseManager, returnTypeManager, customQualifier);
     }
 
     @Override
@@ -54,11 +55,6 @@ public final class ELDGDragEventHandler extends ELDGEventHandler<DragMapping, In
             @Override
             public boolean ignoreCancelled() {
                 return annotation.ignoreCancelled();
-            }
-
-            @Override
-            public int order() {
-                return annotation.order();
             }
 
             @Override

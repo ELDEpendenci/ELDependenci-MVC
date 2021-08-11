@@ -5,7 +5,10 @@ import com.ericlam.mc.eld.ELDBukkitAddon;
 import com.ericlam.mc.eld.ManagerProvider;
 import com.ericlam.mc.eld.ServiceCollection;
 import com.ericlam.mc.eld.annotations.ELDPlugin;
+import com.ericlam.mc.eldgui.controller.UIController;
 import com.ericlam.mc.eldgui.demo.DemoInventories;
+import com.ericlam.mc.eldgui.demo.error.ELDGExceptionViewHandler;
+import com.ericlam.mc.eldgui.demo.error.ErrorController;
 import com.ericlam.mc.eldgui.demo.user.UserController;
 
 @ELDPlugin(
@@ -29,7 +32,8 @@ public class ELDGPlugin extends ELDBukkitAddon {
         ELDGMVCInstallation eldgmvcInstallation = new ELDGMVCInstallation(this);
         addonManager.customInstallation(MVCInstallation.class, eldgmvcInstallation);
         // my demo register
-        eldgmvcInstallation.registerControllers(UserController.class);
+        eldgmvcInstallation.registerControllers(UserController.class, ErrorController.class);
+        eldgmvcInstallation.setGlobalExceptionHandler(ELDGExceptionViewHandler.class);
         //
         addonManager.installModule(new ELDGMVCModule(eldgmvcInstallation));
     }

@@ -7,6 +7,8 @@ import com.ericlam.mc.eldgui.view.BukkitView;
 import com.ericlam.mc.eldgui.view.UseTemplate;
 import com.ericlam.mc.eldgui.view.View;
 import com.ericlam.mc.eldgui.view.ViewDescriptor;
+import com.google.inject.TypeLiteral;
+import org.apache.commons.lang.text.StrSubstitutor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -17,9 +19,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
 import javax.inject.Inject;
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.*;
+import java.util.stream.Collectors;
 
-public class ELDGView<T> {
+public final class ELDGView<T> {
 
     private final Inventory nativeInventory;
     private final Map<Character, List<Integer>> patternMasks = new LinkedHashMap<>();
@@ -44,11 +50,28 @@ public class ELDGView<T> {
             throw new IllegalStateException("view is lack of either @UseTemplate or @ViewDescriptor annotation.");
         }
         InventoryTemplate inventoryTemplate = template;
-        this.nativeInventory = Bukkit.createInventory(null, template.rows * 9, ChatColor.translateAlternateColorCodes('&', template.name));;
+        Map<String, Object> objectFieldMap = objectFieldsToMap(bukkitView.getModel());
+        String inventoryTitle = StrSubstitutor.replace(template.name, objectFieldMap);
+        this.nativeInventory = Bukkit.createInventory(null, template.rows * 9, ChatColor.translateAlternateColorCodes('&', inventoryTitle));
         this.view = this.initializeView(viewCls);
+        // === test only ===
+        this.view.setItemStackService(itemStackService);
+        // ========
         this.nativeInventory.clear();
         this.renderFromTemplate(inventoryTemplate, itemStackService);
         this.view.renderView(bukkitView.getModel(), eldgContext);
+    }
+
+    private Map<String, Object> objectFieldsToMap(Object model){
+        return Arrays.stream(model.getClass().getFields()).collect(Collectors.toMap(Field::getName, f -> {
+           try {
+               f.setAccessible(true);
+               return f.get(model);
+           }catch (Exception e){
+               e.printStackTrace();
+               return "[Error: "+e.getClass().getSimpleName()+"]";
+           }
+        }));
     }
 
 
@@ -64,13 +87,22 @@ public class ELDGView<T> {
         return cancelMovePatterns;
     }
 
+    public void destroyView(){
+        this.patternMasks.clear();
+        this.nativeInventory.clear();
+    }
+
     public ELDGContext getEldgContext() {
         return eldgContext;
     }
 
-    private <T> View<T> initializeView(Class<View<T>> viewCls){
+    public Map<Character, List<Integer>> getPatternMasks() {
+        return patternMasks;
+    }
+
+    private View<T> initializeView(Class<View<T>> viewCls){
         try{
-            return (View<T>) viewCls.getConstructor().newInstance();
+            return viewCls.getConstructor().newInstance();
         }catch (Exception e) {
             throw new IllegalStateException("error while creating view. (view must be no-arg constructor)", e);
         }
@@ -160,6 +192,10 @@ public class ELDGView<T> {
             }
         }
 
+        @Override
+        public <C> void setAttribute(Class<C> type, char pattern, String key, C value) {
+            getItems(pattern).forEach(item -> this.setAttribute(type, item, key, value));
+        }
 
         public List<ItemStack> getItems(char pattern) {
             var slots = patternMasks.get(pattern);

@@ -5,7 +5,7 @@ import com.ericlam.mc.eldgui.InventoryTemplate;
 
 @GroupResource(
         folder = "templates",
-        preloads = {"crafttable", "confirm"}
+        preloads = { "user", "user-list" }
 )
 public class DemoInventories extends InventoryTemplate {
 }

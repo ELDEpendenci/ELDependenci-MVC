@@ -16,15 +16,18 @@ public final class ReturnTypeManager {
         supplierMap.put(define, consumer);
     }
 
-    public void handleReturnResult(Type returnType, Object result) {
-        if (result == null) return;
-        supplierMap.keySet().stream()
+    public boolean handleReturnResult(Type returnType, Object result) {
+        if (result == null) return false;
+        return supplierMap.keySet().stream()
                 .filter(key -> key.apply(returnType))
                 .findFirst()
-                .ifPresentOrElse(
-                        key -> supplierMap.get(key).accept(result),
-                        () -> Bukkit.getLogger().warning("[ELDepdendenci-GUI] Unknown return type " + returnType + ", ignore handling.")
-                );
+                .map(key -> {
+                    supplierMap.get(key).accept(result);
+                    return true;
+                }).orElseGet(() -> {
+                    Bukkit.getLogger().warning("[ELDepdendenci-GUI] Unknown return type " + returnType + ", ignore handling.");
+                    return false;
+                });
     }
 
 }

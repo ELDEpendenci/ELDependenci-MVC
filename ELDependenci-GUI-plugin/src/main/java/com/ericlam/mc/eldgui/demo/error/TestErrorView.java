@@ -6,15 +6,12 @@ import com.ericlam.mc.eldgui.view.View;
 import com.ericlam.mc.eldgui.view.ViewDescriptor;
 import org.bukkit.Material;
 
-import java.util.Arrays;
-
 @ViewDescriptor(
-        name = "Error Encountered",
+        name = "Test Error",
         rows = 1,
-        patterns = {"ZZZZAZZZZ"},
-        cancelMove = {'A', 'Z'}
+        patterns = { "ZZZZAZZZZ" }
 )
-public class StaticErrorView implements View<Exception> {
+public class TestErrorView implements View<Object> {
 
     private ItemStackService itemStackService;
 
@@ -24,13 +21,11 @@ public class StaticErrorView implements View<Exception> {
     }
 
     @Override
-    public void renderView(Exception ex, UIContext context) {
-        context.fillItem('Z', itemStackService.build(Material.BLACK_STAINED_GLASS_PANE).getItem());
+    public void renderView(Object model, UIContext context) {
         context.addItem('A', itemStackService
-                .build(Material.BARRIER)
-                .display("&cError: "+ex.getClass().getSimpleName())
-                .lore("&c".concat(ex.getMessage()))
-                .getItem()
-        );
+                .build(Material.REDSTONE_TORCH)
+                .display("&cClick to me produce Error")
+                .lore("&eclick this will throw IllegalStateException")
+                .getItem());
     }
 }

@@ -2,20 +2,17 @@ package com.ericlam.mc.eldgui.event;
 
 import com.ericlam.mc.eldgui.ELDGView;
 import com.ericlam.mc.eldgui.MVCInstallation;
-import com.ericlam.mc.eldgui.event.*;
 import com.ericlam.mc.eldgui.view.View;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.Inventory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
 public final class ELDGClickEventHandler extends ELDGEventHandler<ClickMapping, InventoryClickEvent> {
@@ -34,10 +31,11 @@ public final class ELDGClickEventHandler extends ELDGEventHandler<ClickMapping, 
 
 
     @Override
-    public void onEventHandle(InventoryClickEvent e, Player player, ELDGView<?> eldgView) throws Exception{
-        if (eldgView.getNativeInventory() != e.getClickedInventory()) return;
-        if (e.getSlotType() != InventoryType.SlotType.CONTAINER) return;
-        super.onEventHandle(e, player, eldgView);
+    public boolean onEventHandle(InventoryClickEvent e, Player player, ELDGView<?> eldgView) throws Exception{
+        if (eldgView.getNativeInventory() != e.getClickedInventory()) return false;
+        if (e.getSlotType() != InventoryType.SlotType.CONTAINER) return false;
+        if (e.getCurrentItem() == null) return false;
+        return super.onEventHandle(e, player, eldgView);
     }
 
     @Override

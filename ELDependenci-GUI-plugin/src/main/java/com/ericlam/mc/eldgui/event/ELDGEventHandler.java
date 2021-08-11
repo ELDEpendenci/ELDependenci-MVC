@@ -2,12 +2,8 @@ package com.ericlam.mc.eldgui.event;
 
 import com.ericlam.mc.eldgui.ELDGView;
 import com.ericlam.mc.eldgui.MVCInstallation;
-import com.ericlam.mc.eldgui.view.BukkitRedirectView;
 import com.ericlam.mc.eldgui.view.View;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.inventory.Inventory;
 
@@ -16,7 +12,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiPredicate;
 
 public abstract class ELDGEventHandler<A extends Annotation, E extends InventoryInteractEvent> {
 
@@ -52,7 +47,7 @@ public abstract class ELDGEventHandler<A extends Annotation, E extends Inventory
     }
 
     @SuppressWarnings("unchecked")
-    public void onEventHandle(
+    public boolean onEventHandle(
             E e,
             Player player,
             ELDGView<?> eldgView
@@ -61,11 +56,11 @@ public abstract class ELDGEventHandler<A extends Annotation, E extends Inventory
         final Map<Character, List<Integer>> patternMasks = eldgView.getPatternMasks();
         final View<?> currentView = eldgView.getView();
         final Set<Character> cancellable = eldgView.getCancelMovePatterns();
-        if (e.getWhoClicked() != player) return;
-        if (!e.getViewers().contains(player)) return;
-        if (e.getInventory() != nativeInventory) return;
+        if (e.getWhoClicked() != player) return false;
+        if (!e.getViewers().contains(player)) return false;
+        if (e.getInventory() != nativeInventory) return false;
         Optional<Character> chOpt = patternMasks.keySet().stream().filter(ch -> slotTrigger(patternMasks.get(ch), e)).findAny();
-        if (chOpt.isEmpty()) return;
+        if (chOpt.isEmpty()) return false;
         final var patternClicked = chOpt.get();
         if (cancellable.contains(patternClicked)) {
             e.setCancelled(true);
@@ -85,15 +80,22 @@ public abstract class ELDGEventHandler<A extends Annotation, E extends Inventory
                     Method method = en.getValue();
                     return Arrays.stream(method.getDeclaredAnnotations())
                             .filter(a -> customQualifier.containsKey(a.annotationType()))
-                            .allMatch(a -> ((MVCInstallation.QualifierFilter<A>)customQualifier.get(a.annotationType())).checkIsPass(e, patternClicked, (A)a));
+                            .allMatch(a -> ((MVCInstallation.QualifierFilter<A>) customQualifier.get(a.annotationType())).checkIsPass(e, patternClicked, (A) a));
                 })
                 .map(Map.Entry::getValue)
                 .findFirst();
-        if (targetMethod.isEmpty()) return;
+        if (targetMethod.isEmpty()) return false;
         Method m = targetMethod.get();
         Object[] results = parseManager.getMethodParameters(m, e);
-        var returnType = m.invoke(uiController, results);
-        returnTypeManager.handleReturnResult(m.getGenericReturnType(), returnType);
+        try {
+            Object returnType = m.invoke(uiController, results);
+            return returnTypeManager.handleReturnResult(m.getGenericReturnType(), returnType);
+        } catch (IllegalAccessException | InvocationTargetException ex) {
+            if (ex.getCause() instanceof Exception) {
+                throw (Exception) ex.getCause();
+            }
+            throw ex;
+        }
     }
 
     protected abstract boolean slotTrigger(List<Integer> slots, E event);

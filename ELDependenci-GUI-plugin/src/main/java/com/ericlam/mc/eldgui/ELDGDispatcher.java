@@ -1,5 +1,7 @@
 package com.ericlam.mc.eldgui;
 
+import com.ericlam.mc.eld.services.ConfigPoolService;
+import com.ericlam.mc.eld.services.ItemStackService;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import org.bukkit.entity.Player;
@@ -23,6 +25,10 @@ public class ELDGDispatcher implements UIDispatcher {
     private ManagerFactory managerFactory;
     @Inject
     private ELDGMVCInstallation eldgmvcInstallation;
+    @Inject
+    private ConfigPoolService configPoolService;
+    @Inject
+    private ItemStackService itemStackService;
 
     public ELDGDispatcher(
             Object controller,
@@ -47,8 +53,11 @@ public class ELDGDispatcher implements UIDispatcher {
                 managerFactory,
                 guiSessionMap::remove,
                 goTo,
-                eldgmvcInstallation
+                eldgmvcInstallation,
+                configPoolService,
+                itemStackService
         );
+
         injector.injectMembers(eldgui);
         this.guiSessionMap.put(player, eldgui);
     }
@@ -65,7 +74,6 @@ public class ELDGDispatcher implements UIDispatcher {
     private final static class ELDGUISession implements UISession {
 
         private final Map<String, Object> attributes = new ConcurrentHashMap<>();
-
 
         @Override
         public <T> T getAttribute(String key) {

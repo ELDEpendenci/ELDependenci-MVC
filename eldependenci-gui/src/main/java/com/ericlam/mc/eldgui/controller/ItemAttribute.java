@@ -10,4 +10,5 @@ import java.lang.annotation.Target;
 public @interface ItemAttribute {
 
     String value();
+
 }

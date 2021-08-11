@@ -28,8 +28,6 @@ public class ErrorView implements View<Exception> {
                 .build(Material.BARRIER)
                 .display("&cError: " + ex.getClass().getSimpleName())
                 .lore("&c".concat(ex.getMessage()))
-                .lore("&eStackTrace")
-                .lore(Arrays.stream(ex.getStackTrace()).map(StackTraceElement::toString).toArray(String[]::new))
                 .getItem()
         );
 

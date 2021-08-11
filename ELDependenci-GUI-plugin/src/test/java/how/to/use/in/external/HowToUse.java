@@ -4,11 +4,14 @@ import com.ericlam.mc.eldgui.controller.UIController;
 import com.ericlam.mc.eldgui.demo.error.ELDGExceptionViewHandler;
 import com.ericlam.mc.eldgui.demo.error.ErrorView;
 import com.ericlam.mc.eldgui.exception.ExceptionViewHandler;
+import com.ericlam.mc.eldgui.view.BukkitView;
+import com.sun.tools.javac.Main;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -46,13 +49,13 @@ public class HowToUse {
     }
 
     @Test
-    public void testPrimitive() {
-        System.out.println(objectFieldsToMap(1234).toString());
-        System.out.println(objectFieldsToMap("123414141").toString());
-        System.out.println(objectFieldsToMap(new User("user1", "A", "BC", 99)).toString());
-        System.out.println(objectFieldsToMap(List.of(1, 2, 3, 5)).toString());
-        System.out.println(objectFieldsToMap(new Exception("1234")));
+    public void testPrimitive() throws Exception{
+        Arrays.stream(HowToUse.class.getMethods()).filter(m -> m.getName().equals("testView")).findAny().ifPresent(m -> {
+            System.out.println(m.getGenericReturnType());
+        });
     }
+
+    public BukkitView<?, ?> testView(String a, Integer b){ return null; }
 
     @Test
     public void testClassCommonPackage() {

@@ -27,18 +27,21 @@ public class UserController {
 
 
     @ClickMapping(view = UserListView.class, pattern = 'L')
-    public BukkitView<?, ?> onClickUser(@ItemAttribute("username") String username){
+    public BukkitView<?, ?> onClickUser(@ItemAttribute("username") String username) throws UserNotFoundException {
         Optional<User> user = userService.findById(username);
         if (user.isPresent()){
             return new BukkitView<>(UserView.class, user.get());
         }else{
-            return new BukkitView<>(UserNotFoundView.class, username);
+            // try using throw exception
+            //return new BukkitView<>(UserNotFoundView.class, username);
+            throw new UserNotFoundException(username);
         }
     }
 
     @ClickMapping(view = UserListView.class, pattern = 'M')
-    public void onResetClick(){
+    public BukkitView<?, ?> onResetClick(){
         userService.reset();
+        return index();
     }
 
     @ClickMapping(view = UserNotFoundView.class, pattern = 'A')
@@ -58,4 +61,18 @@ public class UserController {
         return index();
     }
 
+    public static class UserNotFoundException extends Exception {
+
+        public UserNotFoundException(String username) {
+            super("username not found: "+username);
+            this.username = username;
+        }
+
+        private final String username;
+
+        public String getUsername() {
+            return username;
+        }
+
+    }
 }

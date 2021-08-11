@@ -19,7 +19,7 @@ public abstract class InventoryTemplate extends GroupConfiguration {
 
     public static class ItemDescriptor {
 
-        public Material material = Material.STONE;
+        public Material material = Material.AIR;
 
         public String name = "";
 

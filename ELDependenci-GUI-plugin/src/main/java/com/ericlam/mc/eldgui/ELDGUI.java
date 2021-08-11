@@ -11,6 +11,7 @@ import com.ericlam.mc.eldgui.exception.HandleException;
 import com.ericlam.mc.eldgui.view.BukkitRedirectView;
 import com.ericlam.mc.eldgui.view.BukkitView;
 import com.google.inject.Injector;
+import com.google.inject.TypeLiteral;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -25,6 +26,7 @@ import javax.inject.Inject;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -49,13 +51,10 @@ public final class ELDGUI implements Listener {
     private final MethodParseManager methodParseManager;
     private final ReturnTypeManager returnTypeManager;
     private final ELDGMVCInstallation eldgmvcInstallation;
+    private final ConfigPoolService configPoolService;
+    private final ItemStackService itemStackService;
+    private final ELDGPlugin eldgPlugin = ELDGPlugin.getPlugin(ELDGPlugin.class);
 
-    @Inject
-    private ELDGPlugin eldgPlugin;
-    @Inject
-    private ConfigPoolService configPoolService;
-    @Inject
-    private ItemStackService itemStackService;
     @Inject
     private Injector injector;
 
@@ -67,7 +66,9 @@ public final class ELDGUI implements Listener {
                   ManagerFactory managerFactory,
                   Consumer<Player> onDestroy,
                   ViewJumper goTo,
-                  ELDGMVCInstallation eldgmvcInstallation
+                  ELDGMVCInstallation eldgmvcInstallation,
+                  ConfigPoolService configPoolService,
+                  ItemStackService itemStackService
     ) {
 
         this.session = session;
@@ -75,6 +76,8 @@ public final class ELDGUI implements Listener {
         this.onDestroy = onDestroy;
         this.goTo = goTo;
         this.eldgmvcInstallation = eldgmvcInstallation;
+        this.configPoolService = configPoolService;
+        this.itemStackService = itemStackService;
 
         methodParseManager = managerFactory.buildParseManager(this::initMethodParseManager);
         returnTypeManager = managerFactory.buildReturnTypeManager(this::initReturnTypeManager);
@@ -88,13 +91,13 @@ public final class ELDGUI implements Listener {
 
 
         this.controllerCls = controller.getClass();
-        this.initIndexView();
+        this.initIndexView(controller);
         Bukkit.getServer().getPluginManager().registerEvents(this, ELDGPlugin.getPlugin(ELDGPlugin.class));
     }
 
     private synchronized void updateView(BukkitView<?, ?> view) {
         LOGGER.info("update view to "+view.getView().getSimpleName()); // debug
-        currentView.destroyView();
+        if (currentView != null) currentView.destroyView();
         currentView = new ELDGView(view, configPoolService, itemStackService);
         owner.openInventory(currentView.getNativeInventory());
     }
@@ -113,7 +116,7 @@ public final class ELDGUI implements Listener {
         });
     }
 
-    public void initIndexView() {
+    public void initIndexView(Object controller) {
         LOGGER.info("initializing index view"); // debug
         try {
             Optional<Method> indexMethod = Arrays.stream(controllerCls.getDeclaredMethods()).filter(m -> m.getName().equalsIgnoreCase("index")).findAny();
@@ -121,18 +124,19 @@ public final class ELDGUI implements Listener {
                 throw new IllegalStateException("cannot find index method from " + controllerCls);
             Method index = indexMethod.get();
             Object[] objects = methodParseManager.getMethodParameters(index, null);
-            Object result = index.invoke(index, objects);
+            Object result = index.invoke(controller, objects);
             if (!(result instanceof BukkitView))
                 throw new IllegalStateException("index method must return bukkit view");
-            returnTypeManager.handleReturnResult(index.getReturnType(), result);
+            if (!returnTypeManager.handleReturnResult(index.getGenericReturnType(), result)){
+                throw new IllegalStateException("cannot initialize index view for controller: "+controller);
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-
     private void initReturnTypeManager(ReturnTypeManager returnTypeManager) {
-        returnTypeManager.registerReturnType(type -> type == BukkitView.class, bukkitView -> {
+        returnTypeManager.registerReturnType(type -> type.equals(new TypeLiteral<BukkitView<?, ?>>(){}.getType()) || type == BukkitView.class, bukkitView -> {
             if (bukkitView instanceof BukkitRedirectView) {
                 this.jumpToController((BukkitRedirectView) bukkitView);
             } else {
@@ -201,7 +205,7 @@ public final class ELDGUI implements Listener {
     }
 
     private void handleException(Exception ex) {
-        LOGGER.info("on exception handle"); // debug
+        LOGGER.info("on exception handle: "+ex.getClass()); // debug
         Optional<Class<? extends ExceptionViewHandler>> exceptionViewHandlerOpt = Optional
                 .ofNullable(eldgmvcInstallation.getExceptionHandlerMap().get(controllerCls));
         if (exceptionViewHandlerOpt.isEmpty()) {
@@ -210,11 +214,18 @@ public final class ELDGUI implements Listener {
                     .findAny();
         }
         Class<? extends ExceptionViewHandler> exceptionViewHandler = exceptionViewHandlerOpt.orElseGet(eldgmvcInstallation::getDefaultExceptionHandler);
-        ExceptionViewHandler viewHandlerIns = injector.getInstance(ExceptionViewHandler.class);
+        ExceptionViewHandler viewHandlerIns = injector.getInstance(exceptionViewHandler);
         UIController fromController = controllerCls.getAnnotation(UIController.class);
         Arrays.stream(exceptionViewHandler.getDeclaredMethods())
                 .filter(m -> m.isAnnotationPresent(HandleException.class))
-                .filter(m -> Arrays.stream(m.getAnnotation(HandleException.class).value()).anyMatch(v -> v == ex.getClass()))
+                .filter(m -> Arrays.stream(m.getAnnotation(HandleException.class).value()).anyMatch(v -> {
+                    Class<?> superCls = ex.getClass();
+                    while (superCls != null){
+                        if (v == superCls) return true;
+                        superCls = superCls.getSuperclass();
+                    }
+                    return false;
+                }))
                 .findFirst()
                 .ifPresentOrElse(
                         method -> {
@@ -233,6 +244,7 @@ public final class ELDGUI implements Listener {
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent e) {
+        if (this.currentView == null) return;
         if (e.getPlayer() != this.owner) return;
         if (e.getInventory() != this.currentView.getNativeInventory()) return;
         LOGGER.info("on inventory close"); // debug

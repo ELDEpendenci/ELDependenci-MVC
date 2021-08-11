@@ -2,7 +2,7 @@ name: "&bUser Info: ${username}"
 rows: 3
 pattern:
   - ZZZZZZZZZ
-  - ZZAZAZAZZ
+  - ZZZZAZZZZ
   - ZZBZZZCZZ
 items:
   A:
@@ -10,7 +10,7 @@ items:
   Z:
     material: BLACK_STAINED_GLASS_PANE
   B:
-    material: DIAMOND
+    material: EMERALD_BLOCK
     name: "&bBack To Previous Page"
   C:
     material: REDSTONE_BLOCK

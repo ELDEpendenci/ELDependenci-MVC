@@ -1,4 +1,4 @@
-package com.ericlam.mc.eldgui;
+package com.ericlam.mc.eldgui.view;
 
 import org.bukkit.inventory.ItemStack;
 

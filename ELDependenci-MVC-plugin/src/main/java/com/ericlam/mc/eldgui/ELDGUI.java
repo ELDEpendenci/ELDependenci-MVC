@@ -101,7 +101,7 @@ public final class ELDGUI implements Listener {
     private synchronized void updateView(BukkitView<?, ?> view) {
         LOGGER.info("update view to " + view.getView().getSimpleName()); // debug
         if (currentView != null) currentView.destroyView();
-        currentView = new ELDGView(view, configPoolService, itemStackService);
+        currentView = new ELDGView(view, configPoolService, itemStackService, injector, eldgmvcInstallation.getComponentFactoryList());
         owner.openInventory(currentView.getNativeInventory());
     }
 

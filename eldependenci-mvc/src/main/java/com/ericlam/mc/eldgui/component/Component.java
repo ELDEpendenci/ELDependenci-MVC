@@ -5,7 +5,8 @@ import org.bukkit.inventory.ItemStack;
 // static component
 public interface Component {
 
-    ItemStack getItem();
+    <T> T getValue(String key, Class<T> type);
 
+    ItemStack getItem();
 
 }

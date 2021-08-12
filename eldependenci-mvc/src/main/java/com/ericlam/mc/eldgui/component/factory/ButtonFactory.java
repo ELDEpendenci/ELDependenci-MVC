@@ -6,7 +6,4 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import java.util.function.Consumer;
 
 public interface ButtonFactory extends ComponentFactory<ButtonFactory> {
-
-    ButtonFactory onClick(Consumer<InventoryClickEvent> clickEventConsumer);
-
 }

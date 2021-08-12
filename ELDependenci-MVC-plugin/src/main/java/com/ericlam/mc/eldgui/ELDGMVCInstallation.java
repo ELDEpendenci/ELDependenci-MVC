@@ -1,5 +1,6 @@
 package com.ericlam.mc.eldgui;
 
+import com.ericlam.mc.eldgui.component.ComponentFactory;
 import com.ericlam.mc.eldgui.exception.ExceptionViewHandler;
 import com.ericlam.mc.eldgui.exception.HandleException;
 import com.ericlam.mc.eldgui.controller.UIController;
@@ -7,10 +8,7 @@ import com.ericlam.mc.eldgui.exception.HandleForControllers;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 
 import java.lang.annotation.Annotation;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiPredicate;
 
@@ -20,6 +18,7 @@ public class ELDGMVCInstallation implements MVCInstallation{
     private final Map<Class<? extends Annotation>, QualifierFilter<? extends Annotation>> qualifierMap = new ConcurrentHashMap<>();
     private final Map<Class<?>, Class<? extends ExceptionViewHandler>> exceptionHandlerMap = new ConcurrentHashMap<>();
     private final Set<Class<? extends ExceptionViewHandler>> scopedExceptionHandlerSet = new HashSet<>();
+    private final List<Class<? extends ComponentFactory<?>>> componentFactoryList = new ArrayList<>();
     private Class<? extends ExceptionViewHandler> defaultExceptionHandler;
     private final ELDGPlugin plugin;
 
@@ -65,6 +64,11 @@ public class ELDGMVCInstallation implements MVCInstallation{
         this.defaultExceptionHandler = exceptionHandler;
     }
 
+    @Override
+    public void addComponentFactory(Class<? extends ComponentFactory<?>> factory) {
+        this.componentFactoryList.add(factory);
+    }
+
 
     public Map<String, Class<?>> getControllerMap() {
         return controllerMap;
@@ -84,5 +88,9 @@ public class ELDGMVCInstallation implements MVCInstallation{
 
     public Map<Class<?>, Class<? extends ExceptionViewHandler>> getExceptionHandlerMap() {
         return exceptionHandlerMap;
+    }
+
+    public List<Class<? extends ComponentFactory<?>>> getComponentFactoryList() {
+        return componentFactoryList;
     }
 }

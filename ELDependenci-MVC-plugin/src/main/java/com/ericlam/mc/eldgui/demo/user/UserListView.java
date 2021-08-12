@@ -1,7 +1,7 @@
 package com.ericlam.mc.eldgui.demo.user;
 
 import com.ericlam.mc.eld.services.ItemStackService;
-import com.ericlam.mc.eldgui.UIContext;
+import com.ericlam.mc.eldgui.view.UIContext;
 import com.ericlam.mc.eldgui.demo.DemoInventories;
 import com.ericlam.mc.eldgui.view.UseTemplate;
 import com.ericlam.mc.eldgui.view.View;

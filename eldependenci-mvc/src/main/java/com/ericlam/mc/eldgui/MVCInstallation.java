@@ -1,5 +1,6 @@
 package com.ericlam.mc.eldgui;
 
+import com.ericlam.mc.eldgui.component.ComponentFactory;
 import com.ericlam.mc.eldgui.exception.ExceptionViewHandler;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 
@@ -16,6 +17,8 @@ public interface MVCInstallation {
     void addExceptionViewHandlers(List<Class<? extends ExceptionViewHandler>> controllers);
 
     void setGlobalExceptionHandler(Class<? extends ExceptionViewHandler> exceptionHandler);
+
+    void addComponentFactory(Class<? extends ComponentFactory<?>> factory);
 
     @FunctionalInterface
     interface QualifierFilter<A extends Annotation> {

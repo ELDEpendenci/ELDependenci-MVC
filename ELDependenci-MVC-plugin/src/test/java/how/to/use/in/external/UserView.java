@@ -1,6 +1,6 @@
 package how.to.use.in.external;
 
-import com.ericlam.mc.eldgui.UIContext;
+import com.ericlam.mc.eldgui.view.UIContext;
 import com.ericlam.mc.eldgui.view.View;
 
 public class UserView implements View<User> {

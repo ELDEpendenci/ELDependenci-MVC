@@ -2,12 +2,10 @@ package com.ericlam.mc.eldgui;
 
 import com.ericlam.mc.eld.services.ConfigPoolService;
 import com.ericlam.mc.eld.services.ItemStackService;
-import com.ericlam.mc.eldgui.controller.UIRequest;
-import com.ericlam.mc.eldgui.view.BukkitView;
-import com.ericlam.mc.eldgui.view.UseTemplate;
-import com.ericlam.mc.eldgui.view.View;
-import com.ericlam.mc.eldgui.view.ViewDescriptor;
-import io.papermc.paper.event.player.AsyncChatEvent;
+import com.ericlam.mc.eldgui.component.Component;
+import com.ericlam.mc.eldgui.component.ComponentFactory;
+import com.ericlam.mc.eldgui.view.*;
+import com.google.inject.Injector;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -18,6 +16,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -27,10 +26,8 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 public final class ELDGView<T> {
 
@@ -59,12 +56,23 @@ public final class ELDGView<T> {
 
     private final Inventory nativeInventory;
     private final Map<Character, List<Integer>> patternMasks = new LinkedHashMap<>();
+    private final Map<Character, List<Component>> componentMap = new HashMap<>();
+    private final Map<Class<? extends ComponentFactory<?>>, ComponentFactory<?>> factoryMap = new HashMap<>();
     private final Set<Character> cancelMovePatterns = new HashSet<>();
     private final View<T> view;
     private final ELDGContext eldgContext = new ELDGContext();
 
 
-    public ELDGView(BukkitView<View<T>, T> bukkitView, ConfigPoolService configPoolService, ItemStackService itemStackService) {
+    public ELDGView(
+            BukkitView<View<T>, T> bukkitView,
+            ConfigPoolService configPoolService,
+            ItemStackService itemStackService,
+            Injector injector,
+            List<Class<? extends ComponentFactory<?>>> componentFactory
+    ) {
+        for (Class<? extends ComponentFactory<?>> f : componentFactory) {
+            this.factoryMap.put(f, injector.getInstance(f));
+        }
         Class<View<T>> viewCls = bukkitView.getView();
         InventoryTemplate template;
         if (viewCls.isAnnotationPresent(UseTemplate.class)) {
@@ -88,7 +96,10 @@ public final class ELDGView<T> {
         this.view.setItemStackService(itemStackService);
         // ========
         this.renderFromTemplate(inventoryTemplate, itemStackService);
+        // either
         this.view.renderView(bukkitView.getModel(), eldgContext);
+        this.view.renderView(bukkitView.getModel(), (ViewContext) null);
+        //
         // test
         var p = ELDGPlugin.getPlugin(ELDGPlugin.class);
         Bukkit.getServer().getPluginManager().registerEvent(AsyncPlayerChatEvent.class, new Listener() {
@@ -116,6 +127,10 @@ public final class ELDGView<T> {
     public void destroyView() {
         this.patternMasks.clear();
         this.nativeInventory.clear();
+    }
+
+    public void handleComponentClick(InventoryClickEvent clickEvent){
+
     }
 
     public ELDGContext getEldgContext() {
@@ -169,8 +184,56 @@ public final class ELDGView<T> {
         }
     }
 
+    public final class ELDGViewContext implements ViewContext {
 
-    public final class ELDGContext implements UIContext, UIRequest {
+        @Override
+        public PatternComponentBuilder pattern(char pattern) {
+            return new PatternComponentFactory(pattern);
+        }
+
+        @Override
+        public <F extends ComponentFactory<F>> F factory(Class<F> factoryCls) {
+            return null;
+        }
+
+        private class PatternComponentFactory implements PatternComponentBuilder {
+
+            private final char pattern;
+
+            private PatternComponentFactory(char pattern) {
+                this.pattern = pattern;
+            }
+
+
+            @Override
+            public PatternComponentBuilder fill(Component component) {
+                eldgContext.fillItem(pattern, component.getItem());
+                return this;
+            }
+
+            @Override
+            public PatternComponentBuilder components(Component... components) {
+                for (Component component : components) {
+                    eldgContext.addItem(pattern, component.getItem());
+                }
+                return this;
+            }
+
+            @Override
+            public PatternComponentBuilder component(int pos, Component component) {
+                eldgContext.setItem(pattern, pos, component.getItem());
+                return this;
+            }
+
+            @Override
+            public ViewContext and() {
+                return ELDGViewContext.this;
+            }
+        }
+    }
+
+
+    public final class ELDGContext implements UIContext {
 
 
         @Override

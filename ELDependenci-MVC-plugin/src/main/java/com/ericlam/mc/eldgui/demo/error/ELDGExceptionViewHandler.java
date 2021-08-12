@@ -1,7 +1,7 @@
 package com.ericlam.mc.eldgui.demo.error;
 
 import com.ericlam.mc.eld.services.ItemStackService;
-import com.ericlam.mc.eldgui.UIContext;
+import com.ericlam.mc.eldgui.view.UIContext;
 import com.ericlam.mc.eldgui.UISession;
 import com.ericlam.mc.eldgui.demo.user.UserController;
 import com.ericlam.mc.eldgui.exception.ExceptionViewHandler;

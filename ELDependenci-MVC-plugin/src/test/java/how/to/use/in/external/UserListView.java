@@ -1,6 +1,6 @@
 package how.to.use.in.external;
 
-import com.ericlam.mc.eldgui.UIContext;
+import com.ericlam.mc.eldgui.view.UIContext;
 import com.ericlam.mc.eldgui.view.View;
 
 import java.util.ArrayList;

@@ -1,7 +1,7 @@
 package com.ericlam.mc.eldgui.demo.error;
 
 import com.ericlam.mc.eld.services.ItemStackService;
-import com.ericlam.mc.eldgui.UIContext;
+import com.ericlam.mc.eldgui.view.UIContext;
 import com.ericlam.mc.eldgui.view.View;
 import com.ericlam.mc.eldgui.view.ViewDescriptor;
 import org.bukkit.Material;

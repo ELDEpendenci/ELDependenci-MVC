@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.eldependenci</groupId>
-    <artifactId>ELDependenci-GUI-Module</artifactId>
+    <artifactId>ELDependenci-MVC-Module</artifactId>
     <packaging>pom</packaging>
     <version>0.0.3</version>
     <modules>
-        <module>eldependenci-gui</module>
-        <module>ELDependenci-GUI-plugin</module>
+        <module>eldependenci-mvc</module>
+        <module>ELDependenci-MVC-plugin</module>
     </modules>
 
     <repositories>

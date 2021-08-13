@@ -12,8 +12,6 @@ import com.ericlam.mc.eldgui.exception.ExceptionViewHandler;
 import com.ericlam.mc.eldgui.exception.HandleException;
 import com.ericlam.mc.eldgui.view.BukkitRedirectView;
 import com.ericlam.mc.eldgui.view.BukkitView;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.gson.Gson;
 import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
 import org.bukkit.Bukkit;
@@ -24,7 +22,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.*;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +36,7 @@ import java.util.stream.Collectors;
 public final class ELDGUI {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ELDGUI.class);
+
 
     private final Map<Class<? extends InventoryEvent>, ELDGEventHandler<? extends Annotation, ? extends InventoryEvent>> eventHandlerMap = new ConcurrentHashMap<>();
     private final Map<String, Function<InventoryEvent, ItemStack>> itemGetterMap = new ConcurrentHashMap<>();
@@ -55,6 +55,7 @@ public final class ELDGUI {
     private final ItemStackService itemStackService;
     private final Consumer<Player> onDestroy;
     private final ViewJumper goTo;
+
 
     private ELDGView<?> currentView;
 
@@ -179,6 +180,18 @@ public final class ELDGUI {
                     if (type instanceof ParameterizedType)
                         throw new IllegalStateException("model attribute cannot be generic type");
                     var model = ((Class<?>) type);
+
+                    Map<String, Object> fieldMap = context.getItems(modelAttribute.value())
+                            .stream()
+                            .collect(Collectors
+                                    .toMap(
+                                            item -> context.getAttribute(String.class, item, AttributeController.FIELD_TAG),
+                                            item -> context.getObjectAttribute(item, AttributeController.VALUE_TAG)
+                                    )
+                            );
+
+                    return PersistDataUtils.mapToObject(fieldMap, model);
+                    /*
                     Object modelObject;
                     try {
                         Constructor<?> con = model.getConstructor();
@@ -203,7 +216,8 @@ public final class ELDGUI {
                             throw new IllegalStateException("error while setting field " + field + " from model " + model, e);
                         }
                     }
-                    return modelObject;
+
+                     */
                 });
     }
 
@@ -297,29 +311,5 @@ public final class ELDGUI {
         this.onDestroy.accept(owner);
     }
 
-
-    public static Map<String, Object> reflectToMap(Object model) {
-        if (model == null || model.getClass().isPrimitive()) return Map.of();
-        return Arrays.stream(model.getClass().getFields()).filter(f -> !f.isAnnotationPresent(JsonIgnore.class)).collect(Collectors.toMap(Field::getName, f -> {
-            try {
-                f.setAccessible(true);
-                return f.get(model);
-            } catch (Exception e) {
-                e.printStackTrace();
-                return "[Error: " + e.getClass().getSimpleName() + "]";
-            }
-        }));
-    }
-
-    public static Map<String, Class<?>> fieldsToMap(Class<?> cls) {
-        return Arrays.stream(cls.getFields()).filter(f -> !f.isAnnotationPresent(JsonIgnore.class)).collect(Collectors.toMap(Field::getName, Field::getType));
-    }
-
-    @SuppressWarnings("unchecked")
-    public static Map<String, Object> gsonToMap(Object model) {
-        if (model == null || model.getClass().isPrimitive()) return Map.of();
-        Gson gson = new Gson();
-        return gson.fromJson(gson.toJson(model), Map.class);
-    }
 
 }

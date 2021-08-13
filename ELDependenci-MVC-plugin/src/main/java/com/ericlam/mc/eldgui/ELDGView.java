@@ -8,6 +8,8 @@ import com.ericlam.mc.eldgui.component.ComponentFactory;
 import com.ericlam.mc.eldgui.component.ListenableComponent;
 import com.ericlam.mc.eldgui.component.factory.AttributeController;
 import com.ericlam.mc.eldgui.view.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -34,28 +36,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public final class ELDGView<T> {
 
-    private static final Map<Class<?>, PersistentDataType<?, ?>> PERSISTENT_DATA_TYPE_MAP = new ConcurrentHashMap<>();
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ELDGView.class);
-
-    static {
-        PERSISTENT_DATA_TYPE_MAP.put(Byte.class, PersistentDataType.BYTE);
-        PERSISTENT_DATA_TYPE_MAP.put(byte.class, PersistentDataType.BYTE);
-        PERSISTENT_DATA_TYPE_MAP.put(Short.class, PersistentDataType.SHORT);
-        PERSISTENT_DATA_TYPE_MAP.put(short.class, PersistentDataType.SHORT);
-        PERSISTENT_DATA_TYPE_MAP.put(Integer.class, PersistentDataType.INTEGER);
-        PERSISTENT_DATA_TYPE_MAP.put(int.class, PersistentDataType.INTEGER);
-        PERSISTENT_DATA_TYPE_MAP.put(Long.class, PersistentDataType.LONG);
-        PERSISTENT_DATA_TYPE_MAP.put(long.class, PersistentDataType.LONG);
-        PERSISTENT_DATA_TYPE_MAP.put(Float.class, PersistentDataType.FLOAT);
-        PERSISTENT_DATA_TYPE_MAP.put(float.class, PersistentDataType.FLOAT);
-        PERSISTENT_DATA_TYPE_MAP.put(Double.class, PersistentDataType.DOUBLE);
-        PERSISTENT_DATA_TYPE_MAP.put(double.class, PersistentDataType.DOUBLE);
-        PERSISTENT_DATA_TYPE_MAP.put(String.class, PersistentDataType.STRING);
-        PERSISTENT_DATA_TYPE_MAP.put(byte[].class, PersistentDataType.BYTE_ARRAY);
-        PERSISTENT_DATA_TYPE_MAP.put(int[].class, PersistentDataType.INTEGER_ARRAY);
-        PERSISTENT_DATA_TYPE_MAP.put(long[].class, PersistentDataType.LONG_ARRAY);
-    }
-
 
     private final Inventory nativeInventory;
     private final View<T> view;
@@ -103,7 +85,7 @@ public final class ELDGView<T> {
             throw new IllegalStateException("view is lack of either @UseTemplate or @ViewDescriptor annotation.");
         }
         InventoryTemplate inventoryTemplate = template;
-        Map<String, Object> objectFieldMap = ELDGUI.reflectToMap(bukkitView.getModel());
+        Map<String, Object> objectFieldMap = PersistDataUtils.reflectToMap(bukkitView.getModel());
         String inventoryTitle = StrSubstitutor.replace(template.name, objectFieldMap);
         this.nativeInventory = Bukkit.createInventory(null, template.rows * 9, ChatColor.translateAlternateColorCodes('&', inventoryTitle));
         this.view = this.initializeView(viewCls);
@@ -327,21 +309,35 @@ public final class ELDGView<T> {
             return false;
         }
 
-        @SuppressWarnings("unchecked")
-        private <C> PersistentDataType<C, C> getPersistentDataType(Class<C> type) {
-            return (PersistentDataType<C, C>) Optional.ofNullable(PERSISTENT_DATA_TYPE_MAP.get(type)).orElseThrow(() -> new IllegalStateException("Unsupported data type: " + type));
-        }
-
         @Override
         public <C> C getAttribute(Class<C> type, ItemStack itemStack, String key) {
             var meta = itemStack.getItemMeta();
             if (meta == null)
                 throw new IllegalStateException("cannot get attribute: " + key + ", this item has no item meta.");
             var container = meta.getPersistentDataContainer();
-            var o = getPersistentDataType(type);
+            var o = PersistDataUtils.getPersistentDataType(type);
             return container.get(new NamespacedKey(ELDGPlugin.getPlugin(ELDGPlugin.class), key), o);
         }
 
+        @SuppressWarnings("unchecked")
+        public <C> C getObjectAttribute(ItemStack itemStack, String key){
+            var meta = itemStack.getItemMeta();
+            if (meta == null)
+                throw new IllegalStateException("cannot get attribute: " + key + ", this item has no item meta.");
+            var container = meta.getPersistentDataContainer();
+            var o = PersistDataUtils.getPersistentDataType();
+            return (C) container.get(new NamespacedKey(ELDGPlugin.getPlugin(ELDGPlugin.class), key), o);
+        }
+
+        public <C> void setObjectAttribute(ItemStack itemStack, String key, C value){
+            var meta = itemStack.getItemMeta();
+            if (meta == null)
+                throw new IllegalStateException("cannot get attribute: " + key + ", this item has no item meta.");
+            var container = meta.getPersistentDataContainer();
+            var o = PersistDataUtils.getPersistentDataType();
+            container.set(new NamespacedKey(ELDGPlugin.getPlugin(ELDGPlugin.class), key), o, value);
+            itemStack.setItemMeta(meta);
+        }
 
         public <C> void setAttribute(Class<C> type, ItemStack itemStack, String key, Object value) {
             C realValue;
@@ -355,7 +351,7 @@ public final class ELDGView<T> {
             if (meta == null)
                 throw new IllegalStateException("cannot get attribute: " + key + ", this item has no item meta.");
             var container = meta.getPersistentDataContainer();
-            var o = getPersistentDataType(type);
+            var o = PersistDataUtils.getPersistentDataType(type);
             container.set(new NamespacedKey(ELDGPlugin.getPlugin(ELDGPlugin.class), key), o, realValue);
             itemStack.setItemMeta(meta);
         }

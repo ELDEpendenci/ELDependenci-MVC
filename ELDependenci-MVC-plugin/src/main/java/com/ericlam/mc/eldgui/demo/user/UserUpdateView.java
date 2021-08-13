@@ -28,26 +28,32 @@ public class UserUpdateView implements View<User> {
         NumInputFactory numberField = context.factory(NumInputFactory.class);
         ButtonFactory button = context.factory(ButtonFactory.class);
 
+        // model == null is create mode, else edit mode
         context.pattern('A')
                 .components(
-                        textField
-                                .icon(Material.BIRCH_SIGN)
-                                .label("Enter Your UserName")
-                                .bindInput("username", model == null ? "" : model.username)
-                                .create(),
+                        model == null
+                                ? textField //editable username for create
+                                    .icon(Material.BIRCH_SIGN)
+                                    .label("Enter UserName")
+                                    .bindInput("username", "")
+                                    .create()
+                                : button.icon(Material.BIRCH_SIGN) // readonly username for edit
+                                    .title("UserName: " + model.username)
+                                    .lore("&cRead Only")
+                                    .create(),
                         textField
                                 .icon(Material.ACACIA_SIGN)
-                                .label("Enter Your First Name")
+                                .label("Enter First Name")
                                 .bindInput("firstname", model == null ? "" : model.firstName)
                                 .create(),
                         textField
                                 .icon(Material.CRIMSON_SIGN)
-                                .label("Enter Your Last Name")
+                                .label("Enter Last Name")
                                 .bindInput("lastname", model == null ? "" : model.lastName)
                                 .create(),
                         numberField
                                 .icon(Material.REDSTONE_TORCH)
-                                .label("Your Age (Left Click + / Right Click -)")
+                                .label("Input Age (Left Click + / Right Click -)")
                                 .bindInput("age", model == null ? 0 : model.age)
                                 .create()
                 )

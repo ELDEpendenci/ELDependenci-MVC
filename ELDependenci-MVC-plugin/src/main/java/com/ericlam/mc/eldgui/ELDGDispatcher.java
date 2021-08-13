@@ -5,20 +5,25 @@ import com.ericlam.mc.eld.services.ItemStackService;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
-public class ELDGDispatcher implements UIDispatcher {
+public class ELDGDispatcher implements UIDispatcher, Listener {
 
     private static final Map<Player, UISession> uiSessionMap = new ConcurrentHashMap<>();
-
+    private final Map<Player, ELDGUI> guiSessionMap = new ConcurrentHashMap<>();
 
     private final Object controller;
     private final ViewJumper goTo;
-    private final Map<Player, ELDGUI> guiSessionMap = new ConcurrentHashMap<>();
 
     @Inject
     private Injector injector;
@@ -79,6 +84,23 @@ public class ELDGDispatcher implements UIDispatcher {
 
     public synchronized void onClose() {
         this.guiSessionMap.values().forEach(ELDGUI::destroy);
+        HandlerList.unregisterAll(this);
+    }
+
+
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent e){
+        Optional.ofNullable(guiSessionMap.get((Player) e.getWhoClicked())).ifPresent(gui -> gui.onInventoryClick(e));
+    }
+
+    @EventHandler
+    public void onInventoryDrag(InventoryDragEvent e){
+        Optional.ofNullable(guiSessionMap.get((Player) e.getWhoClicked())).ifPresent(gui -> gui.onInventoryDrag(e));
+    }
+
+    @EventHandler
+    public void onInventoryClose(InventoryCloseEvent e){
+        Optional.ofNullable(guiSessionMap.get((Player) e.getPlayer())).ifPresent(gui -> gui.onInventoryClose(e));
     }
 
     @SuppressWarnings("unchecked")

@@ -18,9 +18,6 @@ import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.ItemStack;
 import org.slf4j.Logger;
@@ -37,7 +34,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public final class ELDGUI implements Listener {
+public final class ELDGUI {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ELDGUI.class);
 
@@ -61,16 +58,17 @@ public final class ELDGUI implements Listener {
 
     private ELDGView<?> currentView;
 
-    public ELDGUI(Object controller,
-                  Injector injector,
-                  UISession session,
-                  Player owner,
-                  ManagerFactory managerFactory,
-                  Consumer<Player> onDestroy,
-                  ViewJumper goTo,
-                  ELDGMVCInstallation eldgmvcInstallation,
-                  ConfigPoolService configPoolService,
-                  ItemStackService itemStackService
+    public ELDGUI(
+            Object controller,
+            Injector injector,
+            UISession session,
+            Player owner,
+            ManagerFactory managerFactory,
+            Consumer<Player> onDestroy,
+            ViewJumper goTo,
+            ELDGMVCInstallation eldgmvcInstallation,
+            ConfigPoolService configPoolService,
+            ItemStackService itemStackService
     ) {
 
         this.session = session;
@@ -95,7 +93,6 @@ public final class ELDGUI implements Listener {
 
         this.controllerCls = controller.getClass();
         this.initIndexView(controller);
-        Bukkit.getServer().getPluginManager().registerEvents(this, eldgPlugin);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -195,16 +192,16 @@ public final class ELDGUI implements Listener {
                     for (ItemStack item : items) {
                         String field = context.getAttribute(String.class, item, AttributeController.FIELD_TAG);
                         if (field == null) continue;
-                       try {
-                           Field f = model.getField(field);
-                           Object value = context.getAttribute(f.getType(), item, AttributeController.VALUE_TAG);
-                           f.setAccessible(true);
-                           f.set(modelObject, value);
-                       } catch (NoSuchFieldException e) {
-                           throw new IllegalStateException("cannot find the field " + field + " from model " + model, e);
-                       } catch (IllegalAccessException e) {
-                           throw new IllegalStateException("error while setting field " + field + " from model " + model, e);
-                       }
+                        try {
+                            Field f = model.getField(field);
+                            Object value = context.getAttribute(f.getType(), item, AttributeController.VALUE_TAG);
+                            f.setAccessible(true);
+                            f.set(modelObject, value);
+                        } catch (NoSuchFieldException e) {
+                            throw new IllegalStateException("cannot find the field " + field + " from model " + model, e);
+                        } catch (IllegalAccessException e) {
+                            throw new IllegalStateException("error while setting field " + field + " from model " + model, e);
+                        }
                     }
                     return modelObject;
                 });
@@ -216,7 +213,6 @@ public final class ELDGUI implements Listener {
 
 
     @SuppressWarnings("unchecked")
-    @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
         if (this.currentView == null) return;
         LOGGER.info("on Inventory Click"); // debug
@@ -232,7 +228,6 @@ public final class ELDGUI implements Listener {
     }
 
     @SuppressWarnings("unchecked")
-    @EventHandler
     public void onInventoryDrag(InventoryDragEvent e) {
         if (this.currentView == null) return;
         LOGGER.info("on inventory drag"); // debug
@@ -284,7 +279,6 @@ public final class ELDGUI implements Listener {
                         ));
     }
 
-    @EventHandler
     public void onInventoryClose(InventoryCloseEvent e) {
         if (this.currentView == null) return;
         if (e.getPlayer() != this.owner) return;
@@ -295,10 +289,9 @@ public final class ELDGUI implements Listener {
     }
 
     // controller destroy
-    public void destroy() {
+    public synchronized void destroy() {
         LOGGER.info("destroying controller"); //debug
         eventHandlerMap.values().forEach(ELDGEventHandler::unloadAllHandlers);
-        HandlerList.unregisterAll(this);
         //lifeCycleManager.onLifeCycle(OnDestroy.class);
         this.currentView.destroyView();
         this.onDestroy.accept(owner);

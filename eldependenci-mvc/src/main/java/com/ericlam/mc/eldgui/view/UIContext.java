@@ -1,16 +1,26 @@
 package com.ericlam.mc.eldgui.view;
 
-import org.bukkit.inventory.ItemStack;
+import com.ericlam.mc.eldgui.component.Component;
+import com.ericlam.mc.eldgui.component.ComponentFactory;
 
 public interface UIContext {
 
-    boolean setItem(char pattern, int slot, ItemStack itemStack);
+    PatternComponentBuilder pattern(char pattern);
 
-    boolean addItem(char pattern, ItemStack itemStack);
+    <T extends ComponentFactory<T>> T factory(Class<T> factoryCls);
 
-    void fillItem(char pattern, ItemStack itemStack);
+    interface PatternComponentBuilder {
 
-    <C> void setAttribute(Class<C> type, ItemStack itemStack, String key, C value);
+        PatternComponentBuilder fill(Component component);
 
-    <C> void setAttribute(Class<C> type, char pattern, String key, C value);
+        PatternComponentBuilder components(Component... components);
+
+        PatternComponentBuilder component(int pos, Component component);
+
+        PatternComponentBuilder bindAll(String key, Object value);
+
+        UIContext and();
+
+    }
+
 }

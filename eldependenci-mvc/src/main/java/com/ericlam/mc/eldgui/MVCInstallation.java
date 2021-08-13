@@ -6,7 +6,6 @@ import org.bukkit.event.inventory.InventoryInteractEvent;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
-import java.util.function.BiPredicate;
 
 public interface MVCInstallation {
 
@@ -18,7 +17,7 @@ public interface MVCInstallation {
 
     void setGlobalExceptionHandler(Class<? extends ExceptionViewHandler> exceptionHandler);
 
-    void addComponentFactory(Class<? extends ComponentFactory<?>> factory);
+    <T extends ComponentFactory<T>, E extends T> void addComponentFactory(Class<T> factory, Class<E> implement);
 
     @FunctionalInterface
     interface QualifierFilter<A extends Annotation> {

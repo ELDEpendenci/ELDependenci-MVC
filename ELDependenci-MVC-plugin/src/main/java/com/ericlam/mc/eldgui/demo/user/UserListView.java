@@ -1,12 +1,11 @@
 package com.ericlam.mc.eldgui.demo.user;
 
-import com.ericlam.mc.eld.services.ItemStackService;
-import com.ericlam.mc.eldgui.view.UIContext;
+import com.ericlam.mc.eldgui.component.factory.ButtonFactory;
 import com.ericlam.mc.eldgui.demo.DemoInventories;
+import com.ericlam.mc.eldgui.view.UIContext;
 import com.ericlam.mc.eldgui.view.UseTemplate;
 import com.ericlam.mc.eldgui.view.View;
 import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
@@ -16,35 +15,33 @@ import java.util.List;
 )
 public class UserListView implements View<List<String>> {
 
-    private ItemStackService itemStackService;
-
-    @Override
-    public void setItemStackService(ItemStackService itemStackService) {
-        this.itemStackService = itemStackService;
-    }
-
     @Override
     public void renderView(List<String> users, UIContext context) {
+        var button = context.factory(ButtonFactory.class);
+        var builder = context.pattern('L');
         for (int i = 0; i < users.size(); i++) {
             String username = users.get(i);
-            ItemStack userButton = itemStackService
-                    .build(Material.APPLE)
-                    .amount(i + 1)
-                    .display("&aUsername: &e" + username)
-                    .lore("&eClick to check the user info")
-                    .getItem();
-            context.setAttribute(String.class, userButton, "username", username);
-            context.addItem('L', userButton);
+
+            builder.components(
+                    button
+                            .icon(Material.PLAYER_HEAD)
+                            .number(i + 1)
+                            .title("&aUsername: &e" + username)
+                            .lore("&eClick to check the user info")
+                            .bind("username", username)
+                            .create()
+            );
         }
 
-        ItemStack nonExistUserBtn = itemStackService
-                .build(Material.APPLE)
-                .amount(users.size()+1)
-                .display("&aUsername: &eunknown")
-                .lore("&eClick to check the user info")
-                .getItem();
-        context.setAttribute(String.class, nonExistUserBtn, "username", "unknown");
-        context.addItem('L', nonExistUserBtn);
+        // for not found test
+        builder.components(
+                button
+                        .title("&aUsername: &eunknown")
+                        .number(users.size() + 1)
+                        .lore("&eClick to check the user info")
+                        .bind("username", "unknown")
+                        .create()
+        );
 
     }
 }

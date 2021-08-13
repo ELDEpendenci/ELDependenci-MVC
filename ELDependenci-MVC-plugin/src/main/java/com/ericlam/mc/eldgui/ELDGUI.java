@@ -2,6 +2,7 @@ package com.ericlam.mc.eldgui;
 
 import com.ericlam.mc.eld.services.ConfigPoolService;
 import com.ericlam.mc.eld.services.ItemStackService;
+import com.ericlam.mc.eldgui.component.factory.AttributeController;
 import com.ericlam.mc.eldgui.controller.FromPattern;
 import com.ericlam.mc.eldgui.controller.ItemAttribute;
 import com.ericlam.mc.eldgui.controller.ModelAttribute;
@@ -101,7 +102,7 @@ public final class ELDGUI implements Listener {
     private synchronized void updateView(BukkitView<?, ?> view) {
         LOGGER.info("update view to " + view.getView().getSimpleName()); // debug
         if (currentView != null) currentView.destroyView();
-        currentView = new ELDGView(view, configPoolService, itemStackService, injector, eldgmvcInstallation.getComponentFactoryList());
+        currentView = new ELDGView(view, configPoolService, itemStackService, eldgmvcInstallation.getComponentFactoryMap());
         owner.openInventory(currentView.getNativeInventory());
     }
 
@@ -112,6 +113,7 @@ public final class ELDGUI implements Listener {
         Bukkit.getScheduler().runTask(eldgPlugin, () -> {
             try {
                 LOGGER.info("jump tp another controller: " + redirectView.getRedirectTo()); // debug
+                this.destroy();
                 goTo.onJump(session, owner, redirectView.getRedirectTo());
             } catch (UINotFoundException e) {
                 owner.sendMessage(e.getMessage());
@@ -177,7 +179,6 @@ public final class ELDGUI implements Listener {
                 (annotations, type, event) -> {
                     ModelAttribute modelAttribute = (ModelAttribute) Arrays.stream(annotations).filter(a -> a.annotationType() == ModelAttribute.class).findAny().orElseThrow(() -> new IllegalStateException("cannot find @ModelAttribute"));
                     var context = this.currentView.getEldgContext();
-                    List<ItemStack> items = context.getItems(modelAttribute.value());
                     if (type instanceof ParameterizedType)
                         throw new IllegalStateException("model attribute cannot be generic type");
                     var model = ((Class<?>) type);
@@ -190,24 +191,21 @@ public final class ELDGUI implements Listener {
                     } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
                         throw new IllegalStateException("error while initializing instance of model " + model, e);
                     }
-                    fieldsToMap(model).forEach((fName, fType) -> {
-                        Object value = null;
-                        for (ItemStack item : items) {
-                            value = context.getAttribute(fType, item, fName);
-                            if (value != null) break;
-                        }
-                        if (value == null)
-                            throw new IllegalStateException("cannot find " + fName + " value for model " + model);
-                        try {
-                            Field field = model.getField(fName);
-                            field.setAccessible(true);
-                            field.set(modelObject, value);
-                        } catch (NoSuchFieldException e) {
-                            throw new IllegalStateException("cannot find the field " + fName + " from model " + model, e);
-                        } catch (IllegalAccessException e) {
-                            throw new IllegalStateException("error while setting field " + fName + " with type " + fType + " from model " + model, e);
-                        }
-                    });
+                    List<ItemStack> items = context.getItems(modelAttribute.value());
+                    for (ItemStack item : items) {
+                        String field = context.getAttribute(String.class, item, AttributeController.FIELD_TAG);
+                        if (field == null) continue;
+                       try {
+                           Field f = model.getField(field);
+                           Object value = context.getAttribute(f.getType(), item, AttributeController.VALUE_TAG);
+                           f.setAccessible(true);
+                           f.set(modelObject, value);
+                       } catch (NoSuchFieldException e) {
+                           throw new IllegalStateException("cannot find the field " + field + " from model " + model, e);
+                       } catch (IllegalAccessException e) {
+                           throw new IllegalStateException("error while setting field " + field + " from model " + model, e);
+                       }
+                    }
                     return modelObject;
                 });
     }
@@ -222,6 +220,8 @@ public final class ELDGUI implements Listener {
     public void onInventoryClick(InventoryClickEvent e) {
         if (this.currentView == null) return;
         LOGGER.info("on Inventory Click"); // debug
+        if (!this.currentView.handleComponentClick(e)) return;
+        // pass to controller
         var handler = (ELDGEventHandler<? extends Annotation, InventoryClickEvent>) eventHandlerMap.get(e.getClass());
         if (handler == null) return;
         try {
@@ -289,6 +289,7 @@ public final class ELDGUI implements Listener {
         if (this.currentView == null) return;
         if (e.getPlayer() != this.owner) return;
         if (e.getInventory() != this.currentView.getNativeInventory()) return;
+        if (this.currentView.isDoNotDestroyView()) return;
         LOGGER.info("on inventory close"); // debug
         destroy();
     }

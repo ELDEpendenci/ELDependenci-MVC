@@ -1,4 +1,4 @@
-package com.ericlam.mc.eldgui.commands;
+package com.ericlam.mc.eldgui.command;
 
 import com.ericlam.mc.eld.annotations.Commander;
 import com.ericlam.mc.eld.components.CommandNode;

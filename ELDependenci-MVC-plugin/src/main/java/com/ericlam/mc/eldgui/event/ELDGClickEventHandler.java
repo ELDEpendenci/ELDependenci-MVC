@@ -30,6 +30,7 @@ public final class ELDGClickEventHandler extends ELDGEventHandler<ClickMapping, 
     }
 
 
+    /* handleComponentClick method filtered
     @Override
     public boolean onEventHandle(InventoryClickEvent e, Player player, ELDGView<?> eldgView) throws Exception{
         if (eldgView.getNativeInventory() != e.getClickedInventory()) return false;
@@ -37,6 +38,8 @@ public final class ELDGClickEventHandler extends ELDGEventHandler<ClickMapping, 
         if (e.getCurrentItem() == null) return false;
         return super.onEventHandle(e, player, eldgView);
     }
+
+     */
 
     @Override
     protected boolean slotTrigger(List<Integer> slots, InventoryClickEvent event) {

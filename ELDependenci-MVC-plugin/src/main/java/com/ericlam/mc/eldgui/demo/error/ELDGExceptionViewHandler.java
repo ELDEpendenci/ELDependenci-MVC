@@ -1,14 +1,11 @@
 package com.ericlam.mc.eldgui.demo.error;
 
 import com.ericlam.mc.eld.services.ItemStackService;
-import com.ericlam.mc.eldgui.view.UIContext;
+import com.ericlam.mc.eldgui.view.*;
 import com.ericlam.mc.eldgui.UISession;
 import com.ericlam.mc.eldgui.demo.user.UserController;
 import com.ericlam.mc.eldgui.exception.ExceptionViewHandler;
 import com.ericlam.mc.eldgui.exception.HandleException;
-import com.ericlam.mc.eldgui.view.BukkitRedirectView;
-import com.ericlam.mc.eldgui.view.BukkitView;
-import com.ericlam.mc.eldgui.view.ViewDescriptor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.slf4j.Logger;

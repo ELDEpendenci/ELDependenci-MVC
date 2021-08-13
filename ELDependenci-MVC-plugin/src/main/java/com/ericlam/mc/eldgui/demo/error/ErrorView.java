@@ -1,6 +1,6 @@
 package com.ericlam.mc.eldgui.demo.error;
 
-import com.ericlam.mc.eld.services.ItemStackService;
+import com.ericlam.mc.eldgui.component.factory.ButtonFactory;
 import com.ericlam.mc.eldgui.view.UIContext;
 import com.ericlam.mc.eldgui.view.View;
 import com.ericlam.mc.eldgui.view.ViewDescriptor;
@@ -17,28 +17,28 @@ import org.bukkit.Material;
 )
 public class ErrorView implements View<Exception> {
 
-    private ItemStackService itemStackService;
 
     @Override
     public void renderView(Exception ex, UIContext context) {
-        context.fillItem('Z', itemStackService.build(Material.BLACK_STAINED_GLASS_PANE).getItem());
-        context.addItem('A', itemStackService
-                .build(Material.BARRIER)
-                .display("&cError: " + ex.getClass().getSimpleName())
-                .lore("&c".concat(ex.getMessage()))
-                .getItem()
-        );
+        ButtonFactory button = context.factory(ButtonFactory.class);
 
-        context.addItem('B', itemStackService
-                .build(Material.GOLD_INGOT)
-                .display("&eClick Me to back to previous page")
-                .getItem()
-        );
-    }
+        context
+                .pattern('Z')
+                .fill(button.icon(Material.BLACK_STAINED_GLASS_PANE).create())
+                .and()
+                .pattern('A')
+                .components(
+                        button.icon(Material.BARRIER)
+                                .title("&cError: " + ex.getClass().getSimpleName())
+                                .lore("&c".concat(ex.getMessage()))
+                                .create()
+                )
+                .and()
+                .pattern('B')
+                .components(
+                        button.icon(Material.GOLD_INGOT).title("&eClick Me to back to previous page").create()
+                );
 
-    @Override
-    public void setItemStackService(ItemStackService itemStackService) {
-        this.itemStackService = itemStackService;
     }
 
 

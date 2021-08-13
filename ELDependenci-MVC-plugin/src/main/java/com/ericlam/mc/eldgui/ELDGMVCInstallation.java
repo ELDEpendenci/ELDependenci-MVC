@@ -2,15 +2,12 @@ package com.ericlam.mc.eldgui;
 
 import com.ericlam.mc.eldgui.component.ComponentFactory;
 import com.ericlam.mc.eldgui.exception.ExceptionViewHandler;
-import com.ericlam.mc.eldgui.exception.HandleException;
 import com.ericlam.mc.eldgui.controller.UIController;
 import com.ericlam.mc.eldgui.exception.HandleForControllers;
-import org.bukkit.event.inventory.InventoryInteractEvent;
 
 import java.lang.annotation.Annotation;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiPredicate;
 
 public class ELDGMVCInstallation implements MVCInstallation{
 
@@ -18,7 +15,7 @@ public class ELDGMVCInstallation implements MVCInstallation{
     private final Map<Class<? extends Annotation>, QualifierFilter<? extends Annotation>> qualifierMap = new ConcurrentHashMap<>();
     private final Map<Class<?>, Class<? extends ExceptionViewHandler>> exceptionHandlerMap = new ConcurrentHashMap<>();
     private final Set<Class<? extends ExceptionViewHandler>> scopedExceptionHandlerSet = new HashSet<>();
-    private final List<Class<? extends ComponentFactory<?>>> componentFactoryList = new ArrayList<>();
+    private final Map<Class<? extends ComponentFactory<?>>, Class<? extends ComponentFactory<?>>> componentFactoryMap = new ConcurrentHashMap<>();
     private Class<? extends ExceptionViewHandler> defaultExceptionHandler;
     private final ELDGPlugin plugin;
 
@@ -65,8 +62,8 @@ public class ELDGMVCInstallation implements MVCInstallation{
     }
 
     @Override
-    public void addComponentFactory(Class<? extends ComponentFactory<?>> factory) {
-        this.componentFactoryList.add(factory);
+    public <T extends ComponentFactory<T>, E extends T> void addComponentFactory(Class<T> factory, Class<E> implement) {
+        this.componentFactoryMap.put(factory, implement);
     }
 
 
@@ -90,7 +87,7 @@ public class ELDGMVCInstallation implements MVCInstallation{
         return exceptionHandlerMap;
     }
 
-    public List<Class<? extends ComponentFactory<?>>> getComponentFactoryList() {
-        return componentFactoryList;
+    public Map<Class<? extends ComponentFactory<?>>, Class<? extends ComponentFactory<?>>> getComponentFactoryMap() {
+        return componentFactoryMap;
     }
 }

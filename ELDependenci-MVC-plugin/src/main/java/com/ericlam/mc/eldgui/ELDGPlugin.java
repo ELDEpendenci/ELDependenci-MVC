@@ -5,6 +5,7 @@ import com.ericlam.mc.eld.ELDBukkitAddon;
 import com.ericlam.mc.eld.ManagerProvider;
 import com.ericlam.mc.eld.ServiceCollection;
 import com.ericlam.mc.eld.annotations.ELDPlugin;
+import com.ericlam.mc.eldgui.component.factory.*;
 import com.ericlam.mc.eldgui.controller.UIController;
 import com.ericlam.mc.eldgui.demo.DemoInventories;
 import com.ericlam.mc.eldgui.demo.error.ELDGExceptionViewHandler;
@@ -20,7 +21,6 @@ public class ELDGPlugin extends ELDBukkitAddon {
     @Override
     protected void bindServices(ServiceCollection serviceCollection) {
         serviceCollection.bindService(InventoryService.class, ELDGInventoryService.class);
-        // demo
         serviceCollection.addSingleton(ManagerFactory.class);
         serviceCollection.addGroupConfiguration(DemoInventories.class);
         serviceCollection.addConfiguration(ELDGLanguage.class);
@@ -32,8 +32,16 @@ public class ELDGPlugin extends ELDBukkitAddon {
         ELDGMVCInstallation eldgmvcInstallation = new ELDGMVCInstallation(this);
         addonManager.customInstallation(MVCInstallation.class, eldgmvcInstallation);
         // my demo register
+
+        // register controller
         eldgmvcInstallation.registerControllers(UserController.class, ErrorController.class);
+        // register exception view handler
         eldgmvcInstallation.setGlobalExceptionHandler(ELDGExceptionViewHandler.class);
+        // register component factory
+        eldgmvcInstallation.addComponentFactory(ButtonFactory.class, ELDGButtonFactory.class);
+        eldgmvcInstallation.addComponentFactory(TextInputFactory.class, ELDGTextInputFactory.class);
+        eldgmvcInstallation.addComponentFactory(NumInputFactory.class, ELDGNumInputFactory.class);
+
         //
         addonManager.installModule(new ELDGMVCModule(eldgmvcInstallation));
     }

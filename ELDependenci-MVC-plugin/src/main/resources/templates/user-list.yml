@@ -3,7 +3,7 @@ rows: 3
 pattern:
   - LLLLLLLLL
   - LLLLLLLLL
-  - ZZZZMZZZZ
+  - ZZZMZAZZZ
 items:
   L:
     cancelMove: true
@@ -12,3 +12,6 @@ items:
   M:
     material: DIAMOND_SWORD
     name: "&bReset"
+  A:
+    material: DIAMOND_AXE
+    name: "&aCreate"

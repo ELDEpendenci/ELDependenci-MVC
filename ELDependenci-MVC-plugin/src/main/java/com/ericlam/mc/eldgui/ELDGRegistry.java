@@ -3,8 +3,8 @@ package com.ericlam.mc.eldgui;
 import com.ericlam.mc.eld.registrations.CommandRegistry;
 import com.ericlam.mc.eld.registrations.ComponentsRegistry;
 import com.ericlam.mc.eld.registrations.ListenerRegistry;
-import com.ericlam.mc.eldgui.commands.ELDGCommand;
-import com.ericlam.mc.eldgui.commands.ELDGDemoCommand;
+import com.ericlam.mc.eldgui.command.ELDGCommand;
+import com.ericlam.mc.eldgui.command.ELDGDemoCommand;
 
 public class ELDGRegistry implements ComponentsRegistry {
 

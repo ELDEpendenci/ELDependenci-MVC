@@ -2,14 +2,9 @@ package com.ericlam.mc.eldgui;
 
 import com.ericlam.mc.eld.services.ConfigPoolService;
 import com.ericlam.mc.eld.services.ItemStackService;
-import com.ericlam.mc.eldgui.component.ClickableComponent;
-import com.ericlam.mc.eldgui.component.Component;
-import com.ericlam.mc.eldgui.component.ComponentFactory;
-import com.ericlam.mc.eldgui.component.ListenableComponent;
+import com.ericlam.mc.eldgui.component.*;
 import com.ericlam.mc.eldgui.component.factory.AttributeController;
 import com.ericlam.mc.eldgui.view.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -26,13 +21,11 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 public final class ELDGView<T> {
 
@@ -42,7 +35,7 @@ public final class ELDGView<T> {
     private final Inventory nativeInventory;
     private final View<T> view;
 
-    private final ELDGContext eldgContext = new ELDGContext();
+    private final InventoryContext inventoryContext = new InventoryContext();
     private final Map<Character, List<Integer>> patternMasks = new LinkedHashMap<>();
     private final Map<Character, List<Component>> componentMap = new HashMap<>();
     private final Map<Class<? extends ComponentFactory<?>>, ComponentFactory<?>> factoryMap = new HashMap<>();
@@ -64,7 +57,7 @@ public final class ELDGView<T> {
         componentFactory.forEach((f, impl) -> {
             try {
                 var constructor = impl.getConstructor(ItemStackService.class, AttributeController.class);
-                this.factoryMap.put(f, constructor.newInstance(itemStackService, eldgContext));
+                this.factoryMap.put(f, constructor.newInstance(itemStackService, inventoryContext));
             } catch (Exception e) {
                 LOGGER.warn("Error while initializing component factory " + impl, e);
                 LOGGER.warn("ComponentFactory must have a constructor with item stack service and attribute controller arguments");
@@ -127,11 +120,15 @@ public final class ELDGView<T> {
         Optional<Component> clickedComponent = componentMap.values().stream().flatMap(Collection::stream).filter(c -> c.getItem().equals(clicked)).findAny();
         if (clickedComponent.isEmpty()) return true;
         final Component component = clickedComponent.get();
+        if (component instanceof Disable && ((Disable) component).isDisabled()) {
+            return true;
+        }
         if (component instanceof ClickableComponent) {
             ((ClickableComponent) component).onClick(e);
         }
         if (component instanceof ListenableComponent) {
             var listenable = (ListenableComponent<? extends PlayerEvent>) component;
+            e.setCancelled(true);
             this.activateEventListener(listenable, e);
             return false;
         } else {
@@ -172,15 +169,22 @@ public final class ELDGView<T> {
                             if (event instanceof Cancellable) {
                                 ((Cancellable) event).setCancelled(true);
                             }
-                            component.callBack(realEvent);
-                            callback.run();
+                            if (event.isAsynchronous()){
+                                Bukkit.getScheduler().runTask(eldgPlugin, () -> {
+                                    component.callBack(realEvent);
+                                    callback.run();
+                                });
+                            }else{
+                                component.callBack(realEvent);
+                                callback.run();
+                            }
                         }, eldgPlugin);
         component.onListen((Player) e.getWhoClicked());
         this.waitingTask = Bukkit.getScheduler().runTaskLater(eldgPlugin, callback, component.getMaxWaitingTime());
     }
 
-    public ELDGContext getEldgContext() {
-        return eldgContext;
+    public InventoryContext getEldgContext() {
+        return inventoryContext;
     }
 
     public Map<Character, List<Integer>> getPatternMasks() {
@@ -256,7 +260,7 @@ public final class ELDGView<T> {
             public PatternComponentBuilder fill(Component component) {
                 componentMap.putIfAbsent(pattern, new ArrayList<>());
                 componentMap.get(pattern).add(component);
-                eldgContext.fillItem(pattern, component.getItem());
+                inventoryContext.fillItem(pattern, component);
                 return this;
             }
 
@@ -265,7 +269,7 @@ public final class ELDGView<T> {
                 for (Component component : components) {
                     componentMap.putIfAbsent(pattern, new ArrayList<>());
                     componentMap.get(pattern).add(component);
-                    eldgContext.addItem(pattern, component.getItem());
+                    inventoryContext.addItem(pattern, component);
                 }
                 return this;
             }
@@ -274,13 +278,13 @@ public final class ELDGView<T> {
             public PatternComponentBuilder component(int pos, Component component) {
                 componentMap.putIfAbsent(pattern, new ArrayList<>());
                 componentMap.get(pattern).add(component);
-                eldgContext.setItem(pattern, pos, component.getItem());
+                inventoryContext.setItem(pattern, pos, component);
                 return this;
             }
 
             @Override
             public PatternComponentBuilder bindAll(String key, Object value) {
-                eldgContext.setAttribute(pattern, key, value);
+                inventoryContext.setAttribute(pattern, key, value);
                 return this;
             }
 
@@ -292,31 +296,23 @@ public final class ELDGView<T> {
     }
 
 
-    public final class ELDGContext implements UIContextLegacy, AttributeController {
+    public final class InventoryContext implements AttributeController {
 
-        @Override
-        public boolean setItem(char pattern, int slot, ItemStack itemStack) {
-            var slots = patternMasks.get(pattern);
-            if (slots == null) return false;
-            int order = 0;
-            for (Integer s : slots) {
-                if (order == slot) {
-                    nativeInventory.setItem(s, itemStack);
-                    return true;
-                }
-                order++;
-            }
-            return false;
-        }
 
-        @Override
-        public <C> C getAttribute(Class<C> type, ItemStack itemStack, String key) {
+        // attributes
+
+        public <C> C getAttributePrimitive(Class<C> type, ItemStack itemStack, String key) {
             var meta = itemStack.getItemMeta();
             if (meta == null)
                 throw new IllegalStateException("cannot get attribute: " + key + ", this item has no item meta.");
             var container = meta.getPersistentDataContainer();
             var o = PersistDataUtils.getPersistentDataType(type);
             return container.get(new NamespacedKey(ELDGPlugin.getPlugin(ELDGPlugin.class), key), o);
+        }
+
+        @Override
+        public <C> C getAttribute(ItemStack item, String key) {
+            return getObjectAttribute(item, key);
         }
 
         @SuppressWarnings("unchecked")
@@ -339,7 +335,8 @@ public final class ELDGView<T> {
             itemStack.setItemMeta(meta);
         }
 
-        public <C> void setAttribute(Class<C> type, ItemStack itemStack, String key, Object value) {
+
+        public <C> void setAttributePrimitive(Class<C> type, ItemStack itemStack, String key, Object value) {
             C realValue;
             try {
                 realValue = type.cast(value);
@@ -358,16 +355,37 @@ public final class ELDGView<T> {
 
         @Override
         public void setAttribute(ItemStack itemStack, String key, Object value) {
-            this.setAttribute(value.getClass(), itemStack, key, value);
+            this.setObjectAttribute(itemStack, key, value);
         }
 
-        public <C> void setAttribute(Class<C> type, char pattern, String key, Object value) {
-            getItems(pattern).forEach(item -> this.setAttribute(type, item, key, value));
+
+        public <C> void setAttributePrimitive(Class<C> type, char pattern, String key, Object value) {
+            getItems(pattern).forEach(item -> this.setAttributePrimitive(type, item, key, value));
         }
+
 
         @Override
         public void setAttribute(char pattern, String key, Object value) {
-            this.setAttribute(value.getClass(), pattern, key, value);
+            getItems(pattern).forEach(item -> setObjectAttribute(item, key, value));
+        }
+
+
+        // inventory control
+
+        public boolean setItem(char pattern, int slot, Component component) {
+            var slots = patternMasks.get(pattern);
+            if (slots == null) return false;
+            int order = 0;
+            for (Integer s : slots) {
+                if (order == slot) {
+                    Runnable runner = () -> nativeInventory.setItem(s, component.getItem());
+                    component.setUpdateHandler(runner);
+                    runner.run();
+                    return true;
+                }
+                order++;
+            }
+            return false;
         }
 
         public List<ItemStack> getItems(char pattern) {
@@ -381,26 +399,30 @@ public final class ELDGView<T> {
             return List.copyOf(items);
         }
 
-        @Override
-        public boolean addItem(char pattern, ItemStack itemStack) {
+        public boolean addItem(char pattern, Component component) {
             var slots = patternMasks.get(pattern);
             if (slots == null) return false;
             for (Integer s : slots) {
                 var slotItem = nativeInventory.getItem(s);
                 if (slotItem != null && slotItem.getType() != Material.AIR) continue;
-                nativeInventory.setItem(s, itemStack);
+                Runnable runner = () -> nativeInventory.setItem(s, component.getItem());
+                component.setUpdateHandler(runner);
+                runner.run();
                 return true;
             }
             return false;
         }
 
-        @Override
-        public void fillItem(char pattern, ItemStack itemStack) {
+        public void fillItem(char pattern, Component component) {
             var slots = patternMasks.get(pattern);
             if (slots == null) return;
-            for (Integer s : slots) {
-                nativeInventory.setItem(s, itemStack);
-            }
+            Runnable runner = () -> {
+                for (Integer s : slots) {
+                    nativeInventory.setItem(s, component.getItem());
+                }
+            };
+            component.setUpdateHandler(runner);
+            runner.run();
         }
 
     }

@@ -10,8 +10,11 @@ import java.util.List;
 
 public final class TextInputField extends AbstractComponent implements ListenableComponent<AsyncChatEvent> {
 
-    public TextInputField(AttributeController attributeController, ItemStackService.ItemFactory itemFactory) {
+    private final boolean disabled;
+
+    public TextInputField(AttributeController attributeController, ItemStackService.ItemFactory itemFactory, boolean disabled) {
         super(attributeController, itemFactory);
+        this.disabled = disabled;
     }
 
     @Override
@@ -29,10 +32,16 @@ public final class TextInputField extends AbstractComponent implements Listenabl
         final String message = ((TextComponent) event.message()).content();
         attributeController.setAttribute(getItem(), AttributeController.VALUE_TAG, message);
         itemFactory.lore(List.of("Input: " + message));
+        this.updateInventory();
     }
 
     @Override
     public Class<AsyncChatEvent> getEventClass() {
         return AsyncChatEvent.class;
+    }
+
+    @Override
+    public boolean isDisabled() {
+        return disabled;
     }
 }

@@ -1,6 +1,7 @@
 package com.ericlam.mc.eldgui.demo.error;
 
 import com.ericlam.mc.eld.services.ItemStackService;
+import com.ericlam.mc.eldgui.component.factory.ButtonFactory;
 import com.ericlam.mc.eldgui.view.*;
 import com.ericlam.mc.eldgui.UISession;
 import com.ericlam.mc.eldgui.demo.user.UserController;
@@ -46,16 +47,10 @@ public class ELDGExceptionViewHandler implements ExceptionViewHandler {
     )
     public static class CustomRedirectView implements BukkitRedirectView.RedirectView{
 
-        private ItemStackService itemStackService;
-
-        @Override
-        public void setItemStackService(ItemStackService itemStackService) {
-            this.itemStackService = itemStackService;
-        }
 
         @Override
         public void renderView(String model, UIContext context) {
-            context.fillItem('Z', itemStackService.build(Material.GREEN_STAINED_GLASS_PANE).getItem());
+            context.pattern('Z').fill(context.factory(ButtonFactory.class).icon(Material.GREEN_STAINED_GLASS_PANE).create());
         }
     }
 }

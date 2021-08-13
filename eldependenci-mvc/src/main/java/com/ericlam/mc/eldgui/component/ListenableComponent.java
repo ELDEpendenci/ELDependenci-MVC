@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerEvent;
 
 // waiting for a specific event to accept and edit item attributes when clicked
-public interface ListenableComponent<E extends PlayerEvent> extends Component {
+public interface ListenableComponent<E extends PlayerEvent> extends Component, Disable {
 
     void onListen(Player player);
 

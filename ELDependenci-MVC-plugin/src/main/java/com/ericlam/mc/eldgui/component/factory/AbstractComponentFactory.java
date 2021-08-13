@@ -21,6 +21,7 @@ public abstract class AbstractComponentFactory<Factory extends ComponentFactory<
         this.attributeController = attributeController;
         this.itemFactory = itemStackService.build(Material.STONE);
         this.factory = (Factory) this;
+        this.defaultProperties();
     }
 
     protected final Factory editItemByFactory(Consumer<ItemStackService.ItemFactory> factoryConsumer){
@@ -45,8 +46,11 @@ public abstract class AbstractComponentFactory<Factory extends ComponentFactory<
     public final Component create() {
         Component component = build(this.itemFactory);
         this.itemFactory = itemStackService.build(Material.STONE);
+        this.defaultProperties();
         return component;
     }
+
+    protected abstract void defaultProperties();
 
     public abstract Component build(ItemStackService.ItemFactory itemFactory);
 

@@ -1,6 +1,8 @@
 package com.ericlam.mc.eldgui;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.inject.TypeLiteral;
@@ -10,6 +12,10 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -17,10 +23,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PersistDataUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PersistDataUtils.class);
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     private static final Gson GSON = new Gson();
 
-    public static final PersistentDataType<String, Object> GENERIC_DATA_TYPE = new GenericDataType();
+    public static final PersistentDataType<byte[], Object> GENERIC_DATA_TYPE = new GenericDataType();
     public static final PersistentDataType<String, Map> MAP_DATA_TYPE = new MapDataType();
     private static final Map<Class<?>, PersistentDataType<?, ?>> PRIMITIVE_MAP = new ConcurrentHashMap<>();
 
@@ -29,7 +35,7 @@ public class PersistDataUtils {
         if (PRIMITIVE_MAP.containsKey(type)) return (PersistentDataType<?, C>) PRIMITIVE_MAP.get(type);
         return (PersistentDataType<?, C>) GENERIC_DATA_TYPE;
     }
-    public static PersistentDataType<String, Object> getPersistentDataType(){
+    public static PersistentDataType<byte[], Object> getPersistentDataType(){
         return GENERIC_DATA_TYPE;
     }
 
@@ -75,11 +81,11 @@ public class PersistDataUtils {
         }
     }
 
-    public static class GenericDataType implements PersistentDataType<String, Object> {
+    public static class GenericDataType implements PersistentDataType<byte[], Object> {
 
         @Override
-        public @NotNull Class<String> getPrimitiveType() {
-            return String.class;
+        public @NotNull Class<byte[]> getPrimitiveType() {
+            return byte[].class;
         }
 
         @Override
@@ -88,20 +94,31 @@ public class PersistDataUtils {
         }
 
         @Override
-        public @NotNull String toPrimitive(@NotNull Object o, @NotNull PersistentDataAdapterContext persistentDataAdapterContext) {
-            return GSON.toJson(o);
+        public byte @NotNull [] toPrimitive(@NotNull Object o, @NotNull PersistentDataAdapterContext persistentDataAdapterContext) {
+            try {
+                return OBJECT_MAPPER.writeValueAsBytes(o);
+            } catch (JsonProcessingException e) {
+                throw new IllegalStateException(e);
+            }
         }
 
         @Override
-        public @NotNull Object fromPrimitive(@NotNull String s, @NotNull PersistentDataAdapterContext persistentDataAdapterContext) {
-            return GSON.fromJson(s, Object.class);
+        public @NotNull Object fromPrimitive(byte @NotNull [] bb, @NotNull PersistentDataAdapterContext persistentDataAdapterContext) {
+            try {
+                return OBJECT_MAPPER.readValue(bb, Object.class);
+            } catch (IOException e) {
+                throw new IllegalStateException(e);
+            }
         }
     }
 
 
     public static Map<String, Object> reflectToMap(Object model) {
-        if (model == null || model.getClass().isPrimitive()) return Map.of();
-        return (Map<String, Object>) OBJECT_MAPPER.convertValue(model, Map.class);
+        try {
+            return OBJECT_MAPPER.convertValue(model, new TypeReference<>() {});
+        }catch (Exception e){
+            return Map.of();
+        }
     }
 
     public static <T> T mapToObject(Map<String, Object> map, Class<T> type){

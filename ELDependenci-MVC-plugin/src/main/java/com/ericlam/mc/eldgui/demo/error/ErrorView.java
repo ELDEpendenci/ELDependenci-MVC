@@ -30,7 +30,7 @@ public class ErrorView implements View<Exception> {
                 .components(
                         button.icon(Material.BARRIER)
                                 .title("&cError: " + ex.getClass().getSimpleName())
-                                .lore("&c".concat(ex.getMessage()))
+                                .lore("&c" + ex.getMessage())
                                 .create()
                 )
                 .and()

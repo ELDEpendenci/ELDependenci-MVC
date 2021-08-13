@@ -16,6 +16,7 @@ public class UserService {
     }
 
     public void reset() {
+        this.fakeUserTables.clear();
         this.fakeUserTables.put("user1", new User("user1", "Lam", "TF", 11));
         this.fakeUserTables.put("user2", new User("user2", "Chan", "ZF", 21));
         this.fakeUserTables.put("user3", new User("user3", "Tai", "ZZ", 55));

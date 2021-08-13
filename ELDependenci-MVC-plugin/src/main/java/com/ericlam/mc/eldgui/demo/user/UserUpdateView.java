@@ -17,7 +17,8 @@ import javax.annotation.Nullable;
         patterns = {
                 "ZAZAZAZAZ",
                 "ZZZZBZZZZ"
-        }
+        },
+        cancelMove = {'Z', 'A', 'B'}
 )
 public class UserUpdateView implements View<User> {
 
@@ -28,28 +29,26 @@ public class UserUpdateView implements View<User> {
         NumInputFactory numberField = context.factory(NumInputFactory.class);
         ButtonFactory button = context.factory(ButtonFactory.class);
 
+        var usernameField = textField
+                .icon(Material.BIRCH_SIGN)
+                .label("Enter UserName")
+                .bindInput("username", model == null ? "" : model.username);
+
+        if (model != null) usernameField = usernameField.disabled(); // if edit mode, disable the input
+
         // model == null is create mode, else edit mode
         context.pattern('A')
                 .components(
-                        model == null
-                                ? textField //editable username for create
-                                    .icon(Material.BIRCH_SIGN)
-                                    .label("Enter UserName")
-                                    .bindInput("username", "")
-                                    .create()
-                                : button.icon(Material.BIRCH_SIGN) // readonly username for edit
-                                    .title("UserName: " + model.username)
-                                    .lore("&cRead Only")
-                                    .create(),
+                        usernameField.create(),
                         textField
                                 .icon(Material.ACACIA_SIGN)
                                 .label("Enter First Name")
-                                .bindInput("firstname", model == null ? "" : model.firstName)
+                                .bindInput("firstName", model == null ? "" : model.firstName)
                                 .create(),
                         textField
                                 .icon(Material.CRIMSON_SIGN)
                                 .label("Enter Last Name")
-                                .bindInput("lastname", model == null ? "" : model.lastName)
+                                .bindInput("lastName", model == null ? "" : model.lastName)
                                 .create(),
                         numberField
                                 .icon(Material.REDSTONE_TORCH)

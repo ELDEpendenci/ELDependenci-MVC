@@ -98,7 +98,7 @@ public final class ELDGUI {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     private synchronized void updateView(BukkitView<?, ?> view) {
-        LOGGER.info("update view to " + view.getView().getSimpleName()); // debug
+        LOGGER.debug("update view to " + view.getView().getSimpleName()); // debug
         if (currentView != null) currentView.destroyView();
         currentView = new ELDGView(view, configPoolService, itemStackService, eldgmvcInstallation.getComponentFactoryMap());
         owner.openInventory(currentView.getNativeInventory());
@@ -110,7 +110,7 @@ public final class ELDGUI {
         }
         Bukkit.getScheduler().runTask(eldgPlugin, () -> {
             try {
-                LOGGER.info("jump tp another controller: " + redirectView.getRedirectTo()); // debug
+                LOGGER.debug("jump tp another controller: " + redirectView.getRedirectTo()); // debug
                 this.destroy();
                 goTo.onJump(session, owner, redirectView.getRedirectTo());
             } catch (UINotFoundException e) {
@@ -120,7 +120,7 @@ public final class ELDGUI {
     }
 
     public void initIndexView(Object controller) {
-        LOGGER.info("initializing index view"); // debug
+        LOGGER.debug("initializing index view"); // debug
         try {
             Optional<Method> indexMethod = Arrays.stream(controllerCls.getDeclaredMethods()).filter(m -> m.getName().equalsIgnoreCase("index")).findAny();
             if (indexMethod.isEmpty())
@@ -170,7 +170,7 @@ public final class ELDGUI {
         parser.registerParser((t, annos) -> Arrays.stream(annos).anyMatch(a -> a.annotationType() == ItemAttribute.class), (annos, t, e) -> {
             var item = getItemByEvent(e);
             ItemAttribute attribute = (ItemAttribute) Arrays.stream(annos).filter(a -> a.annotationType() == ItemAttribute.class).findAny().orElseThrow(() -> new IllegalStateException("cannot find @ItemAttribute"));
-            return this.currentView.getEldgContext().getAttribute((Class<?>) t, item, attribute.value());
+            return this.currentView.getEldgContext().getAttribute(item, attribute.value());
         });
         parser.registerParser((t, annos) -> t instanceof Class && InventoryInteractEvent.class.isAssignableFrom((Class<?>) t), (anno, t, e) -> e);
         parser.registerParser((t, annos) -> Arrays.stream(annos).anyMatch(a -> a.annotationType() == ModelAttribute.class),
@@ -185,11 +185,18 @@ public final class ELDGUI {
                             .stream()
                             .collect(Collectors
                                     .toMap(
-                                            item -> context.getAttribute(String.class, item, AttributeController.FIELD_TAG),
-                                            item -> context.getObjectAttribute(item, AttributeController.VALUE_TAG)
+                                            item -> Optional.ofNullable((String)context.getAttribute(item, AttributeController.FIELD_TAG)).orElseGet(() -> {
+                                                LOGGER.warn("Field Tag of Item :"+item.toString()+ " is null, return ''");
+                                                return "";
+                                            }),
+                                            item -> Optional.ofNullable(context.getAttribute(item, AttributeController.VALUE_TAG)).orElseGet(() -> {
+                                                LOGGER.warn("Value Tag of Item :"+item.toString()+ " is null, return ''");
+                                                return "";
+                                            })
                                     )
                             );
 
+                    LOGGER.debug("using "+ fieldMap +" to create instance of "+model);
                     return PersistDataUtils.mapToObject(fieldMap, model);
                     /*
                     Object modelObject;
@@ -229,7 +236,7 @@ public final class ELDGUI {
     @SuppressWarnings("unchecked")
     public void onInventoryClick(InventoryClickEvent e) {
         if (this.currentView == null) return;
-        LOGGER.info("on Inventory Click"); // debug
+        LOGGER.debug("on Inventory Click"); // debug
         if (!this.currentView.handleComponentClick(e)) return;
         // pass to controller
         var handler = (ELDGEventHandler<? extends Annotation, InventoryClickEvent>) eventHandlerMap.get(e.getClass());
@@ -244,7 +251,7 @@ public final class ELDGUI {
     @SuppressWarnings("unchecked")
     public void onInventoryDrag(InventoryDragEvent e) {
         if (this.currentView == null) return;
-        LOGGER.info("on inventory drag"); // debug
+        LOGGER.debug("on inventory drag"); // debug
         var handler = (ELDGEventHandler<? extends Annotation, InventoryDragEvent>) eventHandlerMap.get(e.getClass());
         if (handler == null) return;
         try {
@@ -255,7 +262,7 @@ public final class ELDGUI {
     }
 
     private void handleException(Exception ex) {
-        LOGGER.info("on exception handle: " + ex.getClass()); // debug
+        LOGGER.debug("on exception handle: " + ex.getClass()); // debug
         Optional<Class<? extends ExceptionViewHandler>> exceptionViewHandlerOpt = Optional
                 .ofNullable(eldgmvcInstallation.getExceptionHandlerMap().get(controllerCls));
         if (exceptionViewHandlerOpt.isEmpty()) {
@@ -298,13 +305,13 @@ public final class ELDGUI {
         if (e.getPlayer() != this.owner) return;
         if (e.getInventory() != this.currentView.getNativeInventory()) return;
         if (this.currentView.isDoNotDestroyView()) return;
-        LOGGER.info("on inventory close"); // debug
+        LOGGER.debug("on inventory close"); // debug
         destroy();
     }
 
     // controller destroy
     public synchronized void destroy() {
-        LOGGER.info("destroying controller"); //debug
+        LOGGER.debug("destroying controller"); //debug
         eventHandlerMap.values().forEach(ELDGEventHandler::unloadAllHandlers);
         //lifeCycleManager.onLifeCycle(OnDestroy.class);
         this.currentView.destroyView();

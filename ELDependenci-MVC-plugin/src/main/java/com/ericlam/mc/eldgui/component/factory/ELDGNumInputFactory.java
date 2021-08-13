@@ -6,16 +6,24 @@ import com.ericlam.mc.eldgui.component.NumInputField;
 
 public final class ELDGNumInputFactory extends AbstractComponentFactory<NumInputFactory> implements NumInputFactory{
 
-    private int min = 0;
-    private int max = 64;
+    private int min;
+    private int max;
+    private boolean disabled;
 
     public ELDGNumInputFactory(ItemStackService itemStackService, AttributeController attributeController) {
         super(itemStackService, attributeController);
     }
 
     @Override
+    protected void defaultProperties() {
+        this.min = 0;
+        this.max = 64;
+        this.disabled = false;
+    }
+
+    @Override
     public Component build(ItemStackService.ItemFactory itemFactory) {
-        return new NumInputField(attributeController, itemFactory, min, max);
+        return new NumInputField(attributeController, itemFactory, min, max, disabled);
     }
 
 
@@ -40,6 +48,13 @@ public final class ELDGNumInputFactory extends AbstractComponentFactory<NumInput
     @Override
     public NumInputFactory bindInput(String field, int initValue) {
         bind(AttributeController.FIELD_TAG, field);
-        return bind(AttributeController.VALUE_TAG, initValue);
+        bind(AttributeController.VALUE_TAG, initValue);
+        return editItemByFactory(f -> f.lore("Input: "+initValue));
+    }
+
+    @Override
+    public NumInputFactory disabled() {
+        this.disabled = true;
+        return editItemByFactory(f -> f.lore("&cDisabled"));
     }
 }

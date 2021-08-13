@@ -12,4 +12,6 @@ public interface NumInputFactory extends ComponentFactory<NumInputFactory> {
 
     NumInputFactory bindInput(String field, int initValue);
 
+    NumInputFactory disabled();
+
 }

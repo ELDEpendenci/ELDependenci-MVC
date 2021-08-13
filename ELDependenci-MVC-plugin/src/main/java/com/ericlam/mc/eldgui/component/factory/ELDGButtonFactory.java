@@ -11,6 +11,10 @@ public final class ELDGButtonFactory extends AbstractComponentFactory<ButtonFact
     }
 
     @Override
+    protected void defaultProperties() {
+    }
+
+    @Override
     public Component build(ItemStackService.ItemFactory itemFactory) {
         return new Button(attributeController, itemFactory);
     }

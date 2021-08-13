@@ -5,6 +5,8 @@ import com.ericlam.mc.eldgui.demo.error.ELDGExceptionViewHandler;
 import com.ericlam.mc.eldgui.demo.error.ErrorView;
 import com.ericlam.mc.eldgui.exception.ExceptionViewHandler;
 import com.ericlam.mc.eldgui.view.BukkitView;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.sun.tools.javac.Main;
 import org.junit.Assert;
@@ -12,10 +14,10 @@ import org.junit.Test;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @UIController("1234")
@@ -23,16 +25,37 @@ public class HowToUse {
 
 
     public static void main(String[] args) {
-        System.out.println(
-                objectFieldsToMap(
-                        new Student(
-                                "studen1",
-                                "Chan",
-                                "Tai Man",
-                                19,
-                                "1234544",
-                                5)
-                ));
+        Object o = Math.random() > 0.5 ? new ArrayList<String>() : new Object();
+        System.out.println(o instanceof Collection<?>);
+    }
+
+    @Test
+    public void testGson() {
+        Gson gson = new Gson();
+        byte[] json = gson.toJson("123131").getBytes(StandardCharsets.UTF_8);
+        System.out.println(Arrays.toString(json));
+        Object o = gson.fromJson(new String(json), Object.class);
+        System.out.println(o);
+        System.out.println(o.getClass());
+    }
+
+    @Test
+    public void testJackson() throws Exception{
+        ObjectMapper mapper = new ObjectMapper();
+        byte[] bb = mapper.writeValueAsBytes("12313131");
+        System.out.println(Arrays.toString(bb));
+        Object o = mapper.readValue(bb, Object.class);
+        System.out.println(o);
+        System.out.println(o.getClass());
+    }
+
+    @Test
+    public void testJacksonConvert() {
+        ObjectMapper mapper = new ObjectMapper();
+        User user = new User("username1", "first", "last", 12);
+        Map<String, Object> map = mapper.convertValue(user, new TypeReference<>() {
+        });
+        System.out.println(map);
     }
 
     @Test

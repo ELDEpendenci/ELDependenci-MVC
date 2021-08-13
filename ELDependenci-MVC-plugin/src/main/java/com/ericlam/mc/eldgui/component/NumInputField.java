@@ -10,6 +10,7 @@ import java.util.Optional;
 public final class NumInputField extends AbstractComponent implements ClickableComponent {
 
     private final int min, max;
+    private final boolean disabled;
 
     private int value;
 
@@ -17,12 +18,14 @@ public final class NumInputField extends AbstractComponent implements ClickableC
             AttributeController attributeController,
             ItemStackService.ItemFactory itemFactory,
             int min,
-            int max
+            int max,
+            boolean disabled
     ) {
         super(attributeController, itemFactory);
         this.min = min;
         this.max = max;
-        this.value = Optional.ofNullable(attributeController.getAttribute(Integer.class, getItem(), AttributeController.VALUE_TAG)).orElse(0);
+        this.disabled = disabled;
+        this.value = Optional.ofNullable((Integer)attributeController.getAttribute(getItem(), AttributeController.VALUE_TAG)).orElse(0);
     }
 
     @Override
@@ -34,8 +37,14 @@ public final class NumInputField extends AbstractComponent implements ClickableC
         } else {
             return;
         }
+        event.setCancelled(true);
         attributeController.setAttribute(getItem(), AttributeController.VALUE_TAG, this.value);
         itemFactory.lore(List.of("Input: " + this.value));
+        this.updateInventory();
     }
 
+    @Override
+    public boolean isDisabled() {
+        return disabled;
+    }
 }

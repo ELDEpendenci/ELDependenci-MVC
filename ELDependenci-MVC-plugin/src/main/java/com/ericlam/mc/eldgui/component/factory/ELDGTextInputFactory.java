@@ -6,6 +6,8 @@ import com.ericlam.mc.eldgui.component.TextInputField;
 
 public final class ELDGTextInputFactory extends AbstractComponentFactory<TextInputFactory> implements TextInputFactory {
 
+    private boolean disabled;
+
     public ELDGTextInputFactory(
             ItemStackService itemStackService,
             AttributeController attributeController
@@ -14,19 +16,31 @@ public final class ELDGTextInputFactory extends AbstractComponentFactory<TextInp
     }
 
     @Override
+    protected void defaultProperties() {
+        this.disabled = false;
+    }
+
+    @Override
     public Component build(ItemStackService.ItemFactory itemFactory) {
-        return new TextInputField(attributeController, itemFactory);
+        return new TextInputField(attributeController, itemFactory, disabled);
     }
 
 
     @Override
     public TextInputFactory label(String label) {
-       return editItemByFactory(factory -> factory.display(label));
+        return editItemByFactory(factory -> factory.display(label));
     }
 
     @Override
     public TextInputFactory bindInput(String field, String initValue) {
         bind(AttributeController.FIELD_TAG, field);
-        return bind(AttributeController.VALUE_TAG, initValue);
+        bind(AttributeController.VALUE_TAG, initValue);
+        return editItemByFactory(f -> f.lore("Input: " + initValue));
+    }
+
+    @Override
+    public TextInputFactory disabled() {
+        this.disabled = true;
+        return editItemByFactory(f -> f.lore("&cDisabled"));
     }
 }

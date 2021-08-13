@@ -2,6 +2,7 @@ package com.ericlam.mc.eldgui.view;
 
 import org.bukkit.inventory.ItemStack;
 
+@Deprecated
 public interface UIContextLegacy {
 
     boolean setItem(char pattern, int slot, ItemStack itemStack);

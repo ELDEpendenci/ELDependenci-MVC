@@ -15,7 +15,9 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -123,5 +125,23 @@ public class PersistDataUtils {
 
     public static <T> T mapToObject(Map<String, Object> map, Class<T> type){
         return OBJECT_MAPPER.convertValue(map, type);
+    }
+
+    public static Map<String, Object> toNestedMap(Map<String, Object> map) {
+        HashMap<String, Object> result = new HashMap<>();
+        var nested = new HashMap<String, Map<String, Object>>();
+        map.forEach((k, v) -> {
+            final int indexOfDot = k.indexOf('.');
+            if (indexOfDot == -1) {
+                result.put(k, v);
+            } else {
+                String[] paths = k.split("\\.");
+                var remain = String.join("", Arrays.copyOfRange(paths, 1, paths.length));
+                nested.putIfAbsent(paths[0], new HashMap<>());
+                nested.get(paths[0]).put(remain, v);
+            }
+        });
+        nested.forEach((key, mapp) -> result.put(key, toNestedMap(mapp)));
+        return result;
     }
 }

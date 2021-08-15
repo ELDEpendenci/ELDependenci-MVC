@@ -16,7 +16,7 @@ import javax.annotation.Nullable;
         rows = 2,
         patterns = {
                 "ZAZAZAZAZ",
-                "ZZZZBZZZZ"
+                "ZZAZBZAZZ"
         },
         cancelMove = {'Z', 'A', 'B'}
 )
@@ -54,6 +54,17 @@ public class UserUpdateView implements View<User> {
                                 .icon(Material.REDSTONE_TORCH)
                                 .label("Input Age (Left [+] / Right [-] / Middle [Input Number])")
                                 .bindInput("age", model == null ? 0 : model.age)
+                                .create(),
+                        textField
+                                .icon(Material.MAP)
+                                .label("Enter Address Line1: ")
+                                .bindInput("address.line1", model == null ? "" : model.address.line1)
+                                .create(),
+                        textField
+                                .icon(Material.MAP)
+                                .label("Enter Address Line2: ")
+                                .bindInput("address.line2", model == null ? "" : model.address.line2)
+                                .number(2)
                                 .create()
                 )
                 .and()

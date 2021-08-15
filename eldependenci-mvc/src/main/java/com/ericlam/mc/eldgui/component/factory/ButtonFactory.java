@@ -21,11 +21,5 @@ public interface ButtonFactory extends ComponentFactory<ButtonFactory> {
      */
     ButtonFactory lore(String... lore);
 
-    /**
-     *
-     * @param amount 數字標記
-     * @return this
-     */
-    ButtonFactory number(int amount);
 
 }

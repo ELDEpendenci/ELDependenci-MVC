@@ -30,9 +30,4 @@ public final class ELDGButtonFactory extends AbstractComponentFactory<ButtonFact
         return editItemByFactory(f -> f.lore(lore));
     }
 
-    @Override
-    public ButtonFactory number(int amount) {
-        return editItemByFactory(f -> f.amount(amount));
-    }
-
 }

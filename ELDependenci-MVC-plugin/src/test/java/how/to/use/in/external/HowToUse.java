@@ -57,13 +57,39 @@ public class HowToUse {
                 "address.line1", "line1",
                 "address.line2", "line2"
         );
-        User user = mapper.convertValue(map, User.class);
+        Map<String, Object> result = nester(map);
+        System.out.println(result);
+        User user = mapper.convertValue(result, User.class);
         System.out.println(user);
+    }
+
+    private static Map<String, Object> nester(Map<String, Object> map) {
+        HashMap<String, Object> result = new HashMap<>();
+        var nested = new HashMap<String, Map<String, Object>>();
+        map.forEach((k, v) -> {
+            final int indexOfDot = k.indexOf('.');
+            if (indexOfDot == -1) {
+                result.put(k, v);
+            } else {
+                String[] paths = k.split("\\.");
+                var remain = String.join("", Arrays.copyOfRange(paths, 1, paths.length));
+                nested.putIfAbsent(paths[0], new HashMap<>());
+                nested.get(paths[0]).put(remain, v);
+            }
+        });
+        nested.forEach((key, mapp) -> result.put(key, nester(mapp)));
+        return result;
+    }
+
+    private static Map<String, Object> generateNestedMap(String path, Object value) {
+        final int indexOfDot = path.indexOf('.');
+        return indexOfDot == -1 ? Collections.singletonMap(path, value)
+                : Collections.singletonMap(path.split("\\.")[0],
+                generateNestedMap(path.substring(indexOfDot + 1), value));
     }
 
     @Test
     public void testFlatMap() {
-        Map<String, Object> map = Map.of("a", 1, "b", 2, "c.a", 1, "c.b", 2);
     }
 
     @Test

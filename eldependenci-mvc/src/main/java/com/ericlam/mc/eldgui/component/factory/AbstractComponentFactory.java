@@ -46,6 +46,11 @@ public abstract class AbstractComponentFactory<Factory extends ComponentFactory<
         return factory;
     }
 
+    @Override
+    public Factory number(int amount) {
+        this.itemFactory.amount(amount);
+        return factory;
+    }
 
     @Override
     public final Component create() {

@@ -190,9 +190,9 @@ public final class ELDGUI {
                                             item -> Optional.ofNullable(context.getAttribute(item, AttributeController.VALUE_TAG)).orElseThrow(() -> new IllegalStateException("The value tag of "+item.toString()+" is null."))
                                     )
                             );
-
-                    LOGGER.debug("using "+ fieldMap +" to create instance of "+model);
-                    return PersistDataUtils.mapToObject(fieldMap, model);
+                    Map<String, Object> toConvert = PersistDataUtils.toNestedMap(fieldMap);
+                    LOGGER.debug("using "+ toConvert +" to create instance of "+model);
+                    return PersistDataUtils.mapToObject(toConvert, model);
                     /* no need to use
                     Object modelObject;
                     try {

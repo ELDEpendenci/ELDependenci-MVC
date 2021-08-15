@@ -26,7 +26,10 @@ public class UserView implements View<User> {
                                         "&aUsername: &f" + model.username,
                                         "&aFirst Name: &f" + model.firstName,
                                         "&aLast Name: &f" + model.lastName,
-                                        "&aAge: &f" + model.age
+                                        "&aAge: &f" + model.age,
+                                        "&aAddress: ",
+                                        "&f- " + model.address.line1,
+                                        "&f- " + model.address.line2
                                 ).create()
                 )
                 .and()

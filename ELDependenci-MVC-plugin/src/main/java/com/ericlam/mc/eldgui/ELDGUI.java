@@ -183,22 +183,17 @@ public final class ELDGUI {
 
                     Map<String, Object> fieldMap = context.getItems(modelAttribute.value())
                             .stream()
+                            .filter(item -> context.getAttribute(item, AttributeController.FIELD_TAG) != null)
                             .collect(Collectors
                                     .toMap(
-                                            item -> Optional.ofNullable((String)context.getAttribute(item, AttributeController.FIELD_TAG)).orElseGet(() -> {
-                                                LOGGER.warn("Field Tag of Item :"+item.toString()+ " is null, return ''");
-                                                return "";
-                                            }),
-                                            item -> Optional.ofNullable(context.getAttribute(item, AttributeController.VALUE_TAG)).orElseGet(() -> {
-                                                LOGGER.warn("Value Tag of Item :"+item.toString()+ " is null, return ''");
-                                                return "";
-                                            })
+                                            item -> context.getAttribute(item, AttributeController.FIELD_TAG),
+                                            item -> Optional.ofNullable(context.getAttribute(item, AttributeController.VALUE_TAG)).orElseThrow(() -> new IllegalStateException("The value tag of "+item.toString()+" is null."))
                                     )
                             );
 
                     LOGGER.debug("using "+ fieldMap +" to create instance of "+model);
                     return PersistDataUtils.mapToObject(fieldMap, model);
-                    /*
+                    /* no need to use
                     Object modelObject;
                     try {
                         Constructor<?> con = model.getConstructor();

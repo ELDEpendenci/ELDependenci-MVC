@@ -42,10 +42,10 @@ public class HowToUse {
     @Test
     public void testJackson() throws Exception{
         ObjectMapper mapper = new ObjectMapper();
-        byte[] bb = mapper.writeValueAsBytes("12313131");
+        byte[] bb = mapper.writeValueAsBytes(UUID.randomUUID());
         System.out.println(Arrays.toString(bb));
         Object o = mapper.readValue(bb, Object.class);
-        System.out.println(o);
+        System.out.println(o instanceof UUID);
         System.out.println(o.getClass());
     }
 

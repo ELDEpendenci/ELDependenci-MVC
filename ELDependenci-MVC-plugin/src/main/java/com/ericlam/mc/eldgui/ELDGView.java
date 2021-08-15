@@ -3,8 +3,8 @@ package com.ericlam.mc.eldgui;
 import com.ericlam.mc.eld.services.ConfigPoolService;
 import com.ericlam.mc.eld.services.ItemStackService;
 import com.ericlam.mc.eldgui.component.*;
-import com.ericlam.mc.eldgui.component.AttributeController;
 import com.ericlam.mc.eldgui.view.*;
+import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class ELDGView<T> {
 
@@ -100,7 +101,7 @@ public final class ELDGView<T> {
         return cancelMovePatterns;
     }
 
-    public List<Component> getComponents(char pattern){
+    public List<Component> getComponents(char pattern) {
         return this.componentMap.getOrDefault(pattern, List.of());
     }
 
@@ -128,8 +129,8 @@ public final class ELDGView<T> {
         }
         if (component instanceof ListenableComponent) {
             var listenable = (ListenableComponent<? extends PlayerEvent>) component;
-            if (listenable.shouldActivate(e)){
-                e.setCancelled(true);
+            e.setCancelled(true);
+            if (listenable.shouldActivate(e)) {
                 this.activateEventListener(listenable, e);
             }
             return false;
@@ -171,12 +172,12 @@ public final class ELDGView<T> {
                             if (event instanceof Cancellable) {
                                 ((Cancellable) event).setCancelled(true);
                             }
-                            if (event.isAsynchronous()){
+                            if (event.isAsynchronous()) {
                                 Bukkit.getScheduler().runTask(eldgPlugin, () -> {
                                     component.callBack(realEvent);
                                     callback.run();
                                 });
-                            }else{
+                            } else {
                                 component.callBack(realEvent);
                                 callback.run();
                             }
@@ -298,8 +299,10 @@ public final class ELDGView<T> {
     }
 
 
+    @SuppressWarnings("unchecked")
     public final class InventoryContext implements AttributeController {
 
+        private final Map<String, Map<String, Object>> attributeMap = new ConcurrentHashMap<>();
 
         // attributes
 
@@ -312,13 +315,31 @@ public final class ELDGView<T> {
             return container.get(new NamespacedKey(ELDGPlugin.getPlugin(ELDGPlugin.class), key), o);
         }
 
-        @Override
-        public <C> C getAttribute(ItemStack item, String key) {
-            return getObjectAttribute(item, key);
+        public Map<String, Object> getAsMap(ItemStack item) {
+            String id = getAttributePrimitive(String.class, item, "id");
+            return Optional.ofNullable(attributeMap.get(id)).map(ImmutableMap::copyOf).orElseGet(ImmutableMap::of);
         }
 
-        @SuppressWarnings("unchecked")
-        public <C> C getObjectAttribute(ItemStack itemStack, String key){
+        @Override
+        public <C> C getAttribute(ItemStack item, String key) {
+            // instead of using persist data type, use map
+            //return getObjectAttribute(item, key);
+            String id = getIdFromItem(item);
+            attributeMap.putIfAbsent(id, new ConcurrentHashMap<>());
+            LOGGER.debug("item (" + item.getType() + ") is now: " + getAsMap(item).toString());
+            return (C) attributeMap.get(id).get(key);
+        }
+
+        private String getIdFromItem(ItemStack item) {
+            String id = getAttributePrimitive(String.class, item, "id");
+            if (id == null) {
+                id = UUID.randomUUID().toString();
+                this.setAttributePrimitive(String.class, item, "id", id);
+            }
+            return id;
+        }
+
+        public <C> C getObjectAttribute(ItemStack itemStack, String key) {
             var meta = itemStack.getItemMeta();
             if (meta == null)
                 throw new IllegalStateException("cannot get attribute: " + key + ", this item has no item meta.");
@@ -327,7 +348,7 @@ public final class ELDGView<T> {
             return (C) container.get(new NamespacedKey(ELDGPlugin.getPlugin(ELDGPlugin.class), key), o);
         }
 
-        public <C> void setObjectAttribute(ItemStack itemStack, String key, C value){
+        public <C> void setObjectAttribute(ItemStack itemStack, String key, C value) {
             var meta = itemStack.getItemMeta();
             if (meta == null)
                 throw new IllegalStateException("cannot get attribute: " + key + ", this item has no item meta.");
@@ -357,7 +378,13 @@ public final class ELDGView<T> {
 
         @Override
         public void setAttribute(ItemStack itemStack, String key, Object value) {
-            this.setObjectAttribute(itemStack, key, value);
+            // instead of using persist data type, use map
+            //this.setObjectAttribute(itemStack, key, value);
+            String id = getIdFromItem(itemStack);
+            this.attributeMap.putIfAbsent(id, new ConcurrentHashMap<>());
+            this.attributeMap.get(id).put(key, value);
+
+            LOGGER.debug("item (" + itemStack.getType() + ") is now: " + getAsMap(itemStack).toString());
         }
 
 
@@ -368,7 +395,7 @@ public final class ELDGView<T> {
 
         @Override
         public void setAttribute(char pattern, String key, Object value) {
-            getItems(pattern).forEach(item -> setObjectAttribute(item, key, value));
+            getItems(pattern).forEach(item -> setAttribute(item, key, value));
         }
 
 

@@ -52,7 +52,6 @@ public final class NumInputField extends AbstractComponent implements ClickableC
         } else {
             return;
         }
-        event.setCancelled(true);
         this.updateValue(value);
     }
 

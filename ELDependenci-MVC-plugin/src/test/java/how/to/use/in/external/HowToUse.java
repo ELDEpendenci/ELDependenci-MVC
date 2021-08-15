@@ -5,17 +5,14 @@ import com.ericlam.mc.eldgui.demo.error.ELDGExceptionViewHandler;
 import com.ericlam.mc.eldgui.demo.error.ErrorView;
 import com.ericlam.mc.eldgui.exception.ExceptionViewHandler;
 import com.ericlam.mc.eldgui.view.BukkitView;
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-import com.sun.tools.javac.Main;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -40,7 +37,7 @@ public class HowToUse {
     }
 
     @Test
-    public void testJackson() throws Exception{
+    public void testJackson() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         byte[] bb = mapper.writeValueAsBytes(UUID.randomUUID());
         System.out.println(Arrays.toString(bb));
@@ -51,11 +48,22 @@ public class HowToUse {
 
     @Test
     public void testJacksonConvert() {
-        ObjectMapper mapper = new ObjectMapper();
-        User user = new User("username1", "first", "last", 12);
-        Map<String, Object> map = mapper.convertValue(user, new TypeReference<>() {
-        });
-        System.out.println(map);
+        ObjectMapper mapper = new ObjectMapper().disable(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES);
+        Map<String, Object> map = Map.of(
+                "username", "username1",
+                "firstName", "first",
+                "lastName", "last",
+                "age", 12,
+                "address.line1", "line1",
+                "address.line2", "line2"
+        );
+        User user = mapper.convertValue(map, User.class);
+        System.out.println(user);
+    }
+
+    @Test
+    public void testFlatMap() {
+        Map<String, Object> map = Map.of("a", 1, "b", 2, "c.a", 1, "c.b", 2);
     }
 
     @Test
@@ -84,7 +92,7 @@ public class HowToUse {
 
 
     @Test
-    public void testPrimitive(){
+    public void testPrimitive() {
         var student = new Student(
                 "studen1",
                 "Chan",
@@ -96,7 +104,9 @@ public class HowToUse {
         System.out.println(objectToMap(student));
     }
 
-    public BukkitView<?, ?> testView(String a, Integer b){ return null; }
+    public BukkitView<?, ?> testView(String a, Integer b) {
+        return null;
+    }
 
     @Test
     public void testClassCommonPackage() {
@@ -115,8 +125,11 @@ public class HowToUse {
     }
 
     @UIController("1234")
-    private static class A {}
-    private static class B extends A {}
+    private static class A {
+    }
+
+    private static class B extends A {
+    }
 
     public static Map<String, Object> objectFieldsToMap(Object model) {
         return Arrays.stream(model.getClass().getFields()).collect(Collectors.toMap(Field::getName, f -> {
@@ -131,7 +144,7 @@ public class HowToUse {
     }
 
     @SuppressWarnings("unchecked")
-    public static Map<String, Object> objectToMap(Object model){
+    public static Map<String, Object> objectToMap(Object model) {
         Gson gson = new Gson();
         return gson.fromJson(gson.toJson(model), Map.class);
     }

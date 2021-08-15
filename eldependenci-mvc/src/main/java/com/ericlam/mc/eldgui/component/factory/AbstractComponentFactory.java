@@ -8,6 +8,10 @@ import org.bukkit.Material;
 
 import java.util.function.Consumer;
 
+/**
+ * 用於繼承組件工廠，預設了很多事先的邏輯，方便創建
+ * @param <Factory> 工廠
+ */
 public abstract class AbstractComponentFactory<Factory extends ComponentFactory<Factory>> implements ComponentFactory<Factory> {
 
     private final ItemStackService itemStackService;

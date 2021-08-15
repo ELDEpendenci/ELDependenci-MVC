@@ -13,7 +13,7 @@ import org.bukkit.Material;
                 "ZZZZAZZZZ",
                 "BZZZZZZZZ"
         },
-        cancelMove = {'A', 'Z'}
+        cancelMove = {'A', 'Z', 'B'}
 )
 public class ErrorView implements View<Exception> {
 

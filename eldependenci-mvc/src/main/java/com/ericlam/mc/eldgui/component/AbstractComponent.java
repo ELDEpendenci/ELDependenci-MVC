@@ -1,10 +1,7 @@
 package com.ericlam.mc.eldgui.component;
 
 import com.ericlam.mc.eld.services.ItemStackService;
-import com.ericlam.mc.eldgui.component.factory.AttributeController;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.function.Consumer;
 
 public abstract class AbstractComponent implements Component {
 

@@ -1,37 +1,47 @@
 package com.ericlam.mc.eldgui.component;
 
 import com.ericlam.mc.eld.services.ItemStackService;
-import com.ericlam.mc.eldgui.component.factory.AttributeController;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.List;
 
 public final class TextInputField extends AbstractComponent implements ListenableComponent<AsyncChatEvent> {
 
     private final boolean disabled;
+    private final long maxWait;
+    private final String inputMessage;
 
-    public TextInputField(AttributeController attributeController, ItemStackService.ItemFactory itemFactory, boolean disabled) {
+    public TextInputField(
+            AttributeController attributeController,
+            ItemStackService.ItemFactory itemFactory,
+            boolean disabled,
+            long maxWait,
+            String inputMessage
+    ) {
         super(attributeController, itemFactory);
         this.disabled = disabled;
+        this.maxWait = maxWait;
+        this.inputMessage = inputMessage;
     }
 
     @Override
     public void onListen(Player player) {
-        player.sendMessage("input the value within 10 seconds");
+        player.sendMessage(inputMessage);
     }
 
     @Override
     public long getMaxWaitingTime() {
-        return 200L; // 10 secs
+        return maxWait;
     }
 
     @Override
     public void callBack(AsyncChatEvent event) {
         final String message = ((TextComponent) event.message()).content();
         attributeController.setAttribute(getItem(), AttributeController.VALUE_TAG, message);
-        itemFactory.lore(List.of("Input: " + message));
+        itemFactory.lore(List.of("-> " + message));
         this.updateInventory();
     }
 
@@ -41,7 +51,7 @@ public final class TextInputField extends AbstractComponent implements Listenabl
     }
 
     @Override
-    public boolean isDisabled() {
-        return disabled;
+    public boolean shouldActivate(InventoryClickEvent e) {
+        return !disabled;
     }
 }

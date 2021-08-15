@@ -1,7 +1,6 @@
 package com.ericlam.mc.eldgui.component;
 
 import com.ericlam.mc.eld.services.ItemStackService;
-import com.ericlam.mc.eldgui.component.factory.AttributeController;
 
 public final class Button extends AbstractComponent{
 

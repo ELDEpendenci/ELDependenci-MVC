@@ -2,7 +2,7 @@ package com.ericlam.mc.eldgui;
 
 import com.ericlam.mc.eld.services.ConfigPoolService;
 import com.ericlam.mc.eld.services.ItemStackService;
-import com.ericlam.mc.eldgui.component.factory.AttributeController;
+import com.ericlam.mc.eldgui.component.AttributeController;
 import com.ericlam.mc.eldgui.controller.FromPattern;
 import com.ericlam.mc.eldgui.controller.ItemAttribute;
 import com.ericlam.mc.eldgui.controller.ModelAttribute;
@@ -259,6 +259,15 @@ public final class ELDGUI {
         } catch (Exception ex) {
             this.handleException(ex);
         }
+    }
+
+    public void onInventoryOpen(InventoryOpenEvent e){
+        if (this.currentView == null) return;
+        LOGGER.debug("on inventory open"); // debug
+        if (this.currentView.getNativeInventory() == e.getInventory()) return;
+        e.getPlayer().sendMessage("open other inventory while inputting, so destroyed the previous view");
+        e.getPlayer().sendMessage("destroying view: "+controllerCls+" "+currentView.getView());
+        destroy();
     }
 
     private void handleException(Exception ex) {

@@ -12,6 +12,12 @@ public interface NumInputFactory extends ComponentFactory<NumInputFactory> {
 
     NumInputFactory bindInput(String field, int initValue);
 
+    NumInputFactory waitForInput(long wait);
+
+    NumInputFactory messageInput(String message);
+
+    NumInputFactory messageInvalidNumber(String message);
+
     NumInputFactory disabled();
 
 }

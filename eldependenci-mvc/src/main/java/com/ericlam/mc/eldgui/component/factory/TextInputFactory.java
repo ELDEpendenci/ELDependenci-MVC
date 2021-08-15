@@ -8,6 +8,10 @@ public interface TextInputFactory extends ComponentFactory<TextInputFactory> {
 
     TextInputFactory bindInput(String field, String initValue);
 
+    TextInputFactory waitForInput(long wait);
+
+    TextInputFactory messageInput(String message);
+
     TextInputFactory disabled();
 
 }

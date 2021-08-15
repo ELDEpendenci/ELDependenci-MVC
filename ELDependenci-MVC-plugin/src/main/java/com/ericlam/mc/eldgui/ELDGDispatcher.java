@@ -11,6 +11,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 
 import java.util.Map;
 import java.util.Optional;
@@ -101,6 +102,11 @@ public class ELDGDispatcher implements UIDispatcher, Listener {
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent e){
         Optional.ofNullable(guiSessionMap.get((Player) e.getPlayer())).ifPresent(gui -> gui.onInventoryClose(e));
+    }
+
+    @EventHandler
+    public void onInventoryOpen(InventoryOpenEvent e){
+        Optional.ofNullable(guiSessionMap.get((Player) e.getPlayer())).ifPresent(gui -> gui.onInventoryOpen(e));
     }
 
     @SuppressWarnings("unchecked")

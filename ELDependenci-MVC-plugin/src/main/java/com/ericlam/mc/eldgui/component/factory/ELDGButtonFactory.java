@@ -1,6 +1,7 @@
 package com.ericlam.mc.eldgui.component.factory;
 
 import com.ericlam.mc.eld.services.ItemStackService;
+import com.ericlam.mc.eldgui.component.AttributeController;
 import com.ericlam.mc.eldgui.component.Button;
 import com.ericlam.mc.eldgui.component.Component;
 

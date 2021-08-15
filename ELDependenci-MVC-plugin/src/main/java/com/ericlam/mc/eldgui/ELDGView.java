@@ -3,7 +3,7 @@ package com.ericlam.mc.eldgui;
 import com.ericlam.mc.eld.services.ConfigPoolService;
 import com.ericlam.mc.eld.services.ItemStackService;
 import com.ericlam.mc.eldgui.component.*;
-import com.ericlam.mc.eldgui.component.factory.AttributeController;
+import com.ericlam.mc.eldgui.component.AttributeController;
 import com.ericlam.mc.eldgui.view.*;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.bukkit.Bukkit;
@@ -128,8 +128,10 @@ public final class ELDGView<T> {
         }
         if (component instanceof ListenableComponent) {
             var listenable = (ListenableComponent<? extends PlayerEvent>) component;
-            e.setCancelled(true);
-            this.activateEventListener(listenable, e);
+            if (listenable.shouldActivate(e)){
+                e.setCancelled(true);
+                this.activateEventListener(listenable, e);
+            }
             return false;
         } else {
             return true;

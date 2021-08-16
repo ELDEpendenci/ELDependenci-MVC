@@ -6,9 +6,7 @@ import com.ericlam.mc.eld.ManagerProvider;
 import com.ericlam.mc.eld.ServiceCollection;
 import com.ericlam.mc.eld.annotations.ELDPlugin;
 import com.ericlam.mc.eldgui.component.factory.*;
-import com.ericlam.mc.eldgui.controller.UIController;
 import com.ericlam.mc.eldgui.demo.DemoInventories;
-import com.ericlam.mc.eldgui.demo.error.ELDGExceptionViewHandler;
 import com.ericlam.mc.eldgui.demo.error.ErrorController;
 import com.ericlam.mc.eldgui.demo.user.UserController;
 
@@ -35,14 +33,14 @@ public class ELDGPlugin extends ELDBukkitAddon {
 
         // register controller
         eldgmvcInstallation.registerControllers(UserController.class, ErrorController.class);
-        // register exception view handler
-        eldgmvcInstallation.setGlobalExceptionHandler(ELDGExceptionViewHandler.class);
+
         // register component factory
         eldgmvcInstallation.addComponentFactory(ButtonFactory.class, ELDGButtonFactory.class);
         eldgmvcInstallation.addComponentFactory(TextInputFactory.class, ELDGTextInputFactory.class);
         eldgmvcInstallation.addComponentFactory(NumInputFactory.class, ELDGNumInputFactory.class);
+        eldgmvcInstallation.addComponentFactory(AnimatedButtonFactory.class, ELDGAnimatedButtonFactory.class);
 
-        //
+        // install module
         addonManager.installModule(new ELDGMVCModule(eldgmvcInstallation));
     }
 }

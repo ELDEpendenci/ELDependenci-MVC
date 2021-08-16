@@ -1,9 +1,12 @@
 package com.ericlam.mc.eldgui;
 
 import com.ericlam.mc.eldgui.component.ComponentFactory;
+import com.ericlam.mc.eldgui.demo.ELDGExceptionViewHandler;
+import com.ericlam.mc.eldgui.demo.ELDGLoadingView;
 import com.ericlam.mc.eldgui.exception.ExceptionViewHandler;
 import com.ericlam.mc.eldgui.controller.UIController;
 import com.ericlam.mc.eldgui.exception.HandleForControllers;
+import com.ericlam.mc.eldgui.view.LoadingView;
 
 import java.lang.annotation.Annotation;
 import java.util.*;
@@ -16,7 +19,8 @@ public class ELDGMVCInstallation implements MVCInstallation{
     private final Map<Class<?>, Class<? extends ExceptionViewHandler>> exceptionHandlerMap = new ConcurrentHashMap<>();
     private final Set<Class<? extends ExceptionViewHandler>> scopedExceptionHandlerSet = new HashSet<>();
     private final Map<Class<? extends ComponentFactory<?>>, Class<? extends ComponentFactory<?>>> componentFactoryMap = new ConcurrentHashMap<>();
-    private Class<? extends ExceptionViewHandler> defaultExceptionHandler;
+    private Class<? extends ExceptionViewHandler> defaultExceptionHandler = ELDGExceptionViewHandler.class;
+    private Class<? extends LoadingView> defaultLoadingView = ELDGLoadingView.class;
     private final ELDGPlugin plugin;
 
     public ELDGMVCInstallation(ELDGPlugin plugin) {
@@ -62,6 +66,11 @@ public class ELDGMVCInstallation implements MVCInstallation{
     }
 
     @Override
+    public void setGlobalLoadingView(Class<? extends LoadingView> loadingView) {
+        this.defaultLoadingView = loadingView;
+    }
+
+    @Override
     public <T extends ComponentFactory<T>, E extends T> void addComponentFactory(Class<T> factory, Class<E> implement) {
         this.componentFactoryMap.put(factory, implement);
     }
@@ -77,6 +86,10 @@ public class ELDGMVCInstallation implements MVCInstallation{
 
     public Class<? extends ExceptionViewHandler> getDefaultExceptionHandler() {
         return defaultExceptionHandler;
+    }
+
+    public Class<? extends LoadingView> getDefaultLoadingView() {
+        return defaultLoadingView;
     }
 
     public Set<Class<? extends ExceptionViewHandler>> getScopedExceptionHandlerSet() {

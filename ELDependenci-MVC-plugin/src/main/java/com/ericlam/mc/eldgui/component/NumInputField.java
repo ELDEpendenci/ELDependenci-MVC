@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public final class NumInputField extends AbstractComponent implements ClickableComponent, ListenableComponent<AsyncChatEvent> {
+public final class NumInputField extends AbstractComponent implements Clickable, Listenable<AsyncChatEvent> {
 
     private final int min, max;
     private final boolean disabled;

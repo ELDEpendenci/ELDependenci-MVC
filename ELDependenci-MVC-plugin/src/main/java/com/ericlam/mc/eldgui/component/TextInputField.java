@@ -8,7 +8,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.List;
 
-public final class TextInputField extends AbstractComponent implements ListenableComponent<AsyncChatEvent> {
+public final class TextInputField extends AbstractComponent implements Listenable<AsyncChatEvent> {
 
     private final boolean disabled;
     private final long maxWait;

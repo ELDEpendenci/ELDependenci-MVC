@@ -1,7 +1,7 @@
 package how.to.use.in.external;
 
 import com.ericlam.mc.eldgui.controller.UIController;
-import com.ericlam.mc.eldgui.demo.error.ELDGExceptionViewHandler;
+import com.ericlam.mc.eldgui.demo.ELDGExceptionViewHandler;
 import com.ericlam.mc.eldgui.demo.error.ErrorView;
 import com.ericlam.mc.eldgui.exception.ExceptionViewHandler;
 import com.ericlam.mc.eldgui.view.BukkitView;

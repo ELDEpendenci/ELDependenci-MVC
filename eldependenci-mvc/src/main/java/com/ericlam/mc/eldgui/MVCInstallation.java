@@ -2,6 +2,7 @@ package com.ericlam.mc.eldgui;
 
 import com.ericlam.mc.eldgui.component.ComponentFactory;
 import com.ericlam.mc.eldgui.exception.ExceptionViewHandler;
+import com.ericlam.mc.eldgui.view.LoadingView;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 
 import java.lang.annotation.Annotation;
@@ -16,6 +17,8 @@ public interface MVCInstallation {
     void addExceptionViewHandlers(List<Class<? extends ExceptionViewHandler>> controllers);
 
     void setGlobalExceptionHandler(Class<? extends ExceptionViewHandler> exceptionHandler);
+
+    void setGlobalLoadingView(Class<? extends LoadingView> loadingView);
 
     <T extends ComponentFactory<T>, E extends T> void addComponentFactory(Class<T> factory, Class<E> implement);
 

@@ -2,16 +2,15 @@ package com.ericlam.mc.eldgui;
 
 import com.ericlam.mc.eld.services.ConfigPoolService;
 import com.ericlam.mc.eld.services.ItemStackService;
+import com.ericlam.mc.eld.services.ScheduleService;
 import com.ericlam.mc.eldgui.component.AttributeController;
-import com.ericlam.mc.eldgui.controller.FromPattern;
-import com.ericlam.mc.eldgui.controller.ItemAttribute;
-import com.ericlam.mc.eldgui.controller.ModelAttribute;
-import com.ericlam.mc.eldgui.controller.UIController;
+import com.ericlam.mc.eldgui.controller.*;
 import com.ericlam.mc.eldgui.event.*;
 import com.ericlam.mc.eldgui.exception.ExceptionViewHandler;
 import com.ericlam.mc.eldgui.exception.HandleException;
 import com.ericlam.mc.eldgui.view.BukkitRedirectView;
 import com.ericlam.mc.eldgui.view.BukkitView;
+import com.ericlam.mc.eldgui.view.LoadingView;
 import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
 import org.bukkit.Bukkit;
@@ -55,6 +54,7 @@ public final class ELDGUI {
     private final ItemStackService itemStackService;
     private final Consumer<Player> onDestroy;
     private final ViewJumper goTo;
+    private final BukkitView<? extends LoadingView, Void> loadingView;
 
 
     private ELDGView<?> currentView;
@@ -93,6 +93,11 @@ public final class ELDGUI {
 
 
         this.controllerCls = controller.getClass();
+
+        Optional<Class<? extends LoadingView>> loadingViewOpt = Optional.ofNullable(this.controllerCls.getAnnotation(AsyncLoadingView.class)).map(AsyncLoadingView::value);
+        var loadingView = loadingViewOpt.isPresent() ? loadingViewOpt.get() : eldgmvcInstallation.getDefaultLoadingView();
+        this.loadingView = new BukkitView<>(loadingView, null);
+
         this.initIndexView(controller);
     }
 
@@ -138,6 +143,7 @@ public final class ELDGUI {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void initReturnTypeManager(ReturnTypeManager returnTypeManager) {
         returnTypeManager.registerReturnType(type -> type.equals(new TypeLiteral<BukkitView<?, ?>>() {
         }.getType()) || type == BukkitView.class, bukkitView -> {
@@ -147,6 +153,27 @@ public final class ELDGUI {
                 BukkitView<?, ?> bv = (BukkitView<?, ?>) bukkitView;
                 this.updateView(bv);
             }
+        });
+        returnTypeManager.registerReturnType(t -> {
+            if (t instanceof ParameterizedType) {
+                var parat = (ParameterizedType) t;
+                var inside = parat.getActualTypeArguments()[0];
+                return (inside == BukkitView.class || inside.equals(new TypeLiteral<BukkitView<?, ?>>() {
+                        }.getType()))
+                        && parat.getRawType() == ScheduleService.BukkitPromise.class;
+            }
+            return false;
+        }, result -> {
+            // loading view start
+            this.updateView(this.loadingView);
+            ScheduleService.BukkitPromise<BukkitView<?, ?>> promise = (ScheduleService.BukkitPromise<BukkitView<?,?>>) result;
+            promise.thenRunSync(bukkitView -> {
+                if (bukkitView instanceof BukkitRedirectView) {
+                    this.jumpToController((BukkitRedirectView) bukkitView);
+                } else {
+                    this.updateView(bukkitView);
+                }
+            }).join();
         });
         returnTypeManager.registerReturnType(type -> type == void.class, view -> {
         });
@@ -187,11 +214,11 @@ public final class ELDGUI {
                             .collect(Collectors
                                     .toMap(
                                             item -> context.getAttribute(item, AttributeController.FIELD_TAG),
-                                            item -> Optional.ofNullable(context.getAttribute(item, AttributeController.VALUE_TAG)).orElseThrow(() -> new IllegalStateException("The value tag of "+item.toString()+" is null."))
+                                            item -> Optional.ofNullable(context.getAttribute(item, AttributeController.VALUE_TAG)).orElseThrow(() -> new IllegalStateException("The value tag of " + item.toString() + " is null."))
                                     )
                             );
                     Map<String, Object> toConvert = PersistDataUtils.toNestedMap(fieldMap);
-                    LOGGER.debug("using "+ toConvert +" to create instance of "+model);
+                    LOGGER.debug("using " + toConvert + " to create instance of " + model);
                     return PersistDataUtils.mapToObject(toConvert, model);
                     /* no need to use
                     Object modelObject;
@@ -256,12 +283,12 @@ public final class ELDGUI {
         }
     }
 
-    public void onInventoryOpen(InventoryOpenEvent e){
+    public void onInventoryOpen(InventoryOpenEvent e) {
         if (this.currentView == null) return;
         LOGGER.debug("on inventory open"); // debug
         if (this.currentView.getNativeInventory() == e.getInventory()) return;
         e.getPlayer().sendMessage("open other inventory while inputting, so destroyed the previous view");
-        e.getPlayer().sendMessage("destroying view: "+controllerCls+" "+currentView.getView());
+        e.getPlayer().sendMessage("destroying view: " + controllerCls + " " + currentView.getView());
         destroy();
     }
 

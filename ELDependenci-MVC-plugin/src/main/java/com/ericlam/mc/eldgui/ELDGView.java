@@ -110,6 +110,7 @@ public final class ELDGView<T> {
         this.nativeInventory.clear();
         this.componentListeners.forEach(HandlerList::unregisterAll);
         if (waitingTask != null && !waitingTask.isCancelled()) waitingTask.cancel();
+        this.componentMap.values().stream().flatMap(Collection::stream).filter(c -> c instanceof Animatable && ((Animatable) c).isAnimating()).forEach(animate -> ((Animatable)animate).stopAnimation());
     }
 
     // boolean: pass to controller or not
@@ -124,11 +125,11 @@ public final class ELDGView<T> {
         if (component instanceof Disable && ((Disable) component).isDisabled()) {
             return true;
         }
-        if (component instanceof ClickableComponent) {
-            ((ClickableComponent) component).onClick(e);
+        if (component instanceof Clickable) {
+            ((Clickable) component).onClick(e);
         }
-        if (component instanceof ListenableComponent) {
-            var listenable = (ListenableComponent<? extends PlayerEvent>) component;
+        if (component instanceof Listenable) {
+            var listenable = (Listenable<? extends PlayerEvent>) component;
             e.setCancelled(true);
             if (listenable.shouldActivate(e)) {
                 this.activateEventListener(listenable, e);
@@ -144,7 +145,7 @@ public final class ELDGView<T> {
     }
 
     private <E extends PlayerEvent> void activateEventListener(
-            ListenableComponent<E> component,
+            Listenable<E> component,
             InventoryClickEvent e
     ) {
         Class<E> eventClass = component.getEventClass();
@@ -264,6 +265,7 @@ public final class ELDGView<T> {
                 componentMap.putIfAbsent(pattern, new ArrayList<>());
                 componentMap.get(pattern).add(component);
                 inventoryContext.fillItem(pattern, component);
+                if (component instanceof Animatable) ((Animatable) component).startAnimation();
                 return this;
             }
 
@@ -273,6 +275,7 @@ public final class ELDGView<T> {
                     componentMap.putIfAbsent(pattern, new ArrayList<>());
                     componentMap.get(pattern).add(component);
                     inventoryContext.addItem(pattern, component);
+                    if (component instanceof Animatable) ((Animatable) component).startAnimation();
                 }
                 return this;
             }
@@ -282,6 +285,7 @@ public final class ELDGView<T> {
                 componentMap.putIfAbsent(pattern, new ArrayList<>());
                 componentMap.get(pattern).add(component);
                 inventoryContext.setItem(pattern, pos, component);
+                if (component instanceof Animatable) ((Animatable) component).startAnimation();
                 return this;
             }
 

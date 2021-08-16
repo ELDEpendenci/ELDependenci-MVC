@@ -1,6 +1,8 @@
 package com.ericlam.mc.eldgui.event;
 
 import org.bukkit.Bukkit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Type;
 import java.util.Map;
@@ -10,6 +12,7 @@ import java.util.function.Function;
 
 public final class ReturnTypeManager {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReturnTypeManager.class);
     private final Map<Function<Type, Boolean>, Consumer<Object>> supplierMap = new ConcurrentHashMap<>();
 
     public void registerReturnType(Function<Type, Boolean> define, Consumer<Object> consumer) {
@@ -25,7 +28,7 @@ public final class ReturnTypeManager {
                     supplierMap.get(key).accept(result);
                     return true;
                 }).orElseGet(() -> {
-                    Bukkit.getLogger().warning("[ELDepdendenci-GUI] Unknown return type " + returnType + ", ignore handling.");
+                    LOGGER.warn("Unknown return type " + returnType + ", ignore handling.");
                     return false;
                 });
     }

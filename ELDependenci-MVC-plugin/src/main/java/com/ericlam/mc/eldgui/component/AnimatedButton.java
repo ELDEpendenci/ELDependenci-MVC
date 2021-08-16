@@ -3,11 +3,12 @@ package com.ericlam.mc.eldgui.component;
 import com.ericlam.mc.eld.services.ItemStackService;
 import com.ericlam.mc.eldgui.CircuitIterator;
 import com.ericlam.mc.eldgui.ELDGPlugin;
+import com.ericlam.mc.eldgui.component.modifier.Animatable;
 import org.bukkit.Material;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.Iterator;
+import java.util.Arrays;
 
 public final class AnimatedButton extends AbstractComponent implements Animatable {
 
@@ -72,7 +73,7 @@ public final class AnimatedButton extends AbstractComponent implements Animatabl
                     itemFactory.display(displayIterator.next());
                 }
                 if (loreIterator.hasNext()){
-                    itemFactory.lore(loreIterator.next());
+                    itemFactory.lore(Arrays.asList(loreIterator.next()));
                 }
                 if (iconIterator.hasNext()){
                     itemFactory.material(iconIterator.next());

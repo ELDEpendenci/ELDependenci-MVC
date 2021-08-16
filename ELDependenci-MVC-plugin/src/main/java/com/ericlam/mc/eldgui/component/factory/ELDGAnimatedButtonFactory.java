@@ -9,7 +9,7 @@ import org.bukkit.Material;
 import java.util.Arrays;
 import java.util.List;
 
-public class ELDGAnimatedButtonFactory extends AbstractComponentFactory<AnimatedButtonFactory> implements AnimatedButtonFactory {
+public final class ELDGAnimatedButtonFactory extends AbstractComponentFactory<AnimatedButtonFactory> implements AnimatedButtonFactory {
 
     private String[][] lores;
     private Material[] icons;

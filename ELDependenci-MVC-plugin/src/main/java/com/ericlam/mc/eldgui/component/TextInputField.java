@@ -1,6 +1,7 @@
 package com.ericlam.mc.eldgui.component;
 
 import com.ericlam.mc.eld.services.ItemStackService;
+import com.ericlam.mc.eldgui.component.modifier.Listenable;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.entity.Player;

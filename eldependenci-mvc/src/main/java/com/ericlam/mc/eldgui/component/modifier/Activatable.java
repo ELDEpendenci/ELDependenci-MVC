@@ -1,4 +1,4 @@
-package com.ericlam.mc.eldgui.component;
+package com.ericlam.mc.eldgui.component.modifier;
 
 import org.bukkit.event.inventory.InventoryClickEvent;
 

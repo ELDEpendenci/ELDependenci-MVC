@@ -1,5 +1,7 @@
 package how.to.use.in.external;
 
+import com.ericlam.mc.eldgui.component.Component;
+import com.ericlam.mc.eldgui.component.factory.SelectionFactory;
 import com.ericlam.mc.eldgui.controller.UIController;
 import com.ericlam.mc.eldgui.demo.ELDGExceptionViewHandler;
 import com.ericlam.mc.eldgui.demo.error.ErrorView;
@@ -8,6 +10,8 @@ import com.ericlam.mc.eldgui.view.BukkitView;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -22,8 +26,15 @@ public class HowToUse {
 
 
     public static void main(String[] args) {
-        Object o = Math.random() > 0.5 ? new ArrayList<String>() : new Object();
-        System.out.println(o instanceof Collection<?>);
+        SelectionFactory selection = null;
+
+        Component c = selection
+                .icon(Material.PLAYER_HEAD)
+                .label("select a number")
+                .selectable(List.of(1, 2, 3))
+                .bindInput("go", 3)
+                .toDisplay(String::valueOf)
+                .create();
     }
 
     @Test

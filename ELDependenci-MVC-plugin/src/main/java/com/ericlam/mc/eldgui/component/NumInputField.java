@@ -1,6 +1,8 @@
 package com.ericlam.mc.eldgui.component;
 
 import com.ericlam.mc.eld.services.ItemStackService;
+import com.ericlam.mc.eldgui.component.modifier.Clickable;
+import com.ericlam.mc.eldgui.component.modifier.Listenable;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.TextComponent;
 import org.apache.commons.lang.text.StrSubstitutor;
@@ -39,7 +41,7 @@ public final class NumInputField extends AbstractComponent implements Clickable,
         this.inputMessage = inputMessage;
         this.errorMessage = errorMessage;
         this.maxWait = maxWait;
-        this.value = Optional.ofNullable((Integer) attributeController.getAttribute(getItem(), AttributeController.VALUE_TAG)).orElse(0);
+        this.value = (int) Optional.ofNullable(attributeController.getAttribute(getItem(), AttributeController.VALUE_TAG)).orElse(0);
     }
 
     @Override

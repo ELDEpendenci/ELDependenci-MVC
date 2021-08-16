@@ -11,7 +11,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -31,9 +30,22 @@ public class HowToUse {
         Component c = selection
                 .icon(Material.PLAYER_HEAD)
                 .label("select a number")
-                .selectable(List.of(1, 2, 3))
-                .bindInput("go", 3)
+                .selectable(String.class, builder -> {
+
+                    builder.insert("iron")
+                            .icon(Material.IRON_INGOT)
+                            .number(1)
+                            .submit();
+
+                    builder.insert("gold")
+                            .icon(Material.GOLD_INGOT)
+                            .number(2)
+                            .submit();
+
+                })
+                .bindInput("go", "123")
                 .toDisplay(String::valueOf)
+                .then()
                 .create();
     }
 

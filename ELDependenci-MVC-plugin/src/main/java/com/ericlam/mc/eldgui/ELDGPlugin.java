@@ -40,6 +40,7 @@ public class ELDGPlugin extends ELDBukkitAddon {
         eldgmvcInstallation.addComponentFactory(NumInputFactory.class, ELDGNumInputFactory.class);
         eldgmvcInstallation.addComponentFactory(AnimatedButtonFactory.class, ELDGAnimatedButtonFactory.class);
         eldgmvcInstallation.addComponentFactory(CheckboxFactory.class, ELDGCheckboxFactory.class);
+        eldgmvcInstallation.addComponentFactory(SelectionFactory.class, ELDGSelectionFactory.class);
 
         // install module
         addonManager.installModule(new ELDGMVCModule(eldgmvcInstallation));

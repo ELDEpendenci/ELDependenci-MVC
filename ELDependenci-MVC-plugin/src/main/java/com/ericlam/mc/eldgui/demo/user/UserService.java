@@ -19,7 +19,7 @@ public class UserService {
         this.fakeUserTables.clear();
         this.fakeUserTables.put("user1", new User("user1", "Lam", "TF", 11));
         this.fakeUserTables.put("user2", new User("user2", "Chan", "ZF", 21));
-        this.fakeUserTables.put("user3", new User("user3", "Tai", "ZZ", 55));
+        this.fakeUserTables.put("user3", new User("user3", "Wong", "ZZ", 55));
         this.fakeUserTables.put("user4", new User("user4", "Siu", "OO", 32));
         this.fakeUserTables.put("user5", new User("user5", "Lai", "LL", 19));
     }

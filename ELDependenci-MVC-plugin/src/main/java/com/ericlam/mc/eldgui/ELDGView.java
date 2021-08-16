@@ -124,7 +124,11 @@ public final class ELDGView<T> {
         if (e.getSlotType() != InventoryType.SlotType.CONTAINER) return false;
         final ItemStack clicked = e.getCurrentItem();
         if (clicked == null) return false;
-        Optional<Component> clickedComponent = componentMap.values().stream().flatMap(Collection::stream).filter(c -> c.getItem().equals(clicked)).findAny();
+        Optional<Component> clickedComponent = componentMap.values().stream().flatMap(Collection::stream).filter(c -> {
+            String itemId = inventoryContext.getIdFromItem(c.getItem());
+            String clickedId = inventoryContext.getIdFromItem(clicked);
+            return itemId.equals(clickedId);
+        }).findAny();
         if (clickedComponent.isEmpty()) return true;
         final Component component = clickedComponent.get();
         if (component instanceof Disable && ((Disable) component).isDisabled()) {
@@ -271,6 +275,7 @@ public final class ELDGView<T> {
                 componentMap.get(pattern).add(component);
                 inventoryContext.fillItem(pattern, component);
                 if (component instanceof Animatable) ((Animatable) component).startAnimation();
+                inventoryContext.getIdFromItem(component.getItem());
                 return this;
             }
 
@@ -281,6 +286,7 @@ public final class ELDGView<T> {
                     componentMap.get(pattern).add(component);
                     inventoryContext.addItem(pattern, component);
                     if (component instanceof Animatable) ((Animatable) component).startAnimation();
+                    inventoryContext.getIdFromItem(component.getItem());
                 }
                 return this;
             }
@@ -291,6 +297,7 @@ public final class ELDGView<T> {
                 componentMap.get(pattern).add(component);
                 inventoryContext.setItem(pattern, pos, component);
                 if (component instanceof Animatable) ((Animatable) component).startAnimation();
+                inventoryContext.getIdFromItem(component.getItem());
                 return this;
             }
 

@@ -2,6 +2,7 @@ package com.ericlam.mc.eldgui.demo.user;
 
 import com.ericlam.mc.eldgui.component.factory.ButtonFactory;
 import com.ericlam.mc.eldgui.component.factory.NumInputFactory;
+import com.ericlam.mc.eldgui.component.factory.SelectionFactory;
 import com.ericlam.mc.eldgui.component.factory.TextInputFactory;
 import com.ericlam.mc.eldgui.view.UIContext;
 import com.ericlam.mc.eldgui.view.View;
@@ -28,6 +29,7 @@ public class UserUpdateView implements View<User> {
         TextInputFactory textField = context.factory(TextInputFactory.class);
         NumInputFactory numberField = context.factory(NumInputFactory.class);
         ButtonFactory button = context.factory(ButtonFactory.class);
+        SelectionFactory selection = context.factory(SelectionFactory.class);
 
         var usernameField = textField
                 .icon(Material.BIRCH_SIGN)
@@ -40,10 +42,27 @@ public class UserUpdateView implements View<User> {
         context.pattern('A')
                 .components(
                         usernameField.create(),
+                        /*
                         textField
                                 .icon(Material.ACACIA_SIGN)
                                 .label("Enter First Name")
                                 .bindInput("firstName", model == null ? "" : model.firstName)
+                                .create(),
+
+                         */
+                        selection
+                                .icon(Material.ACACIA_SIGN)
+                                .selectable(String.class, builder -> {
+
+                                    builder.insert("Lam").icon(Material.GOLD_INGOT).number(1).submit();
+                                    builder.insert("Chan").icon(Material.IRON_INGOT).number(2).submit();
+                                    builder.insert("Wong").icon(Material.EMERALD).number(3).submit();
+                                    builder.insert("Siu").icon(Material.REDSTONE).number(4).submit();
+                                    builder.insert("Lai").icon(Material.DIAMOND).number(5).submit();
+
+                                })
+                                .bindInput("firstName", model == null ? "Lam" : model.firstName)
+                                .then()
                                 .create(),
                         textField
                                 .icon(Material.CRIMSON_SIGN)

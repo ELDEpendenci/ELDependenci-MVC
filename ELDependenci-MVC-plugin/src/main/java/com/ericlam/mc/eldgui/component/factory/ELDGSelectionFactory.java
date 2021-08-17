@@ -3,7 +3,7 @@ package com.ericlam.mc.eldgui.component.factory;
 import com.ericlam.mc.eld.services.ItemStackService;
 import com.ericlam.mc.eldgui.component.AttributeController;
 import com.ericlam.mc.eldgui.component.Component;
-import com.ericlam.mc.eldgui.component.SelectionInput;
+import com.ericlam.mc.eldgui.component.Selection;
 import org.bukkit.Material;
 
 import java.util.*;
@@ -31,7 +31,7 @@ public final class ELDGSelectionFactory extends AbstractComponentFactory<Selecti
     public Component build(ItemStackService.ItemFactory itemFactory) {
         if (selectionSettings.getElements().isEmpty())
             throw new IllegalStateException("Selection Elements cannot be empty.");
-        return new SelectionInput(attributeController, itemFactory, disabled, selectionSettings);
+        return new Selection(attributeController, itemFactory, disabled, selectionSettings);
     }
 
     @Override

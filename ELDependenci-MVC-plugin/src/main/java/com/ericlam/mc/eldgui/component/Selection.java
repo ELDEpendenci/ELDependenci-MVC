@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-public final class SelectionInput<T> extends AbstractComponent implements Clickable {
+public final class Selection<T> extends AbstractComponent implements Clickable {
 
     private final boolean disabled;
     private final ELDGSelectionFactory.ELDGSelectionSettings<T> selectionSettings;
@@ -19,7 +19,7 @@ public final class SelectionInput<T> extends AbstractComponent implements Clicka
     private T currentValue;
 
     @SuppressWarnings("unchecked")
-    public SelectionInput(
+    public Selection(
             AttributeController attributeController,
             ItemStackService.ItemFactory itemFactory,
             boolean disabled,

@@ -1,9 +1,11 @@
 package com.ericlam.mc.eldgui.demo.user;
 
+import com.ericlam.mc.eldgui.UISession;
 import com.ericlam.mc.eldgui.controller.ItemAttribute;
 import com.ericlam.mc.eldgui.controller.ModelAttribute;
 import com.ericlam.mc.eldgui.controller.UIController;
 import com.ericlam.mc.eldgui.event.ClickMapping;
+import com.ericlam.mc.eldgui.view.BukkitRedirectView;
 import com.ericlam.mc.eldgui.view.BukkitView;
 import org.bukkit.entity.Player;
 
@@ -25,14 +27,17 @@ public class UserController {
 
 
     @ClickMapping(view = UserListView.class, pattern = 'L')
-    public BukkitView<?, ?> onClickUser(@ItemAttribute("username") String username) throws UserNotFoundException {
+    public BukkitView<?, ?> onClickUser(@ItemAttribute("username") String username, UISession session) throws UserNotFoundException {
         Optional<User> user = userService.findById(username);
         if (user.isPresent()) {
             return new BukkitView<>(UserView.class, user.get());
         } else {
-            // try using throw exception
+            // try using throw exception -> try using pass controller
             //return new BukkitView<>(UserNotFoundView.class, username);
-            throw new UserNotFoundException(username);
+            UserNotFoundException e =  new UserNotFoundException(username);
+            session.setAttribute("exception", e);
+            session.setAttribute("from", "user");
+            return new BukkitRedirectView("error");
         }
     }
 

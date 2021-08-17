@@ -124,12 +124,15 @@ public final class RGBSelector extends AbstractComponent implements Listenable<A
                 int blue = Integer.parseInt(args[2]);
                 color = Color.fromRGB(red, green, blue);
             }else{
-                throw new NumberFormatException();
+                throw new IllegalArgumentException();
             }
-        }catch (NumberFormatException e){
+        }catch (RuntimeException e){
             event.getPlayer().sendMessage(invalidMessage);
             return;
         }
+        this.rgbMap.put(1, color.getRed());
+        this.rgbMap.put(2, color.getGreen());
+        this.rgbMap.put(3, color.getBlue());
         attributeController.setAttribute(getItem(), AttributeController.VALUE_TAG, color);
         this.updateItem(color);
     }

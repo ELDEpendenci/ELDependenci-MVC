@@ -6,8 +6,11 @@ import com.ericlam.mc.eld.ManagerProvider;
 import com.ericlam.mc.eld.ServiceCollection;
 import com.ericlam.mc.eld.annotations.ELDPlugin;
 import com.ericlam.mc.eldgui.component.factory.*;
+import com.ericlam.mc.eldgui.config.ELDGConfig;
+import com.ericlam.mc.eldgui.config.ELDGLanguage;
 import com.ericlam.mc.eldgui.demo.DemoInventories;
 import com.ericlam.mc.eldgui.demo.error.ErrorController;
+import com.ericlam.mc.eldgui.demo.test.TestController;
 import com.ericlam.mc.eldgui.demo.user.UserController;
 
 @ELDPlugin(
@@ -22,6 +25,7 @@ public class ELDGPlugin extends ELDBukkitAddon {
         serviceCollection.addSingleton(ManagerFactory.class);
         serviceCollection.addGroupConfiguration(DemoInventories.class);
         serviceCollection.addConfiguration(ELDGLanguage.class);
+        serviceCollection.addConfiguration(ELDGConfig.class);
     }
 
 
@@ -31,8 +35,12 @@ public class ELDGPlugin extends ELDBukkitAddon {
         addonManager.customInstallation(MVCInstallation.class, eldgmvcInstallation);
         // my demo register
 
+        ELDGConfig config = managerProvider.getConfigStorage().getConfigAs(ELDGConfig.class);
+
         // register controller
-        eldgmvcInstallation.registerControllers(UserController.class, ErrorController.class);
+        if (config.enableDemo){
+            eldgmvcInstallation.registerControllers(UserController.class, ErrorController.class, TestController.class);
+        }
 
         // register component factory
         eldgmvcInstallation.addComponentFactory(ButtonFactory.class, ELDGButtonFactory.class);

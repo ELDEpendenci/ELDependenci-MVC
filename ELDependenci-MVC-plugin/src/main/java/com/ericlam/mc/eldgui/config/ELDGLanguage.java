@@ -1,4 +1,4 @@
-package com.ericlam.mc.eldgui;
+package com.ericlam.mc.eldgui.config;
 
 import com.ericlam.mc.eld.annotations.Prefix;
 import com.ericlam.mc.eld.annotations.Resource;

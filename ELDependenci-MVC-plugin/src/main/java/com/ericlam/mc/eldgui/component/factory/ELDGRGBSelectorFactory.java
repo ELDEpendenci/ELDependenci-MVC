@@ -25,7 +25,7 @@ public final class ELDGRGBSelectorFactory extends AbstractComponentFactory<RGBSe
     @Override
     protected void defaultProperties() {
         this.disabled = false;
-        this.inputMessage = "Input hex color (#??????) or rgb number (??? ??? ???)";
+        this.inputMessage = "Input hex color (#??????) or rgb number (0~255 0~255 0~255)";
         this.invalidMessage = "Invalid format.";
         this.maxWait = 200L;
     }

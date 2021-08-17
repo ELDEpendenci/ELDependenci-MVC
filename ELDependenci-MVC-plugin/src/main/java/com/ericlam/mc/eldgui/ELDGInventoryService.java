@@ -1,10 +1,10 @@
 package com.ericlam.mc.eldgui;
 
+import com.ericlam.mc.eldgui.config.ELDGLanguage;
 import com.google.inject.Injector;
 import org.bukkit.Bukkit;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import java.text.MessageFormat;
 import java.util.Map;
 import java.util.Optional;

@@ -1,7 +1,7 @@
 package com.ericlam.mc.eldgui.event;
 
-import com.ericlam.mc.eldgui.lifecycle.OnDestroy;
-import com.ericlam.mc.eldgui.lifecycle.OnRendered;
+import com.ericlam.mc.eldgui.lifecycle.PreDestroy;
+import com.ericlam.mc.eldgui.lifecycle.PostConstruct;
 import org.apache.commons.lang.Validate;
 
 import java.lang.annotation.Annotation;
@@ -14,7 +14,6 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-@Deprecated
 public final class LifeCycleManager {
 
     private final Object controller;
@@ -25,8 +24,8 @@ public final class LifeCycleManager {
     public LifeCycleManager(Object controller, MethodParseManager methodParseManager) {
         this.controller = controller;
         this.methodParseManager = methodParseManager;
-        this.loadLifeCycle(OnRendered.class);
-        this.loadLifeCycle(OnDestroy.class);
+        this.loadLifeCycle(PostConstruct.class);
+        this.loadLifeCycle(PreDestroy.class);
     }
 
 

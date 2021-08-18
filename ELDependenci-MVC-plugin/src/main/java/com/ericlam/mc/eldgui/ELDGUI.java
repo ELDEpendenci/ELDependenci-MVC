@@ -8,9 +8,12 @@ import com.ericlam.mc.eldgui.controller.*;
 import com.ericlam.mc.eldgui.event.*;
 import com.ericlam.mc.eldgui.exception.ExceptionViewHandler;
 import com.ericlam.mc.eldgui.exception.HandleException;
+import com.ericlam.mc.eldgui.lifecycle.PostConstruct;
+import com.ericlam.mc.eldgui.lifecycle.PreDestroy;
 import com.ericlam.mc.eldgui.view.BukkitRedirectView;
 import com.ericlam.mc.eldgui.view.BukkitView;
 import com.ericlam.mc.eldgui.view.LoadingView;
+import com.ericlam.mc.eldgui.view.View;
 import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
 import org.bukkit.Bukkit;
@@ -41,9 +44,10 @@ public final class ELDGUI {
     private final Map<String, Function<InventoryEvent, ItemStack>> itemGetterMap = new ConcurrentHashMap<>();
     private final ELDGPlugin eldgPlugin = ELDGPlugin.getPlugin(ELDGPlugin.class);
 
-    //private final LifeCycleManager lifeCycleManager;
+    private final LifeCycleManager lifeCycleManager;
 
     private final Class<?> controllerCls;
+    private final Object controller;
     private final Injector injector;
     private final UISession session;
     private final Player owner;
@@ -73,6 +77,7 @@ public final class ELDGUI {
     ) {
 
         this.session = session;
+        this.controller = controller;
         this.injector = injector;
         this.owner = owner;
         this.onDestroy = onDestroy;
@@ -83,7 +88,7 @@ public final class ELDGUI {
 
         methodParseManager = managerFactory.buildParseManager(this::initMethodParseManager);
         returnTypeManager = managerFactory.buildReturnTypeManager(this::initReturnTypeManager);
-        //this.lifeCycleManager = new LifeCycleManager(controller, methodParseManager);
+        this.lifeCycleManager = new LifeCycleManager(controller, methodParseManager);
 
         var customQualifier = eldgmvcInstallation.getQualifierMap();
         this.eventHandlerMap.put(InventoryClickEvent.class, new ELDGClickEventHandler(controller, methodParseManager, returnTypeManager, customQualifier));
@@ -93,6 +98,8 @@ public final class ELDGUI {
 
 
         this.controllerCls = controller.getClass();
+
+        this.lifeCycleManager.onLifeCycle(PostConstruct.class);
 
         Optional<Class<? extends LoadingView>> loadingViewOpt = Optional.ofNullable(this.controllerCls.getAnnotation(AsyncLoadingView.class)).map(AsyncLoadingView::value);
         var loadingView = loadingViewOpt.isPresent() ? loadingViewOpt.get() : eldgmvcInstallation.getDefaultLoadingView();
@@ -104,8 +111,16 @@ public final class ELDGUI {
     @SuppressWarnings({"rawtypes", "unchecked"})
     private synchronized void updateView(BukkitView<?, ?> view) {
         LOGGER.debug("update view to " + view.getView().getSimpleName()); // debug
-        if (currentView != null) currentView.destroyView();
+        if (currentView != null) {
+            if (controller instanceof ViewLifeCycleHook){
+                ((ViewLifeCycleHook)controller).preViewDestroy((Class<View<?>>) currentView.getView().getClass());
+            }
+            currentView.destroyView();
+        }
         currentView = new ELDGView(view, configPoolService, itemStackService, eldgmvcInstallation.getComponentFactoryMap());
+        if (controller instanceof ViewLifeCycleHook){
+            ((ViewLifeCycleHook)controller).postUpdateView((Class<View<?>>) view.getView());
+        }
         owner.openInventory(currentView.getNativeInventory());
     }
 
@@ -344,7 +359,7 @@ public final class ELDGUI {
     public synchronized void destroy() {
         LOGGER.debug("destroying controller"); //debug
         eventHandlerMap.values().forEach(ELDGEventHandler::unloadAllHandlers);
-        //lifeCycleManager.onLifeCycle(OnDestroy.class);
+        lifeCycleManager.onLifeCycle(PreDestroy.class);
         this.currentView.destroyView();
         this.onDestroy.accept(owner);
     }

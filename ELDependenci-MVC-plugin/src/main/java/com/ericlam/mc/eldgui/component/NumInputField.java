@@ -42,14 +42,18 @@ public final class NumInputField extends AbstractComponent implements Clickable,
         this.errorMessage = errorMessage;
         this.maxWait = maxWait;
         this.value = (int) Optional.ofNullable(attributeController.getAttribute(getItem(), AttributeController.VALUE_TAG)).orElse(0);
+        itemFactory.lore("-> " + value);
+        if (disabled) itemFactory.lore("&cDisabled");
     }
 
     @Override
     public void onClick(InventoryClickEvent event) {
         int value;
         if (event.isLeftClick()) {
+            if (this.value == max) return;
             value = Math.min(max, this.value + 1);
         } else if (event.isRightClick()) {
+            if (this.value == min) return;
             value = Math.max(min, this.value - 1);
         } else {
             return;

@@ -26,6 +26,8 @@ public final class TextInputField extends AbstractComponent implements Listenabl
         this.disabled = disabled;
         this.maxWait = maxWait;
         this.inputMessage = inputMessage;
+        itemFactory.lore("-> " + attributeController.getAttribute(getItem(), AttributeController.VALUE_TAG));
+        if (disabled) itemFactory.lore("&cDisabled");
     }
 
     @Override

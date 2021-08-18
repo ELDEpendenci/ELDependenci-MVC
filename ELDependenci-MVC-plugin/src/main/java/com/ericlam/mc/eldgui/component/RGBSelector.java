@@ -59,17 +59,20 @@ public final class RGBSelector extends AbstractComponent implements Listenable<A
 
     @Override
     public void onClick(InventoryClickEvent event) {
+        int value = this.rgbMap.getOrDefault(this.currentSelect, 0);
         if (event.isLeftClick()) {
             if (event.isShiftClick()) {
                 this.currentSelect = colorIterator.previous();
             } else {
-                this.rgbMap.put(this.currentSelect, Math.min(255, this.rgbMap.getOrDefault(this.currentSelect, 0) + 1));
+                if (value == 255) return;
+                this.rgbMap.put(this.currentSelect, Math.min(255, value + 1));
             }
         } else if (event.isRightClick()) {
             if (event.isShiftClick()) {
                 this.currentSelect = colorIterator.next();
             } else {
-                this.rgbMap.put(this.currentSelect, Math.max(0, this.rgbMap.getOrDefault(this.currentSelect, 0) - 1));
+                if (value == 0) return;
+                this.rgbMap.put(this.currentSelect, Math.max(0, value - 1));
             }
         } else {
             return;

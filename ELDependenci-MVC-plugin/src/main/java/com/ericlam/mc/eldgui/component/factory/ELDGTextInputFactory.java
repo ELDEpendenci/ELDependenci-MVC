@@ -5,6 +5,8 @@ import com.ericlam.mc.eldgui.component.AttributeController;
 import com.ericlam.mc.eldgui.component.Component;
 import com.ericlam.mc.eldgui.component.TextInputField;
 
+import java.util.List;
+
 public final class ELDGTextInputFactory extends AbstractComponentFactory<TextInputFactory> implements TextInputFactory {
 
     private boolean disabled;
@@ -40,7 +42,7 @@ public final class ELDGTextInputFactory extends AbstractComponentFactory<TextInp
     public TextInputFactory bindInput(String field, String initValue) {
         bind(AttributeController.FIELD_TAG, field);
         bind(AttributeController.VALUE_TAG, initValue);
-        return editItemByFactory(f -> f.lore("-> " + initValue));
+        return this;
     }
 
     @Override
@@ -58,6 +60,6 @@ public final class ELDGTextInputFactory extends AbstractComponentFactory<TextInp
     @Override
     public TextInputFactory disabled() {
         this.disabled = true;
-        return editItemByFactory(f -> f.lore("&cDisabled"));
+        return this;
     }
 }

@@ -17,7 +17,7 @@ import com.ericlam.mc.eldgui.demo.user.UserController;
         lifeCycle = ELDGLifeCycle.class,
         registry = ELDGRegistry.class
 )
-public class ELDGPlugin extends ELDBukkitAddon {
+public final class ELDGPlugin extends ELDBukkitAddon {
 
     @Override
     protected void bindServices(ServiceCollection serviceCollection) {
@@ -50,6 +50,9 @@ public class ELDGPlugin extends ELDBukkitAddon {
         eldgmvcInstallation.addComponentFactory(CheckboxFactory.class, ELDGCheckboxFactory.class);
         eldgmvcInstallation.addComponentFactory(SelectionFactory.class, ELDGSelectionFactory.class);
         eldgmvcInstallation.addComponentFactory(RGBSelectorFactory.class, ELDGRGBSelectorFactory.class);
+        eldgmvcInstallation.addComponentFactory(BukkitItemFactory.class, ELDGBukkitItemFactory.class);
+        eldgmvcInstallation.addComponentFactory(DateSelectorFactory.class, ELDGDateSelectorFactory.class);
+        eldgmvcInstallation.addComponentFactory(TimeSelectorFactory.class, ELDGTimeSelectorFactory.class);
 
         // install module
         addonManager.installModule(new ELDGMVCModule(eldgmvcInstallation));

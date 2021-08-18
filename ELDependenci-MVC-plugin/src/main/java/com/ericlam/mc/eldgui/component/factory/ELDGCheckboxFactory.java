@@ -35,7 +35,7 @@ public final class ELDGCheckboxFactory extends AbstractComponentFactory<Checkbox
     public CheckboxFactory bindInput(String field, boolean initValue) {
         bind(AttributeController.VALUE_TAG, field);
         bind(AttributeController.FIELD_TAG, initValue);
-        return editItemByFactory(f -> f.lore("-> "+ (initValue ? checkedShow : uncheckedShow)));
+        return this;
     }
 
     @Override
@@ -65,6 +65,6 @@ public final class ELDGCheckboxFactory extends AbstractComponentFactory<Checkbox
     @Override
     public CheckboxFactory disabled() {
         this.disabled = true;
-        return editItemByFactory(f -> f.lore("&cDisabled"));
+        return this;
     }
 }

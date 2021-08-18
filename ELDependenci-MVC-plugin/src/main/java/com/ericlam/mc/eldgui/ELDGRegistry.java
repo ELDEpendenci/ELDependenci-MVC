@@ -6,7 +6,7 @@ import com.ericlam.mc.eld.registrations.ListenerRegistry;
 import com.ericlam.mc.eldgui.command.ELDGCommand;
 import com.ericlam.mc.eldgui.command.ELDGDemoCommand;
 
-public class ELDGRegistry implements ComponentsRegistry {
+public final class ELDGRegistry implements ComponentsRegistry {
 
     @Override
     public void registerCommand(CommandRegistry commandRegistry) {

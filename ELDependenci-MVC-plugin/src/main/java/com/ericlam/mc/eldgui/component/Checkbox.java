@@ -32,6 +32,8 @@ public final class Checkbox extends AbstractComponent implements Clickable {
         this.uncheckedShow = uncheckedShow;
         this.currentValue = (boolean) Optional.ofNullable(attributeController.getAttribute(getItem(), AttributeController.VALUE_TAG)).orElse(false);
         this.disabled = disabled;
+        itemFactory.lore("-> "+ (currentValue ? checkedShow : uncheckedShow));
+        itemFactory.lore("&cDisabled");
     }
 
     @Override

@@ -5,6 +5,8 @@ import com.ericlam.mc.eldgui.component.AttributeController;
 import com.ericlam.mc.eldgui.component.Component;
 import com.ericlam.mc.eldgui.component.NumInputField;
 
+import java.util.List;
+
 public final class ELDGNumInputFactory extends AbstractComponentFactory<NumInputFactory> implements NumInputFactory{
 
     private int min;
@@ -56,7 +58,7 @@ public final class ELDGNumInputFactory extends AbstractComponentFactory<NumInput
     public NumInputFactory bindInput(String field, int initValue) {
         bind(AttributeController.FIELD_TAG, field);
         bind(AttributeController.VALUE_TAG, initValue);
-        return editItemByFactory(f -> f.lore("-> "+initValue));
+        return this;
     }
 
     @Override
@@ -80,6 +82,6 @@ public final class ELDGNumInputFactory extends AbstractComponentFactory<NumInput
     @Override
     public NumInputFactory disabled() {
         this.disabled = true;
-        return editItemByFactory(f -> f.lore("&cDisabled"));
+        return this;
     }
 }

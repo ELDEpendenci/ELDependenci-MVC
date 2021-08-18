@@ -16,7 +16,6 @@ public final class Selection<T> extends AbstractComponent implements Clickable {
     private final boolean disabled;
     private final ELDGSelectionFactory.ELDGSelectionSettings<T> selectionSettings;
     private final CircuitIterator<T> elementIterator;
-    private T currentValue;
 
     @SuppressWarnings("unchecked")
     public Selection(
@@ -28,27 +27,26 @@ public final class Selection<T> extends AbstractComponent implements Clickable {
         super(attributeController, itemFactory);
         this.disabled = disabled;
         this.selectionSettings = selectionSettings;
-        this.currentValue = Optional.ofNullable((T) attributeController.getAttribute(getItem(), AttributeController.VALUE_TAG)).orElseGet(() -> selectionSettings.getElements().get(0));
+        T currentValue = Optional.ofNullable((T) attributeController.getAttribute(getItem(), AttributeController.VALUE_TAG)).orElseGet(() -> selectionSettings.getElements().get(0));
         this.elementIterator = new CircuitIterator<>(selectionSettings.getElements(), selectionSettings.getElements().indexOf(currentValue));
     }
 
     @Override
     public void onClick(InventoryClickEvent event) {
-        T value;
+        T currentValue;
         if (event.isLeftClick()) {
-            value = elementIterator.previous();
+            currentValue = elementIterator.previous();
         } else if (event.isRightClick()) {
-            value = elementIterator.next();
+            currentValue = elementIterator.next();
         } else {
             return;
         }
-        this.currentValue = value;
-        attributeController.setAttribute(getItem(), AttributeController.VALUE_TAG, this.currentValue);
+        attributeController.setAttribute(getItem(), AttributeController.VALUE_TAG, currentValue);
         itemFactory.lore(
                 selectionSettings.getElements()
                         .stream()
                         .map(e -> {
-                            if (this.currentValue == e) {
+                            if (currentValue == e) {
                                 return "&f&l- " + selectionSettings.getToText().apply(e);
                             } else {
                                 return "&7- " + selectionSettings.getToText().apply(e);

@@ -12,6 +12,7 @@ public class ELDGLifeCycle implements ELDLifeCycle {
 
     @Override
     public void onEnable(JavaPlugin javaPlugin) {
+
     }
 
     @Override

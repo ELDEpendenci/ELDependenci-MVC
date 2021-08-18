@@ -3,6 +3,7 @@ package com.ericlam.mc.eldgui.component.factory;
 import com.ericlam.mc.eld.services.ItemStackService;
 import com.ericlam.mc.eldgui.component.AttributeController;
 import com.ericlam.mc.eldgui.component.Component;
+import com.ericlam.mc.eldgui.component.TimeSelector;
 
 import java.time.LocalTime;
 
@@ -27,7 +28,7 @@ public final class ELDGTimeSelectorFactory extends AbstractComponentFactory<Time
 
     @Override
     public Component build(ItemStackService.ItemFactory itemFactory) {
-        return null;
+        return new TimeSelector(attributeController, itemFactory, input, invalid, disabled, maxWait);
     }
 
     @Override
@@ -44,7 +45,7 @@ public final class ELDGTimeSelectorFactory extends AbstractComponentFactory<Time
     @Override
     public TimeSelectorFactory bindInput(String field, LocalTime time) {
         bind(AttributeController.FIELD_TAG, field);
-        bind(AttributeController.FIELD_TAG, time);
+        bind(AttributeController.VALUE_TAG, time);
         return this;
     }
 

@@ -133,7 +133,7 @@ public final class TimeSelector extends AbstractComponent implements Clickable, 
     public void callBack(AsyncChatEvent event) {
         String message = ((TextComponent)event.message()).content();
         try {
-            String[] args = message.split(" ");
+            String[] args = message.split(":");
             int hour = Integer.parseInt(args[0]);
             int minute = Integer.parseInt(args[1]);
             int second = Integer.parseInt(args[2]);

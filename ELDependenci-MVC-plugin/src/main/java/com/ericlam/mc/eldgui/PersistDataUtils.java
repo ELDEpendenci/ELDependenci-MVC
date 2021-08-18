@@ -1,5 +1,6 @@
 package com.ericlam.mc.eldgui;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -13,8 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -123,8 +123,36 @@ public class PersistDataUtils {
         }
     }
 
-    public static <T> T mapToObject(Map<String, Object> map, Class<T> type){
-        return OBJECT_MAPPER.convertValue(map, type);
+    public static <T> T mapToObject(Map<String, Object> map, Class<T> beanClass) {
+        T obj;
+        try {
+             obj = beanClass.getConstructor().newInstance();
+        }catch (InvocationTargetException | InstantiationException e) {
+            throw new IllegalStateException(e);
+        } catch (IllegalAccessException e) {
+            throw new IllegalStateException("The no arg constructor is private of type: "+beanClass);
+        } catch (NoSuchMethodException e) {
+            throw new IllegalStateException("Cannot find no arg constructor on type: "+beanClass);
+        }
+        Field[] fields = beanClass.getDeclaredFields();
+        for (Field field : fields) {
+            int mod = field.getModifiers();
+            if (Modifier.isFinal(mod) || Modifier.isStatic(mod) || field.isAnnotationPresent(JsonIgnore.class)){
+                continue;
+            }
+            field.setAccessible(true);
+            Object value = map.get(field.getName());
+            if (value instanceof Map<?, ?>){
+                Map<String, Object> m = (Map<String, Object>) value;
+                value = mapToObject(m, field.getType());
+            }
+            try {
+                field.set(obj, value);
+            }catch (IllegalAccessException e) {
+                LOGGER.warn("Error while setting field "+field.getName()+" to "+value+", type: "+field.getType(), e);
+            }
+        }
+        return obj;
     }
 
     public static Map<String, Object> toNestedMap(Map<String, Object> map) {

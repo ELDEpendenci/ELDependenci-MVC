@@ -438,8 +438,7 @@ public final class ELDGView<T> {
             if (slots == null) return List.of();
             List<ItemStack> items = new ArrayList<>();
             for (int s : slots) {
-                var item = Optional.ofNullable(nativeInventory.getItem(s)).orElseGet(() -> new ItemStack(Material.AIR));
-                items.add(item);
+                Optional.ofNullable(nativeInventory.getItem(s)).ifPresent(items::add);
             }
             return List.copyOf(items);
         }

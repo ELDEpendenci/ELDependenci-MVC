@@ -7,9 +7,9 @@ import com.ericlam.mc.eldgui.demo.ELDGExceptionViewHandler;
 import com.ericlam.mc.eldgui.demo.error.ErrorView;
 import com.ericlam.mc.eldgui.exception.ExceptionViewHandler;
 import com.ericlam.mc.eldgui.view.BukkitView;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import org.bukkit.Material;
 import org.junit.Assert;
 import org.junit.Test;
@@ -17,6 +17,8 @@ import org.junit.Test;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -71,19 +73,17 @@ public class HowToUse {
 
     @Test
     public void testJacksonConvert() {
-        ObjectMapper mapper = new ObjectMapper().disable(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES);
+        //ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule()).disable(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES);
+        Gson gson = new Gson();
         Map<String, Object> map = Map.of(
-                "username", "username1",
-                "firstName", "first",
-                "lastName", "last",
-                "age", 12,
-                "address.line1", "line1",
-                "address.line2", "line2"
+                "date", LocalDate.now(),
+                "time", LocalTime.now()
         );
         Map<String, Object> result = nester(map);
         System.out.println(result);
-        User user = mapper.convertValue(result, User.class);
-        System.out.println(user);
+        JsonElement element = gson.toJsonTree(result);
+        TestModel test = gson.fromJson(element, TestModel.class);
+        System.out.println(test);
     }
 
     private static Map<String, Object> nester(Map<String, Object> map) {
@@ -214,6 +214,21 @@ public class HowToUse {
             super(username, firstName, lastName, age);
             this.studentId = studentId;
             this.studyLevel = studyLevel;
+        }
+    }
+
+    public static class TestModel {
+
+        public LocalDate date;
+
+        public LocalTime time;
+
+        @Override
+        public String toString() {
+            return "TestModel{" +
+                    "date=" + date +
+                    ", time=" + time +
+                    '}';
         }
     }
 }

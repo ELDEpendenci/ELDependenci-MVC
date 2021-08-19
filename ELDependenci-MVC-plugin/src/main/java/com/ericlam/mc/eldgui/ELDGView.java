@@ -44,6 +44,7 @@ public final class ELDGView<T> {
     private final InventoryContext inventoryContext = new InventoryContext();
     private final Map<Character, List<Integer>> patternMasks = new LinkedHashMap<>();
     private final Map<Character, List<Component>> componentMap = new HashMap<>();
+    private final Map<String, Component> componentsIdMap = new HashMap<>();
     private final Map<Class<? extends ComponentFactory<?>>, ComponentFactory<?>> factoryMap = new HashMap<>();
     private final Set<Character> cancelMovePatterns = new HashSet<>();
     private final List<Listener> componentListeners = new ArrayList<>();
@@ -124,11 +125,8 @@ public final class ELDGView<T> {
         if (e.getSlotType() != InventoryType.SlotType.CONTAINER) return false;
         final ItemStack clicked = e.getCurrentItem();
         if (clicked == null) return false;
-        Optional<Component> clickedComponent = componentMap.values().stream().flatMap(Collection::stream).filter(c -> {
-            String itemId = inventoryContext.getIdFromItem(c.getItem());
-            String clickedId = inventoryContext.getIdFromItem(clicked);
-            return itemId.equals(clickedId);
-        }).findAny();
+        String clickedId = inventoryContext.getIdFromItem(clicked);
+        Optional<Component> clickedComponent = Optional.ofNullable(componentsIdMap.get(clickedId));
         if (clickedComponent.isEmpty()) return true;
         final Component component = clickedComponent.get();
         if (component instanceof Disable && ((Disable) component).isDisabled()) {
@@ -275,7 +273,8 @@ public final class ELDGView<T> {
                 componentMap.get(pattern).add(component);
                 inventoryContext.fillItem(pattern, component);
                 if (component instanceof Animatable) ((Animatable) component).startAnimation();
-                inventoryContext.getIdFromItem(component.getItem());
+                String id = inventoryContext.getIdFromItem(component.getItem());
+                componentsIdMap.put(id, component);
                 return this;
             }
 
@@ -286,7 +285,8 @@ public final class ELDGView<T> {
                     componentMap.get(pattern).add(component);
                     inventoryContext.addItem(pattern, component);
                     if (component instanceof Animatable) ((Animatable) component).startAnimation();
-                    inventoryContext.getIdFromItem(component.getItem());
+                    String id = inventoryContext.getIdFromItem(component.getItem());
+                    componentsIdMap.put(id, component);
                 }
                 return this;
             }
@@ -297,7 +297,8 @@ public final class ELDGView<T> {
                 componentMap.get(pattern).add(component);
                 inventoryContext.setItem(pattern, pos, component);
                 if (component instanceof Animatable) ((Animatable) component).startAnimation();
-                inventoryContext.getIdFromItem(component.getItem());
+                String id = inventoryContext.getIdFromItem(component.getItem());
+                componentsIdMap.put(id, component);
                 return this;
             }
 

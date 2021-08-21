@@ -112,14 +112,14 @@ public final class ELDGUI {
     private synchronized void updateView(BukkitView<?, ?> view) {
         LOGGER.debug("update view to " + view.getView().getSimpleName()); // debug
         if (currentView != null) {
-            if (controller instanceof ViewLifeCycleHook){
-                ((ViewLifeCycleHook)controller).preViewDestroy((Class<View<?>>) currentView.getView().getClass());
+            if (controller instanceof ViewLifeCycleHook) {
+                ((ViewLifeCycleHook) controller).preViewDestroy((Class<View<?>>) currentView.getView().getClass());
             }
             currentView.destroyView();
         }
         currentView = new ELDGView(view, configPoolService, itemStackService, eldgmvcInstallation.getComponentFactoryMap());
-        if (controller instanceof ViewLifeCycleHook){
-            ((ViewLifeCycleHook)controller).postUpdateView((Class<View<?>>) view.getView());
+        if (controller instanceof ViewLifeCycleHook) {
+            ((ViewLifeCycleHook) controller).postUpdateView((Class<View<?>>) view.getView());
         }
         owner.openInventory(currentView.getNativeInventory());
     }
@@ -146,11 +146,11 @@ public final class ELDGUI {
             if (indexMethod.isEmpty())
                 throw new IllegalStateException("cannot find index method from " + controllerCls);
             Method index = indexMethod.get();
+            if (index.getGenericReturnType() == Void.class)
+                throw new IllegalStateException("index method cannot return void");
             Object[] objects = methodParseManager.getMethodParameters(index, null);
             Object result = index.invoke(controller, objects);
-            if (!(result instanceof BukkitView))
-                throw new IllegalStateException("index method must return bukkit view");
-            if (!returnTypeManager.handleReturnResult(index.getGenericReturnType(), result)) {
+            if (!returnTypeManager.handleReturnResult(index, result)) {
                 throw new IllegalStateException("cannot initialize index view for controller: " + controller);
             }
         } catch (Exception e) {
@@ -161,7 +161,7 @@ public final class ELDGUI {
     @SuppressWarnings("unchecked")
     private void initReturnTypeManager(ReturnTypeManager returnTypeManager) {
         returnTypeManager.registerReturnType(type -> type.equals(new TypeLiteral<BukkitView<?, ?>>() {
-        }.getType()) || type == BukkitView.class, bukkitView -> {
+        }.getType()) || type == BukkitView.class, (bukkitView, a) -> {
             if (bukkitView instanceof BukkitRedirectView) {
                 this.jumpToController((BukkitRedirectView) bukkitView);
             } else {
@@ -174,14 +174,19 @@ public final class ELDGUI {
                 var parat = (ParameterizedType) t;
                 var inside = parat.getActualTypeArguments()[0];
                 return (inside == BukkitView.class || inside.equals(new TypeLiteral<BukkitView<?, ?>>() {
-                        }.getType()))
+                }.getType()))
                         && parat.getRawType() == ScheduleService.BukkitPromise.class;
             }
             return false;
-        }, result -> {
+        }, (result, annos) -> {
             // loading view start
-            this.updateView(this.loadingView);
-            ScheduleService.BukkitPromise<BukkitView<?, ?>> promise = (ScheduleService.BukkitPromise<BukkitView<?,?>>) result;
+            Arrays.stream(annos)
+                    .filter(a -> a.annotationType() == AsyncLoadingView.class)
+                    .findAny()
+                    .map(a -> ((AsyncLoadingView) a).value())
+                    .map(v -> new BukkitView<>(v, null))
+                    .ifPresentOrElse(this::updateView, () -> this.updateView(this.loadingView));
+            ScheduleService.BukkitPromise<BukkitView<?, ?>> promise = (ScheduleService.BukkitPromise<BukkitView<?, ?>>) result;
             promise.thenRunSync(bukkitView -> {
                 if (bukkitView instanceof BukkitRedirectView) {
                     this.jumpToController((BukkitRedirectView) bukkitView);
@@ -190,7 +195,7 @@ public final class ELDGUI {
                 }
             }).join();
         });
-        returnTypeManager.registerReturnType(type -> type == void.class, view -> {
+        returnTypeManager.registerReturnType(type -> type == void.class, (view, a) -> {
         });
     }
 
@@ -336,7 +341,7 @@ public final class ELDGUI {
                                 Object returnObject = method.invoke(viewHandlerIns, ex, fromController.value(), session, owner);
                                 if (!(returnObject instanceof BukkitView))
                                     throw new IllegalStateException("error view must return bukkit view type");
-                                returnTypeManager.handleReturnResult(method.getReturnType(), returnObject);
+                                returnTypeManager.handleReturnResult(method, returnObject);
                             } catch (Exception e) {
                                 throw new RuntimeException(e);
                             }

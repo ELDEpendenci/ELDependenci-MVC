@@ -35,12 +35,21 @@ public final class AnimatedButton extends AbstractComponent implements Animatabl
         this.displays = displays;
         this.numbers = numbers;
         this.seconds = seconds;
+        if (icons.length > 0){
+            itemFactory.material(icons[0]);
+        }
+        if (displays.length > 0){
+            itemFactory.display(displays[0]);
+        }
+        if (numbers.length > 0){
+            itemFactory.amount(numbers[0]);
+        }
     }
 
     @Override
     public void startAnimation() {
         if (seconds > 0 && this.task == null){
-            this.task = new AnimatedRunnable().runTaskTimer(ELDGPlugin.getPlugin(ELDGPlugin.class), 20L, 20L);
+            this.task = new AnimatedRunnable().runTaskTimer(ELDGPlugin.getPlugin(ELDGPlugin.class), 0L, 20L);
         }
     }
 

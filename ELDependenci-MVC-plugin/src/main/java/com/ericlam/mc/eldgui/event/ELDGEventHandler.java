@@ -89,7 +89,7 @@ public abstract class ELDGEventHandler<A extends Annotation, E extends Inventory
         Object[] results = parseManager.getMethodParameters(m, e);
         try {
             Object returnType = m.invoke(uiController, results);
-            return returnTypeManager.handleReturnResult(m.getGenericReturnType(), returnType);
+            return returnTypeManager.handleReturnResult(m, returnType);
         } catch (IllegalAccessException | InvocationTargetException ex) {
             if (ex.getCause() instanceof Exception) {
                 throw (Exception) ex.getCause();

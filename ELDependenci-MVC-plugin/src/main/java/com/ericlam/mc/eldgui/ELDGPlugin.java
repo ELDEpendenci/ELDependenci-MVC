@@ -9,6 +9,7 @@ import com.ericlam.mc.eldgui.component.factory.*;
 import com.ericlam.mc.eldgui.config.ELDGConfig;
 import com.ericlam.mc.eldgui.config.ELDGLanguage;
 import com.ericlam.mc.eldgui.demo.DemoInventories;
+import com.ericlam.mc.eldgui.demo.async.AsyncController;
 import com.ericlam.mc.eldgui.demo.error.ErrorController;
 import com.ericlam.mc.eldgui.demo.test.TestController;
 import com.ericlam.mc.eldgui.demo.user.UserController;
@@ -39,7 +40,12 @@ public final class ELDGPlugin extends ELDBukkitAddon {
 
         // register controller
         if (config.enableDemo){
-            eldgmvcInstallation.registerControllers(UserController.class, ErrorController.class, TestController.class);
+            eldgmvcInstallation.registerControllers(
+                    UserController.class,
+                    ErrorController.class,
+                    TestController.class,
+                    AsyncController.class
+            );
         }
 
         // register component factory

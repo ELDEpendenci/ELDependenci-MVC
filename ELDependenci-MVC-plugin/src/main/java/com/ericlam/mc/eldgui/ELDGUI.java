@@ -113,13 +113,13 @@ public final class ELDGUI {
         LOGGER.debug("update view to " + view.getView().getSimpleName()); // debug
         if (currentView != null) {
             if (controller instanceof ViewLifeCycleHook) {
-                ((ViewLifeCycleHook) controller).preViewDestroy((Class<View<?>>) currentView.getView().getClass());
+                ((ViewLifeCycleHook) controller).preViewDestroy(owner, (Class<View<?>>) currentView.getView().getClass(), session);
             }
             currentView.destroyView();
         }
         currentView = new ELDGView(view, configPoolService, itemStackService, eldgmvcInstallation.getComponentFactoryMap());
         if (controller instanceof ViewLifeCycleHook) {
-            ((ViewLifeCycleHook) controller).postUpdateView((Class<View<?>>) view.getView());
+            ((ViewLifeCycleHook) controller).postUpdateView(owner, (Class<View<?>>) view.getView(), session);
         }
         owner.openInventory(currentView.getNativeInventory());
     }
@@ -154,7 +154,7 @@ public final class ELDGUI {
                 throw new IllegalStateException("cannot initialize index view for controller: " + controller);
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            handleException(e);
         }
     }
 
@@ -240,33 +240,6 @@ public final class ELDGUI {
                     Map<String, Object> toConvert = PersistDataUtils.toNestedMap(fieldMap);
                     LOGGER.debug("using " + toConvert + " to create instance of " + model);
                     return PersistDataUtils.mapToObject(toConvert, model);
-                    /* no need to use
-                    Object modelObject;
-                    try {
-                        Constructor<?> con = model.getConstructor();
-                        modelObject = con.newInstance();
-                    } catch (NoSuchMethodException e) {
-                        throw new IllegalStateException("model should have no arg constructor.", e);
-                    } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
-                        throw new IllegalStateException("error while initializing instance of model " + model, e);
-                    }
-                    List<ItemStack> items = context.getItems(modelAttribute.value());
-                    for (ItemStack item : items) {
-                        String field = context.getAttribute(String.class, item, AttributeController.FIELD_TAG);
-                        if (field == null) continue;
-                        try {
-                            Field f = model.getField(field);
-                            Object value = context.getAttribute(f.getType(), item, AttributeController.VALUE_TAG);
-                            f.setAccessible(true);
-                            f.set(modelObject, value);
-                        } catch (NoSuchFieldException e) {
-                            throw new IllegalStateException("cannot find the field " + field + " from model " + model, e);
-                        } catch (IllegalAccessException e) {
-                            throw new IllegalStateException("error while setting field " + field + " from model " + model, e);
-                        }
-                    }
-
-                     */
                 });
     }
 

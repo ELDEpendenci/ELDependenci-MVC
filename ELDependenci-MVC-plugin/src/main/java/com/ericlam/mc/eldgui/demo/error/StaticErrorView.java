@@ -1,6 +1,5 @@
 package com.ericlam.mc.eldgui.demo.error;
 
-import com.ericlam.mc.eld.services.ItemStackService;
 import com.ericlam.mc.eldgui.component.factory.ButtonFactory;
 import com.ericlam.mc.eldgui.view.UIContext;
 import com.ericlam.mc.eldgui.view.View;

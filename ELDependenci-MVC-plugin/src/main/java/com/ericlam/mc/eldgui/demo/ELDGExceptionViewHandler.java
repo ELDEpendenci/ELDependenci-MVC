@@ -25,14 +25,6 @@ public final class ELDGExceptionViewHandler implements ExceptionViewHandler {
         return new BukkitView<>(StaticErrorView.class, exception);
     }
 
-    @HandleException(RuntimeException.class)
-    public BukkitView<?, ?> createRuntimeErrorView(RuntimeException ex, String from, UISession session, Player player) {
-        LOGGER.warn("Resolved Error: " + ex.getMessage(), ex);
-        session.setAttribute("exception", ex);
-        session.setAttribute("from", from);
-        return new BukkitRedirectView(CustomRedirectView.class, "error");
-    }
-
     @HandleException(UserController.UserNotFoundException.class)
     public BukkitView<?, ?> handleUserNotFoundException(UserController.UserNotFoundException ex, String from, UISession session, Player player) {
         LOGGER.warn("Resolved Error: " + ex.getMessage());

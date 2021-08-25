@@ -4,9 +4,11 @@ import com.ericlam.mc.eldgui.UISession;
 import com.ericlam.mc.eldgui.controller.ItemAttribute;
 import com.ericlam.mc.eldgui.controller.ModelAttribute;
 import com.ericlam.mc.eldgui.controller.UIController;
+import com.ericlam.mc.eldgui.controller.ViewLifeCycleHook;
 import com.ericlam.mc.eldgui.event.ClickMapping;
 import com.ericlam.mc.eldgui.view.BukkitRedirectView;
 import com.ericlam.mc.eldgui.view.BukkitView;
+import com.ericlam.mc.eldgui.view.View;
 import org.bukkit.entity.Player;
 
 import javax.inject.Inject;
@@ -14,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @UIController("user")
-public class UserController {
+public class UserController implements ViewLifeCycleHook {
 
     @Inject
     private UserService userService;
@@ -85,6 +87,17 @@ public class UserController {
         userService.save(user);
         player.sendMessage("Save Success");
         return index();
+    }
+
+
+    @Override
+    public void postUpdateView(Player player, Class<View<?>> view, UISession session) {
+        player.sendMessage("after update to view: "+view.getSimpleName());
+    }
+
+    @Override
+    public void preViewDestroy(Player player, Class<View<?>> view, UISession session) {
+        player.sendMessage("before destroy for view: "+view.getSimpleName());
     }
 
     public static class UserNotFoundException extends Exception {

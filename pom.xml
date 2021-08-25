@@ -7,7 +7,7 @@
     <groupId>org.eldependenci</groupId>
     <artifactId>ELDependenci-MVC-Module</artifactId>
     <packaging>pom</packaging>
-    <version>0.1.alpha-3</version>
+    <version>0.1.alpha-4</version>
     <modules>
         <module>eldependenci-mvc</module>
         <module>ELDependenci-MVC-plugin</module>
@@ -66,13 +66,13 @@
             <dependency>
                 <groupId>org.eldependenci</groupId>
                 <artifactId>eldependenci-framework</artifactId>
-                <version>0.1.1</version>
+                <version>0.1.2</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.eldependenci</groupId>
                 <artifactId>eldependenci-addon</artifactId>
-                <version>0.1.1</version>
+                <version>0.1.2</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>

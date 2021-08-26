@@ -1,0 +1,112 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">package com.ericlam.mc.eldgui.view;</a>
+<span class="sourceLineNo">002</span><a id="line.2"></a>
+<span class="sourceLineNo">003</span><a id="line.3">/**</a>
+<span class="sourceLineNo">004</span><a id="line.4"> * 標準界面，用於 controller 的方法中返回用</a>
+<span class="sourceLineNo">005</span><a id="line.5"> * @param &lt;T&gt; 界面類型</a>
+<span class="sourceLineNo">006</span><a id="line.6"> * @param &lt;M&gt; Model 類型</a>
+<span class="sourceLineNo">007</span><a id="line.7"> */</a>
+<span class="sourceLineNo">008</span><a id="line.8">public class BukkitView&lt;T extends View&lt;M&gt;, M&gt; {</a>
+<span class="sourceLineNo">009</span><a id="line.9"></a>
+<span class="sourceLineNo">010</span><a id="line.10">    private final M model;</a>
+<span class="sourceLineNo">011</span><a id="line.11">    private final Class&lt;T&gt; view;</a>
+<span class="sourceLineNo">012</span><a id="line.12"></a>
+<span class="sourceLineNo">013</span><a id="line.13">    /**</a>
+<span class="sourceLineNo">014</span><a id="line.14">     * 指定界面和 Model</a>
+<span class="sourceLineNo">015</span><a id="line.15">     * @param view 界面類</a>
+<span class="sourceLineNo">016</span><a id="line.16">     * @param model Model</a>
+<span class="sourceLineNo">017</span><a id="line.17">     */</a>
+<span class="sourceLineNo">018</span><a id="line.18">    public BukkitView(Class&lt;T&gt; view, M model) {</a>
+<span class="sourceLineNo">019</span><a id="line.19">        this.model = model;</a>
+<span class="sourceLineNo">020</span><a id="line.20">        this.view = view;</a>
+<span class="sourceLineNo">021</span><a id="line.21">    }</a>
+<span class="sourceLineNo">022</span><a id="line.22"></a>
+<span class="sourceLineNo">023</span><a id="line.23">    /**</a>
+<span class="sourceLineNo">024</span><a id="line.24">     * 指定界面</a>
+<span class="sourceLineNo">025</span><a id="line.25">     * @param view 界面類</a>
+<span class="sourceLineNo">026</span><a id="line.26">     */</a>
+<span class="sourceLineNo">027</span><a id="line.27">    public BukkitView(Class&lt;T&gt; view) {</a>
+<span class="sourceLineNo">028</span><a id="line.28">        this(view, null);</a>
+<span class="sourceLineNo">029</span><a id="line.29">    }</a>
+<span class="sourceLineNo">030</span><a id="line.30"></a>
+<span class="sourceLineNo">031</span><a id="line.31">    public M getModel() {</a>
+<span class="sourceLineNo">032</span><a id="line.32">        return model;</a>
+<span class="sourceLineNo">033</span><a id="line.33">    }</a>
+<span class="sourceLineNo">034</span><a id="line.34"></a>
+<span class="sourceLineNo">035</span><a id="line.35">    public Class&lt;T&gt; getView() {</a>
+<span class="sourceLineNo">036</span><a id="line.36">        return view;</a>
+<span class="sourceLineNo">037</span><a id="line.37">    }</a>
+<span class="sourceLineNo">038</span><a id="line.38">}</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

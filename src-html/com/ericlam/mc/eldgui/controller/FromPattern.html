@@ -14,13 +14,20 @@
 <span class="sourceLineNo">005</span><a id="line.5">import java.lang.annotation.RetentionPolicy;</a>
 <span class="sourceLineNo">006</span><a id="line.6">import java.lang.annotation.Target;</a>
 <span class="sourceLineNo">007</span><a id="line.7"></a>
-<span class="sourceLineNo">008</span><a id="line.8">@Target(ElementType.PARAMETER)</a>
-<span class="sourceLineNo">009</span><a id="line.9">@Retention(RetentionPolicy.RUNTIME)</a>
-<span class="sourceLineNo">010</span><a id="line.10">public @interface FromPattern {</a>
-<span class="sourceLineNo">011</span><a id="line.11"></a>
-<span class="sourceLineNo">012</span><a id="line.12">    char value();</a>
-<span class="sourceLineNo">013</span><a id="line.13"></a>
-<span class="sourceLineNo">014</span><a id="line.14">}</a>
+<span class="sourceLineNo">008</span><a id="line.8">/**</a>
+<span class="sourceLineNo">009</span><a id="line.9"> * 獲取指定 pattern 内的所有物品，使用 {@code List&lt;ItemStack&gt;} 返回</a>
+<span class="sourceLineNo">010</span><a id="line.10"> */</a>
+<span class="sourceLineNo">011</span><a id="line.11">@Target(ElementType.PARAMETER)</a>
+<span class="sourceLineNo">012</span><a id="line.12">@Retention(RetentionPolicy.RUNTIME)</a>
+<span class="sourceLineNo">013</span><a id="line.13">public @interface FromPattern {</a>
+<span class="sourceLineNo">014</span><a id="line.14"></a>
+<span class="sourceLineNo">015</span><a id="line.15">    /**</a>
+<span class="sourceLineNo">016</span><a id="line.16">     *</a>
+<span class="sourceLineNo">017</span><a id="line.17">     * @return 指定 pattern</a>
+<span class="sourceLineNo">018</span><a id="line.18">     */</a>
+<span class="sourceLineNo">019</span><a id="line.19">    char value();</a>
+<span class="sourceLineNo">020</span><a id="line.20"></a>
+<span class="sourceLineNo">021</span><a id="line.21">}</a>
 
 
 

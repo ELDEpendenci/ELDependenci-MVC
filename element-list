@@ -1,6 +1,9 @@
 com.ericlam.mc.eldgui
+com.ericlam.mc.eldgui.component
+com.ericlam.mc.eldgui.component.factory
+com.ericlam.mc.eldgui.component.modifier
 com.ericlam.mc.eldgui.controller
 com.ericlam.mc.eldgui.event
+com.ericlam.mc.eldgui.exception
 com.ericlam.mc.eldgui.lifecycle
-com.ericlam.mc.eldgui.model
 com.ericlam.mc.eldgui.view

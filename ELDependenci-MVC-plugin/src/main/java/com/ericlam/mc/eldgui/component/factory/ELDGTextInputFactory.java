@@ -5,8 +5,6 @@ import com.ericlam.mc.eldgui.component.AttributeController;
 import com.ericlam.mc.eldgui.component.Component;
 import com.ericlam.mc.eldgui.component.TextInputField;
 
-import java.util.List;
-
 public final class ELDGTextInputFactory extends AbstractComponentFactory<TextInputFactory> implements TextInputFactory {
 
     private boolean disabled;

@@ -6,7 +6,6 @@ import com.ericlam.mc.eldgui.component.modifier.Clickable;
 import com.ericlam.mc.eldgui.component.modifier.Listenable;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.TextComponent;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;

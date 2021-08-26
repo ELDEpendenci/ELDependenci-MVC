@@ -3,6 +3,9 @@ package com.ericlam.mc.eldgui.component;
 import com.ericlam.mc.eld.services.ItemStackService;
 import org.bukkit.inventory.ItemStack;
 
+/**
+ * 用於繼承組件，預設了很多事先的邏輯，方便創建
+ */
 public abstract class AbstractComponent implements Component {
 
     protected final AttributeController attributeController;

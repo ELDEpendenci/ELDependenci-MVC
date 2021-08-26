@@ -4,10 +4,7 @@ import com.ericlam.mc.eld.services.ItemStackService;
 import com.ericlam.mc.eldgui.component.AttributeController;
 import com.ericlam.mc.eldgui.component.Component;
 import com.ericlam.mc.eldgui.component.RGBSelector;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Color;
-import org.bukkit.Material;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import java.util.List;
 

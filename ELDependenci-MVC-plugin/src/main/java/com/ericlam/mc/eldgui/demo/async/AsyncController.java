@@ -29,7 +29,7 @@ public final class AsyncController {
                 e.printStackTrace();
             }
 
-        }).thenApplySync(v -> new BukkitView<>(AsyncView.class, null));
+        }).thenApplySync(v -> new BukkitView<>(AsyncView.class));
     }
 
 

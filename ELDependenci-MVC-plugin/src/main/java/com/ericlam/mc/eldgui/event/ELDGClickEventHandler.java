@@ -1,12 +1,9 @@
 package com.ericlam.mc.eldgui.event;
 
-import com.ericlam.mc.eldgui.ELDGView;
 import com.ericlam.mc.eldgui.MVCInstallation;
 import com.ericlam.mc.eldgui.view.View;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryInteractEvent;
-import org.bukkit.event.inventory.InventoryType;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;

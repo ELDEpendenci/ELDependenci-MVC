@@ -17,7 +17,7 @@ public class TestController {
     }
 
     public BukkitView<?, ?> index(){
-        return new BukkitView<>(TestView.class, null);
+        return new BukkitView<>(TestView.class);
     }
 
 

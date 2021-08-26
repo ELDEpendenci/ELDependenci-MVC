@@ -103,7 +103,7 @@ public final class ELDGUI {
 
         Optional<Class<? extends LoadingView>> loadingViewOpt = Optional.ofNullable(this.controllerCls.getAnnotation(AsyncLoadingView.class)).map(AsyncLoadingView::value);
         var loadingView = loadingViewOpt.isPresent() ? loadingViewOpt.get() : eldgmvcInstallation.getDefaultLoadingView();
-        this.loadingView = new BukkitView<>(loadingView, null);
+        this.loadingView = new BukkitView<>(loadingView);
 
         this.initIndexView(controller);
     }
@@ -184,7 +184,7 @@ public final class ELDGUI {
                     .filter(a -> a.annotationType() == AsyncLoadingView.class)
                     .findAny()
                     .map(a -> ((AsyncLoadingView) a).value())
-                    .map(v -> new BukkitView<>(v, null))
+                    .map(BukkitView::new)
                     .ifPresentOrElse(this::updateView, () -> this.updateView(this.loadingView));
             ScheduleService.BukkitPromise<BukkitView<?, ?>> promise = (ScheduleService.BukkitPromise<BukkitView<?, ?>>) result;
             promise.thenRunSync(bukkitView -> {

@@ -2,7 +2,8 @@ package com.ericlam.mc.eldgui;
 
 import com.ericlam.mc.eld.services.ConfigPoolService;
 import com.ericlam.mc.eld.services.ItemStackService;
-import com.ericlam.mc.eldgui.component.*;
+import com.ericlam.mc.eldgui.component.AttributeController;
+import com.ericlam.mc.eldgui.component.Component;
 import com.ericlam.mc.eldgui.component.ComponentFactory;
 import com.ericlam.mc.eldgui.component.modifier.Animatable;
 import com.ericlam.mc.eldgui.component.modifier.Clickable;

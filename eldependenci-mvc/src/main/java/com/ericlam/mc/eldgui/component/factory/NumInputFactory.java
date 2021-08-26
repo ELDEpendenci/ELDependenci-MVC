@@ -58,7 +58,7 @@ public interface NumInputFactory extends ComponentFactory<NumInputFactory> {
     NumInputFactory messageInvalidNumber(String message);
 
     /**
-     * 禁用組件
+     * 設置禁用
      * @return this
      */
     NumInputFactory disabled();

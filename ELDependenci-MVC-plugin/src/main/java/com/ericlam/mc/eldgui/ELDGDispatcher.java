@@ -120,8 +120,8 @@ public class ELDGDispatcher implements UIDispatcher, Listener {
         }
 
         @Override
-        public void setAttribute(String key, Object item) {
-            this.attributes.put(key, item);
+        public void setAttribute(String key, Object value) {
+            this.attributes.put(key, value);
         }
 
         @Override

@@ -1,7 +1,7 @@
 package com.ericlam.mc.eldgui.event;
 
-import com.ericlam.mc.eldgui.lifecycle.PreDestroy;
 import com.ericlam.mc.eldgui.lifecycle.PostConstruct;
+import com.ericlam.mc.eldgui.lifecycle.PreDestroy;
 import org.apache.commons.lang.Validate;
 
 import java.lang.annotation.Annotation;

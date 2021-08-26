@@ -3,6 +3,10 @@ package com.ericlam.mc.eldgui;
 import java.util.Collection;
 import java.util.ListIterator;
 
+/**
+ * 輔助用，循環迭代器
+ * @param <E> 元素類型
+ */
 public final class CircuitIterator<E> implements ListIterator<E> {
 
     private final E[] elements;

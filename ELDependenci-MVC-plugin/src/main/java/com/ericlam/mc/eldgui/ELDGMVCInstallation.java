@@ -1,15 +1,18 @@
 package com.ericlam.mc.eldgui;
 
 import com.ericlam.mc.eldgui.component.ComponentFactory;
+import com.ericlam.mc.eldgui.controller.UIController;
 import com.ericlam.mc.eldgui.demo.ELDGExceptionViewHandler;
 import com.ericlam.mc.eldgui.demo.ELDGLoadingView;
 import com.ericlam.mc.eldgui.exception.ExceptionViewHandler;
-import com.ericlam.mc.eldgui.controller.UIController;
 import com.ericlam.mc.eldgui.exception.HandleForControllers;
 import com.ericlam.mc.eldgui.view.LoadingView;
 
 import java.lang.annotation.Annotation;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ELDGMVCInstallation implements MVCInstallation{
@@ -46,8 +49,8 @@ public class ELDGMVCInstallation implements MVCInstallation{
     }
 
     @Override
-    public final void addExceptionViewHandlers(List<Class<? extends ExceptionViewHandler>> handlers) {
-        for (Class<? extends ExceptionViewHandler> handler : handlers) {
+    public final void addExceptionViewHandlers(List<Class<? extends ExceptionViewHandler>> exceptionHandlers) {
+        for (Class<? extends ExceptionViewHandler> handler : exceptionHandlers) {
             if (!handler.isAnnotationPresent(HandleForControllers.class)) {
                 plugin.getLogger().info("exception view handler "+handler+" do not have @HandleForControllers, will use it as plugin scoped");
                 this.scopedExceptionHandlerSet.add(handler);

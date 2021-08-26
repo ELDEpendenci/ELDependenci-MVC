@@ -17,7 +17,7 @@ public class ErrorController {
         Exception ex = session.pollAttribute("exception");
         if (ex == null) {
             LOGGER.warn("exception is null, going to test error gui");
-            return new BukkitView<>(TestErrorView.class, null);
+            return new BukkitView<>(TestErrorView.class);
         }
         return new BukkitView<>(ErrorView.class, ex);
     }
@@ -27,7 +27,7 @@ public class ErrorController {
         String fallback = session.pollAttribute("from");
         if (fallback == null) {
             LOGGER.warn("fallback target is null, using test error gui");
-            return new BukkitView<>(TestErrorView.class, null);
+            return new BukkitView<>(TestErrorView.class);
         }
         return new BukkitRedirectView(fallback);
     }

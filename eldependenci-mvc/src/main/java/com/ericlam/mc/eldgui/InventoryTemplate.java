@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 界面範本，用於作爲 GroupConfiguration 的繼承，預設所有界面所需屬性
+ */
 public abstract class InventoryTemplate extends GroupConfiguration {
 
     public String name;

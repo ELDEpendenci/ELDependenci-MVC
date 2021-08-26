@@ -2,13 +2,11 @@ package com.ericlam.mc.eldgui.component;
 
 import com.ericlam.mc.eld.services.ItemStackService;
 import com.ericlam.mc.eldgui.CircuitIterator;
-import com.ericlam.mc.eldgui.ELDGPlugin;
 import com.ericlam.mc.eldgui.component.factory.ELDGSelectionFactory;
 import com.ericlam.mc.eldgui.component.modifier.Clickable;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.Optional;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public final class Selection<T> extends AbstractComponent implements Clickable {

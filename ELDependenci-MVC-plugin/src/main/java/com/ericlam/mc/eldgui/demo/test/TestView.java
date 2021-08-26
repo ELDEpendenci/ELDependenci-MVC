@@ -1,7 +1,5 @@
 package com.ericlam.mc.eldgui.demo.test;
 
-import com.ericlam.mc.eldgui.component.DateSelector;
-import com.ericlam.mc.eldgui.component.TimeSelector;
 import com.ericlam.mc.eldgui.component.factory.ButtonFactory;
 import com.ericlam.mc.eldgui.component.factory.DateSelectorFactory;
 import com.ericlam.mc.eldgui.component.factory.RGBSelectorFactory;

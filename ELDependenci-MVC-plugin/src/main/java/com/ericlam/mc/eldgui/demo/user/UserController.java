@@ -45,7 +45,7 @@ public class UserController implements ViewLifeCycleHook {
 
     @ClickMapping(view = UserListView.class, pattern = 'A')
     public BukkitView<?, ?> onCreateUser() {
-        return new BukkitView<>(UserUpdateView.class, null);
+        return new BukkitView<>(UserUpdateView.class);
     }
 
     @ClickMapping(view = UserListView.class, pattern = 'M')

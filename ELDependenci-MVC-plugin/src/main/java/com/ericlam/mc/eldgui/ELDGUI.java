@@ -146,7 +146,7 @@ public final class ELDGUI {
             if (indexMethod.isEmpty())
                 throw new IllegalStateException("cannot find index method from " + controllerCls);
             Method index = indexMethod.get();
-            if (index.getGenericReturnType() == Void.class)
+            if (index.getGenericReturnType() == Void.class || index.getGenericReturnType() == void.class)
                 throw new IllegalStateException("index method cannot return void");
             Object[] objects = methodParseManager.getMethodParameters(index, null);
             Object result = index.invoke(controller, objects);
@@ -280,8 +280,6 @@ public final class ELDGUI {
         if (this.currentView == null) return;
         LOGGER.debug("on inventory open"); // debug
         if (this.currentView.getNativeInventory() == e.getInventory()) return;
-        e.getPlayer().sendMessage("open other inventory while inputting, so destroyed the previous view");
-        e.getPlayer().sendMessage("destroying view: " + controllerCls + " " + currentView.getView());
         destroy();
     }
 

@@ -7,9 +7,9 @@ public interface InventoryService {
 
     /**
      * 獲取界面調度器
-     * @param controller controlelr id
+     * @param controller 控制器 id
      * @return 界面調度器
-     * @throws UINotFoundException 找不到該 controller
+     * @throws UINotFoundException 找不到該 控制器
      */
     UIDispatcher getUIDispatcher(String controller) throws UINotFoundException;
 }

@@ -18,7 +18,7 @@ public interface TimeSelectorFactory extends ComponentFactory<TimeSelectorFactor
     /**
      *
      * @param title 標題
-     * @return
+     * @return this
      */
     TimeSelectorFactory label(String title);
 

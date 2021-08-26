@@ -6,8 +6,11 @@ import org.bukkit.entity.Player;
 
 /**
  * 異常界面處理器。當界面執行時出現異常，將會調用這個類去渲染異常界面。
- * <br></br>
- * 你可以透過新增自定義方法並標注 {@link HandleException} 來特別處理指定的異常，但其方法參數必須與 {@link this#createErrorView(Exception, String, UISession, Player)} 一致
+ * <br>
+ * 你可以透過新增自定義方法並標注 {@link HandleException}
+ * 來特別處理指定的異常，但其方法參數必須與
+ * {@link ExceptionViewHandler#createErrorView(Exception, String, UISession, Player)}
+ * 一致
  */
 public interface ExceptionViewHandler {
 

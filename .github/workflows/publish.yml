@@ -1,7 +1,7 @@
 env:
-  version: 0.0.2 # 你的版本名稱
+  version: 0.1.1 # 你的版本名稱
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  plugin_name: ELD-GUI-plugin
+  plugin_name: ELDependenci-MVC-plugin
 
 name: Publish Process
 

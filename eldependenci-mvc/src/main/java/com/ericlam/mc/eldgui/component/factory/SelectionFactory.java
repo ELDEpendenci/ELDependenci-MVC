@@ -45,7 +45,7 @@ public interface SelectionFactory extends ComponentFactory<SelectionFactory> {
 
     /**
      * 選擇器設定
-     * @param <T>
+     * @param <T> 選擇元素類型
      */
     interface SelectionSettings<T> {
 

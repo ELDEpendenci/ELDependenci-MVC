@@ -11,7 +11,7 @@ public interface DateSelectorFactory extends ComponentFactory<DateSelectorFactor
 
     /**
      * 設置禁用
-     * @return
+     * @return this
      */
     DateSelectorFactory disabled();
 

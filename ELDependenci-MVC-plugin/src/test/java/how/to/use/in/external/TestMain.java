@@ -12,7 +12,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import org.bukkit.Material;
 import org.junit.Assert;
-import org.junit.Test;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -23,35 +22,14 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @UIController("1234")
-public class HowToUse {
+public class TestMain {
 
 
     public static void main(String[] args) {
-        SelectionFactory selection = null;
-
-        Component c = selection
-                .icon(Material.PLAYER_HEAD)
-                .label("select a number")
-                .selectable(String.class, builder -> {
-
-                    builder.insert("iron")
-                            .icon(Material.IRON_INGOT)
-                            .number(1)
-                            .submit();
-
-                    builder.insert("gold")
-                            .icon(Material.GOLD_INGOT)
-                            .number(2)
-                            .submit();
-
-                })
-                .bindInput("go", "123")
-                .toDisplay(String::valueOf)
-                .then()
-                .create();
+       // check user controller to see how to use
     }
 
-    @Test
+    // @Test
     public void testGson() {
         Gson gson = new Gson();
         byte[] json = gson.toJson("123131").getBytes(StandardCharsets.UTF_8);
@@ -61,7 +39,7 @@ public class HowToUse {
         System.out.println(o.getClass());
     }
 
-    @Test
+    // @Test
     public void testJackson() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         byte[] bb = mapper.writeValueAsBytes(UUID.randomUUID());
@@ -71,7 +49,7 @@ public class HowToUse {
         System.out.println(o.getClass());
     }
 
-    @Test
+    // @Test
     public void testJacksonConvert() {
         //ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule()).disable(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES);
         Gson gson = new Gson();
@@ -111,13 +89,13 @@ public class HowToUse {
                 generateNestedMap(path.substring(indexOfDot + 1), value));
     }
 
-    @Test
+    // @Test
     public void testFlatMap() {
     }
 
-    @Test
+    //@Test
     public void testAnnotation() {
-        UIController realAnnotation = HowToUse.class.getAnnotation(UIController.class);
+        UIController realAnnotation = TestMain.class.getAnnotation(UIController.class);
         System.out.println(realAnnotation.annotationType());
         System.out.println(realAnnotation.value());
         UIController fakeAnnotation = new UIController() {
@@ -140,7 +118,7 @@ public class HowToUse {
     }
 
 
-    @Test
+    //@Test
     public void testPrimitive() {
         var student = new Student(
                 "studen1",
@@ -157,7 +135,7 @@ public class HowToUse {
         return null;
     }
 
-    @Test
+    //@Test
     public void testClassCommonPackage() {
         System.out.println(ELDGExceptionViewHandler.class.getClassLoader().getName());
         System.out.println(ExceptionViewHandler.class.getClassLoader().getName());
@@ -168,7 +146,7 @@ public class HowToUse {
         System.out.println(UserController.class.getProtectionDomain().getCodeSource().hashCode());
     }
 
-    @Test
+    //@Test
     public void testClassInherit() {
         System.out.println(B.class.isAnnotationPresent(UIController.class));
     }

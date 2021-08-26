@@ -7,7 +7,7 @@
     <groupId>org.eldependenci</groupId>
     <artifactId>ELDependenci-MVC-Module</artifactId>
     <packaging>pom</packaging>
-    <version>0.1.alpha-4</version>
+    <version>0.1.1</version>
     <modules>
         <module>eldependenci-mvc</module>
         <module>ELDependenci-MVC-plugin</module>
@@ -122,19 +122,20 @@
                     <configuration>
                         <links>
                             <link>https://hub.spigotmc.org/javadocs/spigot/</link>
+                            <link>https://eldependenci.github.io/ELDependenci/</link>
                         </links>
                         <show>public</show>
                         <isOffline>false</isOffline>
                         <linksource>true</linksource>
                         <encoding>UTF-8</encoding>
-                        <windowtitle>ELDependenci-Addon</windowtitle>
-                        <doctitle>ELDependenci-Addon v${project.version}</doctitle>
+                        <windowtitle>ELDependenci-MVC</windowtitle>
+                        <doctitle>ELDependenci-MVC v${project.version}</doctitle>
                         <verbose>true</verbose>
                         <author>true</author>
                         <version>true</version>
                         <linksource>true</linksource>
                         <notimestamp>true</notimestamp>
-                        <bottom><![CDATA[<b>© ELDependenci-GUI - 2021</b>]]></bottom>
+                        <bottom><![CDATA[<b>© ELDependenci-MVC - 2021</b>]]></bottom>
                         <reportOutputDirectory>${project.build.directory}</reportOutputDirectory>
                         <outputDirectory>../javadocs</outputDirectory>
                         <detectJavaApiLink>true</detectJavaApiLink>

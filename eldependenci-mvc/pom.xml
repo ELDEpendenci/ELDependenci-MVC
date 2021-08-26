@@ -5,7 +5,7 @@
     <parent>
         <artifactId>ELDependenci-MVC-Module</artifactId>
         <groupId>org.eldependenci</groupId>
-        <version>0.1.alpha-4</version>
+        <version>0.1.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 

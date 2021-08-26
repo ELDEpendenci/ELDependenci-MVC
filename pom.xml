@@ -1,22 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.eldependenci</groupId>
-    <artifactId>ELDependenci-GUI</artifactId>
+    <artifactId>ELDependenci-MVC-Module</artifactId>
     <packaging>pom</packaging>
-    <version>0.0.2</version>
+    <version>0.1.1</version>
     <modules>
-        <module>eld-gui</module>
-        <module>ELD-GUI-plugin</module>
+        <module>eldependenci-mvc</module>
+        <module>ELDependenci-MVC-plugin</module>
     </modules>
 
     <repositories>
         <repository>
             <id>papermc</id>
             <url>https://papermc.io/repo/repository/maven-public/</url>
+        </repository>
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
         <repository>
             <id>chu77</id>
@@ -29,6 +33,10 @@
             <groupId>com.destroystokyo.paper</groupId>
             <artifactId>paper-api</artifactId>
         </dependency>
+        <!-- dependency>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-api</artifactId>
+        </dependency -->
         <dependency>
             <groupId>org.eldependenci</groupId>
             <artifactId>eldependenci-framework</artifactId>
@@ -38,15 +46,39 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>org.spigotmc</groupId>
+                <artifactId>spigot-api</artifactId>
+                <version>1.16.5-R0.1-SNAPSHOT</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
                 <groupId>com.destroystokyo.paper</groupId>
                 <artifactId>paper-api</artifactId>
-                <version>1.16.3-R0.1-SNAPSHOT</version>
+                <version>1.16.5-R0.1-SNAPSHOT</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.papermc.paper</groupId>
+                <artifactId>paper-api</artifactId>
+                <version>1.17.1-R0.1-SNAPSHOT</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.eldependenci</groupId>
                 <artifactId>eldependenci-framework</artifactId>
-                <version>0.0.7</version>
+                <version>0.1.2</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.eldependenci</groupId>
+                <artifactId>eldependenci-addon</artifactId>
+                <version>0.1.2</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.12.4</version>
                 <scope>provided</scope>
             </dependency>
         </dependencies>
@@ -90,19 +122,20 @@
                     <configuration>
                         <links>
                             <link>https://hub.spigotmc.org/javadocs/spigot/</link>
+                            <link>https://eldependenci.github.io/ELDependenci/</link>
                         </links>
                         <show>public</show>
                         <isOffline>false</isOffline>
                         <linksource>true</linksource>
                         <encoding>UTF-8</encoding>
-                        <windowtitle>ELDependenci-Addon</windowtitle>
-                        <doctitle>ELDependenci-Addon v${project.version}</doctitle>
+                        <windowtitle>ELDependenci-MVC</windowtitle>
+                        <doctitle>ELDependenci-MVC v${project.version}</doctitle>
                         <verbose>true</verbose>
                         <author>true</author>
                         <version>true</version>
                         <linksource>true</linksource>
                         <notimestamp>true</notimestamp>
-                        <bottom><![CDATA[<b>© ELDependenci - 2020</b>]]></bottom>
+                        <bottom><![CDATA[<b>© ELDependenci-MVC - 2021</b>]]></bottom>
                         <reportOutputDirectory>${project.build.directory}</reportOutputDirectory>
                         <outputDirectory>../javadocs</outputDirectory>
                         <detectJavaApiLink>true</detectJavaApiLink>

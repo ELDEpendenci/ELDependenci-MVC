@@ -1,0 +1,5 @@
+name: ELDepdendenci-MVC
+main: com.ericlam.mc.eldgui.ELDGPlugin
+version: ${project.version}
+api-version: "1.16"
+depend: [ ELDependenci ]

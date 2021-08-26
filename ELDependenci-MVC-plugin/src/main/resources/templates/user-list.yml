@@ -1,0 +1,17 @@
+name: "&bUser List"
+rows: 3
+pattern:
+  - LLLLLLLLL
+  - LLLLLLLLL
+  - ZZZMZAZZZ
+items:
+  L:
+    cancelMove: true
+  Z:
+    material: BLACK_STAINED_GLASS_PANE
+  M:
+    material: DIAMOND_SWORD
+    name: "&bReset"
+  A:
+    material: DIAMOND_AXE
+    name: "&aCreate"

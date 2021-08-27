@@ -75,12 +75,8 @@ public final class ELDGView<T> {
         InventoryTemplate template;
         if (viewCls.isAnnotationPresent(UseTemplate.class)) {
             UseTemplate useTemplate = viewCls.getAnnotation(UseTemplate.class);
-            var pool = configPoolService.getPool(useTemplate.groupResource());
-            if (pool == null){
-                configPoolService.getConfigAsync(useTemplate.groupResource(), useTemplate.template()); // load again
-                throw new IllegalStateException("config pool is not loaded: " + useTemplate.groupResource()+", maybe wait a minute and try again ?");
-            }
-            template = Optional.ofNullable(pool.get(useTemplate.template())).orElseThrow(() -> new IllegalStateException("Cannot find template: " + useTemplate.template()));
+            var pool = configPoolService.getGroupConfig(useTemplate.groupResource());
+            template = pool.findById(useTemplate.template()).orElseThrow(() -> new IllegalStateException("Cannot find template: " + useTemplate.template()));
         } else if (viewCls.isAnnotationPresent(ViewDescriptor.class)) {
             ViewDescriptor viewDescriptor = viewCls.getAnnotation(ViewDescriptor.class);
             template = new CodeInventoryTemplate(viewDescriptor);

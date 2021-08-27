@@ -66,13 +66,13 @@
             <dependency>
                 <groupId>org.eldependenci</groupId>
                 <artifactId>eldependenci-framework</artifactId>
-                <version>0.1.2</version>
+                <version>0.1.3</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.eldependenci</groupId>
                 <artifactId>eldependenci-addon</artifactId>
-                <version>0.1.2</version>
+                <version>0.1.3</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>

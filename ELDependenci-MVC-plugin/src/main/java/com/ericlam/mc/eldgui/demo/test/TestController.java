@@ -1,5 +1,6 @@
 package com.ericlam.mc.eldgui.demo.test;
 
+import com.ericlam.mc.eldgui.controller.MapAttribute;
 import com.ericlam.mc.eldgui.controller.ModelAttribute;
 import com.ericlam.mc.eldgui.controller.UIController;
 import com.ericlam.mc.eldgui.event.ClickMapping;
@@ -7,6 +8,8 @@ import com.ericlam.mc.eldgui.lifecycle.PostConstruct;
 import com.ericlam.mc.eldgui.lifecycle.PreDestroy;
 import com.ericlam.mc.eldgui.view.BukkitView;
 import org.bukkit.entity.Player;
+
+import java.util.Map;
 
 @UIController("test")
 public class TestController {
@@ -22,8 +25,9 @@ public class TestController {
 
 
     @ClickMapping(view = TestView.class, pattern = 'A')
-    public void onClick(@ModelAttribute('Z') TestModel test, Player player){
+    public void onClick(@ModelAttribute('Z') TestModel test, Player player, @MapAttribute('Z') Map<String, Object> map){
         player.sendMessage(test.toString());
+        player.sendMessage(map.toString());
     }
 
 

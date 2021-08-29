@@ -142,7 +142,7 @@ public class PersistDataUtils {
             }
             field.setAccessible(true);
             Object value = map.get(field.getName());
-            if (value instanceof Map<?, ?>){
+            if (value instanceof Map<?, ?> && field.getType() != Map.class){
                 Map<String, Object> m = (Map<String, Object>) value;
                 value = mapToObject(m, field.getType());
             }

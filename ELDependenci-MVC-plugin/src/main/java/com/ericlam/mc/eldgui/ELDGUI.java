@@ -201,15 +201,15 @@ public final class ELDGUI {
 
     private void initMethodParseManager(MethodParseManager parser) {
         parser.registerParser((t, annos) -> t.equals(UISession.class), (annotations, t, e) -> session);
-        parser.registerParser((t, annos) -> {
+        parser.registerParser((t, annos) -> Arrays.stream(annos).anyMatch(a -> a.annotationType() == FromPattern.class), (annotations, t, e) -> {
+            FromPattern pattern = (FromPattern) Arrays.stream(annotations).filter(a -> a.annotationType() == FromPattern.class).findAny().orElseThrow(() -> new IllegalStateException("cannot find @FromPattern in List<ItemStack> parameters"));
             if (t instanceof ParameterizedType) {
                 var parat = (ParameterizedType) t;
-                return parat.getActualTypeArguments()[0] == ItemStack.class && parat.getRawType() == List.class;
+                if (parat.getActualTypeArguments()[0] == ItemStack.class && parat.getRawType() == List.class){
+                    return this.currentView.getEldgContext().getItems(pattern.value());
+                }
             }
-            return false;
-        }, (annotations, t, e) -> {
-            FromPattern pattern = (FromPattern) Arrays.stream(annotations).filter(a -> a.annotationType() == FromPattern.class).findAny().orElseThrow(() -> new IllegalStateException("cannot find @FromPattern in List<ItemStack> parameters"));
-            return this.currentView.getEldgContext().getItems(pattern.value());
+            throw new IllegalStateException("@FromPattern 必須使用 List<ItemStack> 作為其類型");
         });
         //parser.registerParser((t, annos) -> t.equals(UIRequest.class), (annotations, t, e) -> eldgContext);
         parser.registerParser((t, annos) -> t.equals(Player.class), (annotations, t, e) -> owner);
@@ -240,6 +240,28 @@ public final class ELDGUI {
                     Map<String, Object> toConvert = PersistDataUtils.toNestedMap(fieldMap);
                     LOGGER.debug("using " + toConvert + " to create instance of " + model);
                     return PersistDataUtils.mapToObject(toConvert, model);
+                });
+        parser.registerParser((t, annos) -> Arrays.stream(annos).anyMatch(a -> a.annotationType() == MapAttribute.class),
+                (annotations, type, event) -> {
+                    MapAttribute attribute = (MapAttribute) Arrays.stream(annotations).filter(a -> a.annotationType() == MapAttribute.class).findAny().orElseThrow(() -> new IllegalStateException("cannot find MapAttribute annotation"));
+                    var context = this.currentView.getEldgContext();
+                    boolean isMap = false;
+                    if (type instanceof ParameterizedType){
+                        var parat = (ParameterizedType)type;
+                        isMap = parat.getRawType() == Map.class && parat.getActualTypeArguments()[0] == String.class && parat.getActualTypeArguments()[1] == Object.class;
+                    }
+
+                    if (!isMap) throw new IllegalStateException("@MapAttribute 必須使用 Map<String, Object> 作為其類型");
+                    Map<String, Object> fieldMap = context.getItems(attribute.value())
+                            .stream()
+                            .filter(item -> context.getAttribute(item, AttributeController.FIELD_TAG) != null)
+                            .collect(Collectors
+                                    .toMap(
+                                            item -> context.getAttribute(item, AttributeController.FIELD_TAG),
+                                            item -> Optional.ofNullable(context.getAttribute(item, AttributeController.VALUE_TAG)).orElseThrow(() -> new IllegalStateException("The value tag of " + item.toString() + " is null."))
+                                    )
+                            );
+                    return PersistDataUtils.toNestedMap(fieldMap);
                 });
     }
 

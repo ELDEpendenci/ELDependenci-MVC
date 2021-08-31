@@ -16,13 +16,20 @@
 <span class="sourceLineNo">007</span><a id="line.7">import java.lang.annotation.RetentionPolicy;</a>
 <span class="sourceLineNo">008</span><a id="line.8">import java.lang.annotation.Target;</a>
 <span class="sourceLineNo">009</span><a id="line.9"></a>
-<span class="sourceLineNo">010</span><a id="line.10">@Target(ElementType.METHOD)</a>
-<span class="sourceLineNo">011</span><a id="line.11">@Retention(RetentionPolicy.RUNTIME)</a>
-<span class="sourceLineNo">012</span><a id="line.12">public @interface PostUpdateView {</a>
-<span class="sourceLineNo">013</span><a id="line.13"></a>
-<span class="sourceLineNo">014</span><a id="line.14">    Class&lt;? extends View&lt;?&gt;&gt; value();</a>
-<span class="sourceLineNo">015</span><a id="line.15"></a>
-<span class="sourceLineNo">016</span><a id="line.16">}</a>
+<span class="sourceLineNo">010</span><a id="line.10">/**</a>
+<span class="sourceLineNo">011</span><a id="line.11"> * 界面更新後的操作</a>
+<span class="sourceLineNo">012</span><a id="line.12"> */</a>
+<span class="sourceLineNo">013</span><a id="line.13">@Target(ElementType.METHOD)</a>
+<span class="sourceLineNo">014</span><a id="line.14">@Retention(RetentionPolicy.RUNTIME)</a>
+<span class="sourceLineNo">015</span><a id="line.15">public @interface PostUpdateView {</a>
+<span class="sourceLineNo">016</span><a id="line.16"></a>
+<span class="sourceLineNo">017</span><a id="line.17">    /**</a>
+<span class="sourceLineNo">018</span><a id="line.18">     *</a>
+<span class="sourceLineNo">019</span><a id="line.19">     * @return 指定界面</a>
+<span class="sourceLineNo">020</span><a id="line.20">     */</a>
+<span class="sourceLineNo">021</span><a id="line.21">    Class&lt;? extends View&lt;?&gt;&gt; value();</a>
+<span class="sourceLineNo">022</span><a id="line.22"></a>
+<span class="sourceLineNo">023</span><a id="line.23">}</a>
 
 
 

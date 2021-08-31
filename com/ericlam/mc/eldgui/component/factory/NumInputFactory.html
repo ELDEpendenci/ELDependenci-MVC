@@ -26,7 +26,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6};
+var data = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -88,7 +88,7 @@ loadScripts(document, 'script');</script>
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested.class.summary">Nested</a>&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
@@ -129,13 +129,38 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <hr>
 <pre>public interface <a href="../../../../../../src-html/com/ericlam/mc/eldgui/component/factory/NumInputFactory.html#line.8">NumInputFactory</a>
 extends <a href="../ComponentFactory.html" title="interface in com.ericlam.mc.eldgui.component">ComponentFactory</a>&lt;<a href="NumInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">NumInputFactory</a>&gt;</pre>
-<div class="block">數字輸入組件工廠</div>
+<div class="block">數字輸入組件工廠，可用任意數字類型</div>
 </li>
 </ul>
 </div>
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<section role="region">
+<ul class="blockList">
+<li class="blockList"><a id="nested.class.summary">
+<!--   -->
+</a>
+<h3>Nested Class Summary</h3>
+<table class="memberSummary">
+<caption><span>Nested Classes</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colSecond" scope="col">Interface</th>
+<th class="colLast" scope="col">Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static interface&nbsp;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="NumInputFactory.NumberTypeFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">NumInputFactory.NumberTypeFactory</a>&lt;<a href="NumInputFactory.NumberTypeFactory.html" title="type parameter in NumInputFactory.NumberTypeFactory">T</a> extends <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Number.html?is-external=true" title="class or interface in java.lang" class="externalLink">Number</a>&gt;</span></code></th>
+<td class="colLast">
+<div class="block">泛型數字輸入組件工廠</div>
+</td>
+</tr>
+</table>
+</li>
+</ul>
+</section>
 <!-- ========== METHOD SUMMARY =========== -->
 <section role="region">
 <ul class="blockList">
@@ -152,45 +177,34 @@ extends <a href="../ComponentFactory.html" title="interface in com.ericlam.mc.el
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code><a href="NumInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">NumInputFactory</a></code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#bindInput(java.lang.String,int)">bindInput</a></span>&#8203;(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;field,
-         int&nbsp;initValue)</code></th>
-<td class="colLast">
-<div class="block">綁定 model 屬性</div>
-</td>
-</tr>
-<tr id="i1" class="rowColor">
-<td class="colFirst"><code><a href="NumInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">NumInputFactory</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#disabled()">disabled</a></span>()</code></th>
 <td class="colLast">
 <div class="block">設置禁用</div>
 </td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code><a href="NumInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">NumInputFactory</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#label(java.lang.String)">label</a></span>&#8203;(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;label)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
-<td class="colFirst"><code><a href="NumInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">NumInputFactory</a></code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#max(int)">max</a></span>&#8203;(int&nbsp;max)</code></th>
-<td class="colLast">&nbsp;</td>
-</tr>
-<tr id="i4" class="altColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code><a href="NumInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">NumInputFactory</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#messageInput(java.lang.String)">messageInput</a></span>&#8203;(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;message)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code><a href="NumInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">NumInputFactory</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#messageInvalidNumber(java.lang.String)">messageInvalidNumber</a></span>&#8203;(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;message)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
-<td class="colFirst"><code><a href="NumInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">NumInputFactory</a></code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#min(int)">min</a></span>&#8203;(int&nbsp;min)</code></th>
-<td class="colLast">&nbsp;</td>
+<tr id="i4" class="altColor">
+<td class="colFirst"><code>&lt;T extends <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Number.html?is-external=true" title="class or interface in java.lang" class="externalLink">Number</a>&gt;<br><a href="NumInputFactory.NumberTypeFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">NumInputFactory.NumberTypeFactory</a>&lt;T&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#useNumberType(java.lang.Class)">useNumberType</a></span>&#8203;(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type)</code></th>
+<td class="colLast">
+<div class="block">綁定指定數字類型</div>
+</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code><a href="NumInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">NumInputFactory</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#waitForInput(long)">waitForInput</a></span>&#8203;(long&nbsp;wait)</code></th>
 <td class="colLast">&nbsp;</td>
@@ -219,43 +233,13 @@ extends <a href="../ComponentFactory.html" title="interface in com.ericlam.mc.el
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a id="min(int)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>min</h4>
-<pre class="methodSignature"><a href="NumInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">NumInputFactory</a>&nbsp;<a href="../../../../../../src-html/com/ericlam/mc/eldgui/component/factory/NumInputFactory.html#line.15">min</a>&#8203;(int&nbsp;min)</pre>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>min</code> - 最少數字</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>this</dd>
-</dl>
-</li>
-</ul>
-<a id="max(int)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>max</h4>
-<pre class="methodSignature"><a href="NumInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">NumInputFactory</a>&nbsp;<a href="../../../../../../src-html/com/ericlam/mc/eldgui/component/factory/NumInputFactory.html#line.22">max</a>&#8203;(int&nbsp;max)</pre>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>max</code> - 最大數字</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>this</dd>
-</dl>
-</li>
-</ul>
 <a id="label(java.lang.String)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>label</h4>
-<pre class="methodSignature"><a href="NumInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">NumInputFactory</a>&nbsp;<a href="../../../../../../src-html/com/ericlam/mc/eldgui/component/factory/NumInputFactory.html#line.29">label</a>&#8203;(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;label)</pre>
+<pre class="methodSignature"><a href="NumInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">NumInputFactory</a>&nbsp;<a href="../../../../../../src-html/com/ericlam/mc/eldgui/component/factory/NumInputFactory.html#line.15">label</a>&#8203;(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;label)</pre>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>label</code> - 標題</dd>
@@ -264,21 +248,21 @@ extends <a href="../ComponentFactory.html" title="interface in com.ericlam.mc.el
 </dl>
 </li>
 </ul>
-<a id="bindInput(java.lang.String,int)">
+<a id="useNumberType(java.lang.Class)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>bindInput</h4>
-<pre class="methodSignature"><a href="NumInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">NumInputFactory</a>&nbsp;<a href="../../../../../../src-html/com/ericlam/mc/eldgui/component/factory/NumInputFactory.html#line.37">bindInput</a>&#8203;(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;field,
-                          int&nbsp;initValue)</pre>
-<div class="block">綁定 model 屬性</div>
+<h4>useNumberType</h4>
+<pre class="methodSignature">&lt;T extends <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Number.html?is-external=true" title="class or interface in java.lang" class="externalLink">Number</a>&gt;&nbsp;<a href="NumInputFactory.NumberTypeFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">NumInputFactory.NumberTypeFactory</a>&lt;T&gt;&nbsp;<a href="../../../../../../src-html/com/ericlam/mc/eldgui/component/factory/NumInputFactory.html#line.24">useNumberType</a>&#8203;(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type)</pre>
+<div class="block">綁定指定數字類型</div>
 <dl>
+<dt><span class="paramLabel">Type Parameters:</span></dt>
+<dd><code>T</code> - 數字類型</dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>field</code> - 屬性</dd>
-<dd><code>initValue</code> - 初始數值</dd>
+<dd><code>type</code> - 數字類型</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>this</dd>
+<dd>泛型數字輸入組件工廠</dd>
 </dl>
 </li>
 </ul>
@@ -288,7 +272,7 @@ extends <a href="../ComponentFactory.html" title="interface in com.ericlam.mc.el
 <ul class="blockList">
 <li class="blockList">
 <h4>waitForInput</h4>
-<pre class="methodSignature"><a href="NumInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">NumInputFactory</a>&nbsp;<a href="../../../../../../src-html/com/ericlam/mc/eldgui/component/factory/NumInputFactory.html#line.44">waitForInput</a>&#8203;(long&nbsp;wait)</pre>
+<pre class="methodSignature"><a href="NumInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">NumInputFactory</a>&nbsp;<a href="../../../../../../src-html/com/ericlam/mc/eldgui/component/factory/NumInputFactory.html#line.31">waitForInput</a>&#8203;(long&nbsp;wait)</pre>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>wait</code> - 等待輸入時間 (ticks)</dd>
@@ -303,7 +287,7 @@ extends <a href="../ComponentFactory.html" title="interface in com.ericlam.mc.el
 <ul class="blockList">
 <li class="blockList">
 <h4>messageInput</h4>
-<pre class="methodSignature"><a href="NumInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">NumInputFactory</a>&nbsp;<a href="../../../../../../src-html/com/ericlam/mc/eldgui/component/factory/NumInputFactory.html#line.51">messageInput</a>&#8203;(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;message)</pre>
+<pre class="methodSignature"><a href="NumInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">NumInputFactory</a>&nbsp;<a href="../../../../../../src-html/com/ericlam/mc/eldgui/component/factory/NumInputFactory.html#line.38">messageInput</a>&#8203;(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;message)</pre>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>message</code> - 輸入時的訊息</dd>
@@ -318,7 +302,7 @@ extends <a href="../ComponentFactory.html" title="interface in com.ericlam.mc.el
 <ul class="blockList">
 <li class="blockList">
 <h4>messageInvalidNumber</h4>
-<pre class="methodSignature"><a href="NumInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">NumInputFactory</a>&nbsp;<a href="../../../../../../src-html/com/ericlam/mc/eldgui/component/factory/NumInputFactory.html#line.58">messageInvalidNumber</a>&#8203;(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;message)</pre>
+<pre class="methodSignature"><a href="NumInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">NumInputFactory</a>&nbsp;<a href="../../../../../../src-html/com/ericlam/mc/eldgui/component/factory/NumInputFactory.html#line.45">messageInvalidNumber</a>&#8203;(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;message)</pre>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>message</code> - 無效文字時的訊息</dd>
@@ -333,7 +317,7 @@ extends <a href="../ComponentFactory.html" title="interface in com.ericlam.mc.el
 <ul class="blockListLast">
 <li class="blockList">
 <h4>disabled</h4>
-<pre class="methodSignature"><a href="NumInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">NumInputFactory</a>&nbsp;<a href="../../../../../../src-html/com/ericlam/mc/eldgui/component/factory/NumInputFactory.html#line.64">disabled</a>()</pre>
+<pre class="methodSignature"><a href="NumInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">NumInputFactory</a>&nbsp;<a href="../../../../../../src-html/com/ericlam/mc/eldgui/component/factory/NumInputFactory.html#line.51">disabled</a>()</pre>
 <div class="block">設置禁用</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
@@ -393,7 +377,7 @@ extends <a href="../ComponentFactory.html" title="interface in com.ericlam.mc.el
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested.class.summary">Nested</a>&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>

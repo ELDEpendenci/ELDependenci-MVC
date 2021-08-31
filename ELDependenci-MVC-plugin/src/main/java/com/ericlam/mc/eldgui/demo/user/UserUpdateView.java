@@ -72,7 +72,12 @@ public class UserUpdateView implements View<User> {
                         numberField
                                 .icon(Material.REDSTONE_TORCH)
                                 .label("Input Age (Left [+] / Right [-] / Middle [Input Number])")
+                                .useNumberType(Integer.class)
                                 .bindInput("age", model == null ? 0 : model.age)
+                                .min(0)
+                                .max(64)
+                                .step(1)
+                                .then()
                                 .create(),
                         textField
                                 .icon(Material.MAP)

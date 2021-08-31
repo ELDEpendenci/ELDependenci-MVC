@@ -3,23 +3,9 @@ package com.ericlam.mc.eldgui.component.factory;
 import com.ericlam.mc.eldgui.component.ComponentFactory;
 
 /**
- * 數字輸入組件工廠
+ * 數字輸入組件工廠，可用任意數字類型
  */
 public interface NumInputFactory extends ComponentFactory<NumInputFactory> {
-
-    /**
-     *
-     * @param min 最少數字
-     * @return this
-     */
-    NumInputFactory min(int min);
-
-    /**
-     *
-     * @param max 最大數字
-     * @return this
-     */
-    NumInputFactory max(int max);
 
     /**
      *
@@ -28,13 +14,14 @@ public interface NumInputFactory extends ComponentFactory<NumInputFactory> {
      */
     NumInputFactory label(String label);
 
+
     /**
-     * 綁定 model 屬性
-     * @param field 屬性
-     * @param initValue 初始數值
-     * @return this
+     * 綁定指定數字類型
+     * @param type 數字類型
+     * @param <T> 數字類型
+     * @return 泛型數字輸入組件工廠
      */
-    NumInputFactory bindInput(String field, int initValue);
+    <T extends Number> NumberTypeFactory<T> useNumberType(Class<T> type);
 
     /**
      *
@@ -62,5 +49,49 @@ public interface NumInputFactory extends ComponentFactory<NumInputFactory> {
      * @return this
      */
     NumInputFactory disabled();
+
+    /**
+     * 泛型數字輸入組件工廠
+     * @param <T> 數字類型
+     */
+    interface NumberTypeFactory<T extends Number> {
+
+        /**
+         * <b>必須設置，否則報錯</b>
+         * @param min 最少數字
+         * @return this
+         */
+        NumberTypeFactory<T> min(T min);
+
+        /**
+         * <b>必須設置，否則報錯</b>
+         * @param max 最大數字
+         * @return this
+         */
+        NumberTypeFactory<T> max(T max);
+
+        /**
+         * <b>必須設置，否則報錯</b>
+         * @param step 增加/減少數量
+         * @return this
+         */
+        NumberTypeFactory<T> step(T step);
+
+
+        /**
+         * 綁定 model 屬性
+         * @param field 屬性
+         * @param initValue 初始數值
+         * @return this
+         */
+        NumberTypeFactory<T> bindInput(String field, T initValue);
+
+        /**
+         * 返回組件工廠
+         * @return this
+         */
+        NumInputFactory then();
+
+    }
 
 }

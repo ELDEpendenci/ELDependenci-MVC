@@ -9,7 +9,9 @@ import com.ericlam.mc.eldgui.event.*;
 import com.ericlam.mc.eldgui.exception.ExceptionViewHandler;
 import com.ericlam.mc.eldgui.exception.HandleException;
 import com.ericlam.mc.eldgui.lifecycle.PostConstruct;
+import com.ericlam.mc.eldgui.lifecycle.PostUpdateView;
 import com.ericlam.mc.eldgui.lifecycle.PreDestroy;
+import com.ericlam.mc.eldgui.lifecycle.PreDestroyView;
 import com.ericlam.mc.eldgui.view.BukkitRedirectView;
 import com.ericlam.mc.eldgui.view.BukkitView;
 import com.ericlam.mc.eldgui.view.LoadingView;
@@ -112,15 +114,11 @@ public final class ELDGUI {
     private synchronized void updateView(BukkitView<?, ?> view) {
         LOGGER.debug("update view to " + view.getView().getSimpleName()); // debug
         if (currentView != null) {
-            if (controller instanceof ViewLifeCycleHook) {
-                ((ViewLifeCycleHook) controller).preViewDestroy(owner, (Class<View<?>>) currentView.getView().getClass(), session);
-            }
+            lifeCycleManager.onViewLifeCycle(PreDestroyView.class, currentView.getView().getClass());
             currentView.destroyView();
         }
         currentView = new ELDGView(view, configPoolService, itemStackService, eldgmvcInstallation.getComponentFactoryMap());
-        if (controller instanceof ViewLifeCycleHook) {
-            ((ViewLifeCycleHook) controller).postUpdateView(owner, (Class<View<?>>) view.getView(), session);
-        }
+        lifeCycleManager.onViewLifeCycle(PostUpdateView.class, currentView.getView().getClass());
         owner.openInventory(currentView.getNativeInventory());
     }
 

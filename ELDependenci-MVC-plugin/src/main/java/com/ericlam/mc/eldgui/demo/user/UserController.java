@@ -4,8 +4,9 @@ import com.ericlam.mc.eldgui.UISession;
 import com.ericlam.mc.eldgui.controller.ItemAttribute;
 import com.ericlam.mc.eldgui.controller.ModelAttribute;
 import com.ericlam.mc.eldgui.controller.UIController;
-import com.ericlam.mc.eldgui.controller.ViewLifeCycleHook;
 import com.ericlam.mc.eldgui.event.ClickMapping;
+import com.ericlam.mc.eldgui.lifecycle.PostUpdateView;
+import com.ericlam.mc.eldgui.lifecycle.PreDestroyView;
 import com.ericlam.mc.eldgui.view.BukkitRedirectView;
 import com.ericlam.mc.eldgui.view.BukkitView;
 import com.ericlam.mc.eldgui.view.View;
@@ -16,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 @UIController("user")
-public class UserController implements ViewLifeCycleHook {
+public class UserController {
 
     @Inject
     private UserService userService;
@@ -90,14 +91,14 @@ public class UserController implements ViewLifeCycleHook {
     }
 
 
-    @Override
-    public void postUpdateView(Player player, Class<View<?>> view, UISession session) {
-        player.sendMessage("after update to view: "+view.getSimpleName());
+    @PostUpdateView(UserView.class)
+    public void updateToUserView(Player player){
+        player.sendMessage("post update: user view");
     }
 
-    @Override
-    public void preViewDestroy(Player player, Class<View<?>> view, UISession session) {
-        player.sendMessage("before destroy for view: "+view.getSimpleName());
+    @PreDestroyView(UserListView.class)
+    public void preDestroyUserListView(Player player){
+        player.sendMessage("pre destroy: user list view");
     }
 
     public static class UserNotFoundException extends Exception {

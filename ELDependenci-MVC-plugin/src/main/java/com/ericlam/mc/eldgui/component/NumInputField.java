@@ -12,49 +12,123 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
-public final class NumInputField extends AbstractComponent implements Clickable, Listenable<AsyncChatEvent> {
+public final class NumInputField<T extends Number> extends AbstractComponent implements Clickable, Listenable<AsyncChatEvent> {
 
-    private final int min, max;
+    private final static Map<Class<? extends Number>, MathCalculate<? extends Number>> valueMap = new ConcurrentHashMap<>();
+    private static <N extends Number> void addNumberType(Class<N> type, MathCalculate<N> math){
+        valueMap.put(type, math);
+    }
+
+    static {
+        addNumberType(Integer.class, new MathCalculate<>(
+                Integer::sum,
+                (a, b) -> a - b,
+                Number::intValue,
+                (value, max) -> value > max,
+                (value, min) -> value < min,
+                Integer::parseInt
+        ));
+
+        addNumberType(Double.class, new MathCalculate<>(
+                Double::sum,
+                (a, b) -> a - b,
+                Number::doubleValue,
+                (value, max) -> value > max,
+                (value, min) -> value < min,
+                Double::parseDouble
+        ));
+
+        addNumberType(Long.class, new MathCalculate<>(
+                Long::sum,
+                (a, b) -> a - b,
+                Number::longValue,
+                (value, max) -> value > max,
+                (value, min) -> value < min,
+                Long::parseLong
+        ));
+
+        addNumberType(Short.class, new MathCalculate<>(
+                (a, b) -> (short) (a + b),
+                (a, b) -> (short) (a - b),
+                Number::shortValue,
+                (value, max) -> value > max,
+                (value, min) -> value < min,
+                Short::parseShort
+        ));
+
+        addNumberType(Float.class, new MathCalculate<>(
+                Float::sum,
+                (a, b) -> a - b,
+                Number::floatValue,
+                (value, max) -> value > max,
+                (value, min) -> value < min,
+                Float::parseFloat
+        ));
+
+        addNumberType(Byte.class, new MathCalculate<>(
+                (a, b) -> (byte)(a + b),
+                (a, b) -> (byte)(a - b),
+                Number::byteValue,
+                (value, max) -> value > max,
+                (value, min) -> value < min,
+                Byte::parseByte
+        ));
+    }
+
+    private final T min, max, step;
     private final boolean disabled;
     private final String inputMessage;
     private final String errorMessage;
     private final long maxWait;
+    private final MathCalculate<T> math;
 
-    private int value;
+    private T value;
 
+    @SuppressWarnings("unchecked")
     public NumInputField(
             AttributeController attributeController,
             ItemStackService.ItemFactory itemFactory,
-            int min,
-            int max,
+            T min,
+            T max,
+            T step,
             boolean disabled,
             String inputMessage,
             String errorMessage,
-            long maxWait
+            long maxWait,
+            Class<T> numberType
     ) {
         super(attributeController, itemFactory);
         this.min = min;
         this.max = max;
+        this.step = step;
         this.disabled = disabled;
         this.inputMessage = inputMessage;
         this.errorMessage = errorMessage;
         this.maxWait = maxWait;
-        this.value = (int) Optional.ofNullable(attributeController.getAttribute(getItem(), AttributeController.VALUE_TAG)).orElse(0);
+        this.math = (MathCalculate<T>) Optional.ofNullable(valueMap.get(numberType)).orElseThrow(() -> new IllegalStateException("unknown number type: " + numberType.getSimpleName()));
+        Number num = (Number) Optional.ofNullable(attributeController.getAttribute(getItem(), AttributeController.VALUE_TAG)).orElse(0);
+        this.value = math.toNumber.apply(num);
         itemFactory.lore("-> " + value);
         if (disabled) itemFactory.lore("&cDisabled");
     }
 
     @Override
     public void onClick(InventoryClickEvent event) {
-        int value;
+        T value;
         if (event.isLeftClick()) {
-            if (this.value == max) return;
-            value = Math.min(max, this.value + 1);
+            if (Objects.equals(this.value, max)) return;
+            value = math.addNumber.apply(this.value, step);
+            if (math.biggerThan.apply(value, max)) value = max;
         } else if (event.isRightClick()) {
-            if (this.value == min) return;
-            value = Math.max(min, this.value - 1);
+            if (Objects.equals(this.value, min)) return;
+            value = math.reduceNumber.apply(this.value, step);
+            if (math.smallerThan.apply(value, min)) value = min;
         } else {
             return;
         }
@@ -81,8 +155,8 @@ public final class NumInputField extends AbstractComponent implements Clickable,
     public void callBack(AsyncChatEvent event) {
         String msg = ((TextComponent) event.message()).content();
         try {
-            int value = Integer.parseInt(msg);
-            if (value < min || value > max) throw new NumberFormatException();
+            T value = math.parseNum.apply(msg);
+            if (math.smallerThan.apply(value, min) || math.biggerThan.apply(value, max)) throw new NumberFormatException();
             this.updateValue(value);
         } catch (NumberFormatException e) {
             event.getPlayer().sendMessage(errorMessage);
@@ -100,10 +174,37 @@ public final class NumInputField extends AbstractComponent implements Clickable,
     }
 
 
-    private void updateValue(int value) {
+    private void updateValue(T value) {
         this.value = value;
         attributeController.setAttribute(getItem(), AttributeController.VALUE_TAG, this.value);
         itemFactory.lore(List.of("-> " + this.value));
         this.updateInventory();
+    }
+
+    static class MathCalculate<T extends Number> {
+
+        final BiFunction<T, T, T> addNumber;
+        final BiFunction<T, T, T> reduceNumber;
+        final Function<Number, T> toNumber;
+        final BiFunction<T, T, Boolean> biggerThan;
+        final BiFunction<T, T, Boolean> smallerThan;
+        final Function<String, T> parseNum;
+
+
+        MathCalculate(
+                BiFunction<T, T, T> addNumber,
+                BiFunction<T, T, T> reduceNumber,
+                Function<Number, T> toNumber,
+                BiFunction<T, T, Boolean> biggerThan,
+                BiFunction<T, T, Boolean> smallerThan,
+                Function<String, T> parseNum
+        ) {
+            this.addNumber = addNumber;
+            this.reduceNumber = reduceNumber;
+            this.toNumber = toNumber;
+            this.biggerThan = biggerThan;
+            this.smallerThan = smallerThan;
+            this.parseNum = parseNum;
+        }
     }
 }

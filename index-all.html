@@ -299,7 +299,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dd>
 <dt><a href="com/ericlam/mc/eldgui/lifecycle/package-summary.html">com.ericlam.mc.eldgui.lifecycle</a> - package com.ericlam.mc.eldgui.lifecycle</dt>
 <dd>
-<div class="block">控制器生命周期類</div>
+<div class="block">控制器和界面生命周期類</div>
 </dd>
 <dt><a href="com/ericlam/mc/eldgui/view/package-summary.html">com.ericlam.mc.eldgui.view</a> - package com.ericlam.mc.eldgui.view</dt>
 <dd>
@@ -686,18 +686,14 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Controller 渲染 index 界面後的操作</div>
 </dd>
-<dt><span class="memberNameLink"><a href="com/ericlam/mc/eldgui/controller/ViewLifeCycleHook.html#postUpdateView(org.bukkit.entity.Player,java.lang.Class,com.ericlam.mc.eldgui.UISession)">postUpdateView(Player, Class&lt;View&lt;?&gt;&gt;, UISession)</a></span> - Method in interface com.ericlam.mc.eldgui.controller.<a href="com/ericlam/mc/eldgui/controller/ViewLifeCycleHook.html" title="interface in com.ericlam.mc.eldgui.controller">ViewLifeCycleHook</a></dt>
-<dd>
-<div class="block">新界面創建後</div>
-</dd>
+<dt><a href="com/ericlam/mc/eldgui/lifecycle/PostUpdateView.html" title="annotation in com.ericlam.mc.eldgui.lifecycle"><span class="typeNameLink">PostUpdateView</span></a> - Annotation Type in <a href="com/ericlam/mc/eldgui/lifecycle/package-summary.html">com.ericlam.mc.eldgui.lifecycle</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/ericlam/mc/eldgui/lifecycle/PreDestroy.html" title="annotation in com.ericlam.mc.eldgui.lifecycle"><span class="typeNameLink">PreDestroy</span></a> - Annotation Type in <a href="com/ericlam/mc/eldgui/lifecycle/package-summary.html">com.ericlam.mc.eldgui.lifecycle</a></dt>
 <dd>
 <div class="block">Controller 即將被摧毀前的操作</div>
 </dd>
-<dt><span class="memberNameLink"><a href="com/ericlam/mc/eldgui/controller/ViewLifeCycleHook.html#preViewDestroy(org.bukkit.entity.Player,java.lang.Class,com.ericlam.mc.eldgui.UISession)">preViewDestroy(Player, Class&lt;View&lt;?&gt;&gt;, UISession)</a></span> - Method in interface com.ericlam.mc.eldgui.controller.<a href="com/ericlam/mc/eldgui/controller/ViewLifeCycleHook.html" title="interface in com.ericlam.mc.eldgui.controller">ViewLifeCycleHook</a></dt>
-<dd>
-<div class="block">界面摧毀前(更新前)</div>
-</dd>
+<dt><a href="com/ericlam/mc/eldgui/lifecycle/PreDestroyView.html" title="annotation in com.ericlam.mc.eldgui.lifecycle"><span class="typeNameLink">PreDestroyView</span></a> - Annotation Type in <a href="com/ericlam/mc/eldgui/lifecycle/package-summary.html">com.ericlam.mc.eldgui.lifecycle</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/ericlam/mc/eldgui/CircuitIterator.html#previous()">previous()</a></span> - Method in class com.ericlam.mc.eldgui.<a href="com/ericlam/mc/eldgui/CircuitIterator.html" title="class in com.ericlam.mc.eldgui">CircuitIterator</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/ericlam/mc/eldgui/CircuitIterator.html#previousIndex()">previousIndex()</a></span> - Method in class com.ericlam.mc.eldgui.<a href="com/ericlam/mc/eldgui/CircuitIterator.html" title="class in com.ericlam.mc.eldgui">CircuitIterator</a></dt>
@@ -905,6 +901,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/ericlam/mc/eldgui/exception/HandleForControllers.html#value()">value()</a></span> - Method in annotation type com.ericlam.mc.eldgui.exception.<a href="com/ericlam/mc/eldgui/exception/HandleForControllers.html" title="annotation in com.ericlam.mc.eldgui.exception">HandleForControllers</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/ericlam/mc/eldgui/lifecycle/PostUpdateView.html#value()">value()</a></span> - Method in annotation type com.ericlam.mc.eldgui.lifecycle.<a href="com/ericlam/mc/eldgui/lifecycle/PostUpdateView.html" title="annotation in com.ericlam.mc.eldgui.lifecycle">PostUpdateView</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/ericlam/mc/eldgui/lifecycle/PreDestroyView.html#value()">value()</a></span> - Method in annotation type com.ericlam.mc.eldgui.lifecycle.<a href="com/ericlam/mc/eldgui/lifecycle/PreDestroyView.html" title="annotation in com.ericlam.mc.eldgui.lifecycle">PreDestroyView</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/ericlam/mc/eldgui/component/AttributeController.html#VALUE_TAG">VALUE_TAG</a></span> - Static variable in interface com.ericlam.mc.eldgui.component.<a href="com/ericlam/mc/eldgui/component/AttributeController.html" title="interface in com.ericlam.mc.eldgui.component">AttributeController</a></dt>
 <dd>
 <div class="block">預設綁定 Model 屬性數值 的 標識文字</div>
@@ -922,10 +922,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><a href="com/ericlam/mc/eldgui/view/ViewDescriptor.html" title="annotation in com.ericlam.mc.eldgui.view"><span class="typeNameLink">ViewDescriptor</span></a> - Annotation Type in <a href="com/ericlam/mc/eldgui/view/package-summary.html">com.ericlam.mc.eldgui.view</a></dt>
 <dd>
 <div class="block">在 <a href="com/ericlam/mc/eldgui/view/View.html" title="interface in com.ericlam.mc.eldgui.view"><code>View</code></a> 上使用標注，用於直接指定預設渲染物件而不經過 template 文件</div>
-</dd>
-<dt><a href="com/ericlam/mc/eldgui/controller/ViewLifeCycleHook.html" title="interface in com.ericlam.mc.eldgui.controller"><span class="typeNameLink">ViewLifeCycleHook</span></a> - Interface in <a href="com/ericlam/mc/eldgui/controller/package-summary.html">com.ericlam.mc.eldgui.controller</a></dt>
-<dd>
-<div class="block">界面生命周期挂鈎</div>
 </dd>
 </dl>
 <a id="I:W">

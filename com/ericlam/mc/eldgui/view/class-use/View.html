@@ -106,15 +106,15 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </tr>
 <tbody>
 <tr class="altColor">
-<th class="colFirst" scope="row"><a href="#com.ericlam.mc.eldgui.controller">com.ericlam.mc.eldgui.controller</a></th>
-<td class="colLast">
-<div class="block">控制器類別</div>
-</td>
-</tr>
-<tr class="rowColor">
 <th class="colFirst" scope="row"><a href="#com.ericlam.mc.eldgui.event">com.ericlam.mc.eldgui.event</a></th>
 <td class="colLast">
 <div class="block">界面互動事件類</div>
+</td>
+</tr>
+<tr class="rowColor">
+<th class="colFirst" scope="row"><a href="#com.ericlam.mc.eldgui.lifecycle">com.ericlam.mc.eldgui.lifecycle</a></th>
+<td class="colLast">
+<div class="block">控制器和界面生命周期類</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -128,41 +128,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </li>
 <li class="blockList">
 <ul class="blockList">
-<li class="blockList">
-<section role="region"><a id="com.ericlam.mc.eldgui.controller">
-<!--   -->
-</a>
-<h3>Uses of <a href="../View.html" title="interface in com.ericlam.mc.eldgui.view">View</a> in <a href="../../controller/package-summary.html">com.ericlam.mc.eldgui.controller</a></h3>
-<table class="useSummary">
-<caption><span>Method parameters in <a href="../../controller/package-summary.html">com.ericlam.mc.eldgui.controller</a> with type arguments of type <a href="../View.html" title="interface in com.ericlam.mc.eldgui.view">View</a></span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colFirst" scope="col">Modifier and Type</th>
-<th class="colSecond" scope="col">Method</th>
-<th class="colLast" scope="col">Description</th>
-</tr>
-<tbody>
-<tr class="altColor">
-<td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><span class="typeNameLabel">ViewLifeCycleHook.</span><code><span class="memberNameLink"><a href="../../controller/ViewLifeCycleHook.html#postUpdateView(org.bukkit.entity.Player,java.lang.Class,com.ericlam.mc.eldgui.UISession)">postUpdateView</a></span>&#8203;(<a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Player.html?is-external=true" title="class or interface in org.bukkit.entity" class="externalLink">Player</a>&nbsp;player,
-              <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;<a href="../View.html" title="interface in com.ericlam.mc.eldgui.view">View</a>&lt;?&gt;&gt;&nbsp;view,
-              <a href="../../UISession.html" title="interface in com.ericlam.mc.eldgui">UISession</a>&nbsp;session)</code></th>
-<td class="colLast">
-<div class="block">新界面創建後</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><span class="typeNameLabel">ViewLifeCycleHook.</span><code><span class="memberNameLink"><a href="../../controller/ViewLifeCycleHook.html#preViewDestroy(org.bukkit.entity.Player,java.lang.Class,com.ericlam.mc.eldgui.UISession)">preViewDestroy</a></span>&#8203;(<a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Player.html?is-external=true" title="class or interface in org.bukkit.entity" class="externalLink">Player</a>&nbsp;player,
-              <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;<a href="../View.html" title="interface in com.ericlam.mc.eldgui.view">View</a>&lt;?&gt;&gt;&nbsp;view,
-              <a href="../../UISession.html" title="interface in com.ericlam.mc.eldgui">UISession</a>&nbsp;session)</code></th>
-<td class="colLast">
-<div class="block">界面摧毀前(更新前)</div>
-</td>
-</tr>
-</tbody>
-</table>
-</section>
-</li>
 <li class="blockList">
 <section role="region"><a id="com.ericlam.mc.eldgui.event">
 <!--   -->
@@ -189,6 +154,33 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <tr class="altColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;? extends <a href="../View.html" title="interface in com.ericlam.mc.eldgui.view">View</a>&lt;?&gt;&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="../../event/RequestMapping.html#view()">view</a></span>()</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</section>
+</li>
+<li class="blockList">
+<section role="region"><a id="com.ericlam.mc.eldgui.lifecycle">
+<!--   -->
+</a>
+<h3>Uses of <a href="../View.html" title="interface in com.ericlam.mc.eldgui.view">View</a> in <a href="../../lifecycle/package-summary.html">com.ericlam.mc.eldgui.lifecycle</a></h3>
+<table class="useSummary">
+<caption><span>Methods in <a href="../../lifecycle/package-summary.html">com.ericlam.mc.eldgui.lifecycle</a> that return types with arguments of type <a href="../View.html" title="interface in com.ericlam.mc.eldgui.view">View</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colSecond" scope="col">Method</th>
+<th class="colLast" scope="col">Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;? extends <a href="../View.html" title="interface in com.ericlam.mc.eldgui.view">View</a>&lt;?&gt;&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="../../lifecycle/PostUpdateView.html#value()">value</a></span>()</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;? extends <a href="../View.html" title="interface in com.ericlam.mc.eldgui.view">View</a>&lt;?&gt;&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="../../lifecycle/PreDestroyView.html#value()">value</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 </tbody>

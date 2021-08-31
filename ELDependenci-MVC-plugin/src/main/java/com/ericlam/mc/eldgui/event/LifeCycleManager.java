@@ -59,7 +59,7 @@ public final class LifeCycleManager {
                     .ofNullable((LifeCycleFilter<A>) this.viewLifeCycleFilterMap.get(lifeCycle))
                     .map(f -> f.isPass(anno, viewCls))
                     .orElse(true);
-        }).findFirst()).ifPresent(m -> {
+        }).findAny()).ifPresent(m -> {
             try {
                 m.invoke(controller, methodParseManager.getMethodParameters(m, null));
             } catch (IllegalAccessException | InvocationTargetException e) {

@@ -53,20 +53,18 @@ public final class LifeCycleManager {
 
     @SuppressWarnings("unchecked")
     public <A extends Annotation, E extends View<?>> void onViewLifeCycle(Class<A> lifeCycle, Class<E> viewCls){
-        Optional.ofNullable(this.viewLifeCycleMap.get(lifeCycle)).ifPresent(methods -> {
-            methods.parallelStream().filter(m -> {
-                A anno = m.getAnnotation(lifeCycle);
-                return Optional
-                        .ofNullable((LifeCycleFilter<A>) this.viewLifeCycleFilterMap.get(lifeCycle))
-                        .map(f -> f.isPass(anno, viewCls))
-                        .orElse(true);
-            }).forEach(m -> {
-                try {
-                    m.invoke(controller, methodParseManager.getMethodParameters(m, null));
-                } catch (IllegalAccessException | InvocationTargetException e) {
-                    e.printStackTrace();
-                }
-            });
+        Optional.ofNullable(this.viewLifeCycleMap.get(lifeCycle)).flatMap(methods -> methods.parallelStream().filter(m -> {
+            A anno = m.getAnnotation(lifeCycle);
+            return Optional
+                    .ofNullable((LifeCycleFilter<A>) this.viewLifeCycleFilterMap.get(lifeCycle))
+                    .map(f -> f.isPass(anno, viewCls))
+                    .orElse(true);
+        }).findFirst()).ifPresent(m -> {
+            try {
+                m.invoke(controller, methodParseManager.getMethodParameters(m, null));
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
         });
     }
 

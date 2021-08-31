@@ -12,6 +12,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PreDestroyView {
 
-    Class<View<?>> value();
+    Class<? extends View<?>> value();
 
 }

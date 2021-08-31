@@ -6,6 +6,7 @@ import com.ericlam.mc.eldgui.controller.ModelAttribute;
 import com.ericlam.mc.eldgui.controller.UIController;
 import com.ericlam.mc.eldgui.event.ClickMapping;
 import com.ericlam.mc.eldgui.lifecycle.PostUpdateView;
+import com.ericlam.mc.eldgui.lifecycle.PreDestroyView;
 import com.ericlam.mc.eldgui.view.BukkitRedirectView;
 import com.ericlam.mc.eldgui.view.BukkitView;
 import com.ericlam.mc.eldgui.view.View;
@@ -92,7 +93,12 @@ public class UserController {
 
     @PostUpdateView(UserView.class)
     public void updateToUserView(Player player){
-        player.sendMessage("updated to user");
+        player.sendMessage("post update: user view");
+    }
+
+    @PreDestroyView(UserListView.class)
+    public void preDestroyUserListView(Player player){
+        player.sendMessage("pre destroy: user list view");
     }
 
     public static class UserNotFoundException extends Exception {

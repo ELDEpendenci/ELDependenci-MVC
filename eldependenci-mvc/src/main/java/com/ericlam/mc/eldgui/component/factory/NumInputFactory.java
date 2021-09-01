@@ -57,21 +57,21 @@ public interface NumInputFactory extends ComponentFactory<NumInputFactory> {
     interface NumberTypeFactory<T extends Number> {
 
         /**
-         * <b>必須設置，否則報錯</b>
+         * 默認數值為 0
          * @param min 最少數字
          * @return this
          */
         NumberTypeFactory<T> min(T min);
 
         /**
-         * <b>必須設置，否則報錯</b>
+         * 默認數值為 64
          * @param max 最大數字
          * @return this
          */
         NumberTypeFactory<T> max(T max);
 
         /**
-         * <b>必須設置，否則報錯</b>
+         * 默認數值為 1
          * @param step 增加/減少數量
          * @return this
          */

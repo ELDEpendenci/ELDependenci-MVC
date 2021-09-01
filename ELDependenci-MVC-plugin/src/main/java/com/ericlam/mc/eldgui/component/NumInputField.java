@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -94,9 +95,9 @@ public final class NumInputField<T extends Number> extends AbstractComponent imp
     public NumInputField(
             AttributeController attributeController,
             ItemStackService.ItemFactory itemFactory,
-            T min,
-            T max,
-            T step,
+            @Nullable T min,
+            @Nullable T max,
+            @Nullable T step,
             boolean disabled,
             String inputMessage,
             String errorMessage,
@@ -104,14 +105,14 @@ public final class NumInputField<T extends Number> extends AbstractComponent imp
             Class<T> numberType
     ) {
         super(attributeController, itemFactory);
-        this.min = min;
-        this.max = max;
-        this.step = step;
+        this.math = (MathCalculate<T>) Optional.ofNullable(valueMap.get(numberType)).orElseThrow(() -> new IllegalStateException("unknown number type: " + numberType.getSimpleName()));
+        this.min = Optional.ofNullable(min).orElse(math.toNumber.apply(0));
+        this.max = Optional.ofNullable(max).orElse(math.toNumber.apply(64));
+        this.step = Optional.ofNullable(step).orElse(math.toNumber.apply(1));
         this.disabled = disabled;
         this.inputMessage = inputMessage;
         this.errorMessage = errorMessage;
         this.maxWait = maxWait;
-        this.math = (MathCalculate<T>) Optional.ofNullable(valueMap.get(numberType)).orElseThrow(() -> new IllegalStateException("unknown number type: " + numberType.getSimpleName()));
         Number num = (Number) Optional.ofNullable(attributeController.getAttribute(getItem(), AttributeController.VALUE_TAG)).orElse(0);
         this.value = math.toNumber.apply(num);
         itemFactory.lore("-> " + value);

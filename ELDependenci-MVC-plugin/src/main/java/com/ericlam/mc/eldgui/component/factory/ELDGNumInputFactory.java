@@ -106,9 +106,6 @@ public final class ELDGNumInputFactory extends AbstractComponentFactory<NumInput
         }
 
         public Component build(ItemStackService.ItemFactory itemFactory){
-            Validate.notNull(min, "you must define min value");
-            Validate.notNull(max, "you must define max value");
-            Validate.notNull(step, "you must define step value");
             return new NumInputField<T>(
                     attributeController,
                     itemFactory,

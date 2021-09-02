@@ -25,9 +25,10 @@ public class TestController {
 
 
     @ClickMapping(view = TestView.class, pattern = 'A')
-    public void onClick(@ModelAttribute('Z') TestModel test, Player player, @MapAttribute('Z') Map<String, Object> map){
+    public BukkitView<?, ?> onClick(@ModelAttribute('Z') TestModel test, Player player, @MapAttribute('Z') Map<String, Object> map){
         player.sendMessage(test.toString());
         player.sendMessage(map.toString());
+        return null;
     }
 
 

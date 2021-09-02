@@ -27,10 +27,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -226,20 +223,10 @@ public final class ELDGUI {
         parser.registerParser((t, annos) -> Arrays.stream(annos).anyMatch(a -> a.annotationType() == ModelAttribute.class),
                 (annotations, type, event) -> {
                     ModelAttribute modelAttribute = (ModelAttribute) Arrays.stream(annotations).filter(a -> a.annotationType() == ModelAttribute.class).findAny().orElseThrow(() -> new IllegalStateException("cannot find @ModelAttribute"));
-                    var context = this.currentView.getEldgContext();
                     if (type instanceof ParameterizedType)
                         throw new IllegalStateException("model attribute cannot be generic type");
                     var model = ((Class<?>) type);
-
-                    Map<String, Object> fieldMap = context.getItems(modelAttribute.value())
-                            .stream()
-                            .filter(item -> context.getAttribute(item, AttributeController.FIELD_TAG) != null)
-                            .collect(Collectors
-                                    .toMap(
-                                            item -> context.getAttribute(item, AttributeController.FIELD_TAG),
-                                            item -> Optional.ofNullable(context.getAttribute(item, AttributeController.VALUE_TAG)).orElseThrow(() -> new IllegalStateException("The value tag of " + item.toString() + " is null."))
-                                    )
-                            );
+                    var fieldMap = getFieldMap(modelAttribute.value());
                     Map<String, Object> toConvert = PersistDataUtils.toNestedMap(fieldMap);
                     LOGGER.debug("using " + toConvert + " to create instance of " + model);
                     return PersistDataUtils.mapToObject(toConvert, model);
@@ -247,7 +234,6 @@ public final class ELDGUI {
         parser.registerParser((t, annos) -> Arrays.stream(annos).anyMatch(a -> a.annotationType() == MapAttribute.class),
                 (annotations, type, event) -> {
                     MapAttribute attribute = (MapAttribute) Arrays.stream(annotations).filter(a -> a.annotationType() == MapAttribute.class).findAny().orElseThrow(() -> new IllegalStateException("cannot find MapAttribute annotation"));
-                    var context = this.currentView.getEldgContext();
                     boolean isMap = false;
                     if (type instanceof ParameterizedType) {
                         var parat = (ParameterizedType) type;
@@ -255,17 +241,22 @@ public final class ELDGUI {
                     }
 
                     if (!isMap) throw new IllegalStateException("@MapAttribute 必須使用 Map<String, Object> 作為其類型");
-                    Map<String, Object> fieldMap = context.getItems(attribute.value())
-                            .stream()
-                            .filter(item -> context.getAttribute(item, AttributeController.FIELD_TAG) != null)
-                            .collect(Collectors
-                                    .toMap(
-                                            item -> context.getAttribute(item, AttributeController.FIELD_TAG),
-                                            item -> Optional.ofNullable(context.getAttribute(item, AttributeController.VALUE_TAG)).orElseThrow(() -> new IllegalStateException("The value tag of " + item.toString() + " is null."))
-                                    )
-                            );
+                    Map<String, Object> fieldMap = getFieldMap(attribute.value());
                     return PersistDataUtils.toNestedMap(fieldMap);
                 });
+    }
+
+    private Map<String, Object> getFieldMap(char pattern){
+        if (this.currentView == null) throw new IllegalStateException("currentView is null");
+        var context = this.currentView.getEldgContext();
+        Map<String, Object> fieldMap = new HashMap<>();
+        for (ItemStack item : context.getItems(pattern)) {
+            String field = context.getAttribute(item, AttributeController.FIELD_TAG);
+            if (field == null) continue;
+            Object value = context.getAttribute(item, AttributeController.VALUE_TAG);
+            fieldMap.put(field, value);
+        }
+        return fieldMap;
     }
 
     private ItemStack getItemByEvent(InventoryEvent e) {

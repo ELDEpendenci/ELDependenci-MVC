@@ -333,15 +333,15 @@ public final class ELDGView<T> {
 
         public Map<String, Object> getAsMap(ItemStack item) {
             String id = getAttributePrimitive(String.class, item, "id");
-            return Optional.ofNullable(attributeMap.get(id)).map(ImmutableMap::copyOf).orElseGet(ImmutableMap::of);
+            return Optional.ofNullable(attributeMap.get(id)).map(HashMap::new).orElseGet(HashMap::new);
         }
 
         @Override
-        public <C> C getAttribute(ItemStack item, String key) {
+        public synchronized <C> C getAttribute(ItemStack item, String key) {
             // instead of using persist data type, use map
             //return getObjectAttribute(item, key);
             String id = getIdFromItem(item);
-            attributeMap.putIfAbsent(id, new ConcurrentHashMap<>());
+            attributeMap.putIfAbsent(id, new HashMap<>());
             LOGGER.debug("item (" + item.getType() + ") is now: " + getAsMap(item).toString());
             return (C) attributeMap.get(id).get(key);
         }
@@ -393,11 +393,11 @@ public final class ELDGView<T> {
         }
 
         @Override
-        public void setAttribute(ItemStack itemStack, String key, Object value) {
+        public synchronized void setAttribute(ItemStack itemStack, String key, Object value) {
             // instead of using persist data type, use map
             //this.setObjectAttribute(itemStack, key, value);
             String id = getIdFromItem(itemStack);
-            this.attributeMap.putIfAbsent(id, new ConcurrentHashMap<>());
+            this.attributeMap.putIfAbsent(id, new HashMap<>());
             this.attributeMap.get(id).put(key, value);
 
             LOGGER.debug("item (" + itemStack.getType() + ") is now: " + getAsMap(itemStack).toString());
@@ -410,7 +410,7 @@ public final class ELDGView<T> {
 
 
         @Override
-        public void setAttribute(char pattern, String key, Object value) {
+        public synchronized void setAttribute(char pattern, String key, Object value) {
             getItems(pattern).forEach(item -> setAttribute(item, key, value));
         }
 

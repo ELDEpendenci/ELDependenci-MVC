@@ -1,5 +1,6 @@
 package com.ericlam.mc.eldgui.demo.test;
 
+import com.ericlam.mc.eldgui.component.AttributeController;
 import com.ericlam.mc.eldgui.component.factory.ButtonFactory;
 import com.ericlam.mc.eldgui.component.factory.DateSelectorFactory;
 import com.ericlam.mc.eldgui.component.factory.RGBSelectorFactory;
@@ -47,6 +48,11 @@ public class TestView implements View<Void> {
                                 .bindInput("testTime", LocalTime.now())
                                 .label("&aTime Select: (shift move unit, click to +/-, middle to input)")
                                 .icon(Material.CLOCK)
+                                .create(),
+                        button.icon(Material.PAPER)
+                                .title("test null string")
+                                .bind(AttributeController.FIELD_TAG, "txt")
+                                .bind(AttributeController.VALUE_TAG, null)
                                 .create()
                 )
                 .and()

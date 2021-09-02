@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -145,6 +146,9 @@ public class PersistDataUtils {
             if (value instanceof Map<?, ?> && field.getType() != Map.class){
                 Map<String, Object> m = (Map<String, Object>) value;
                 value = mapToObject(m, field.getType());
+            }
+            if (value == null && field.isAnnotationPresent(Nonnull.class)){
+                throw new IllegalStateException("property assigned @Nonnull but setting null value.");
             }
             try {
                 field.set(obj, value);

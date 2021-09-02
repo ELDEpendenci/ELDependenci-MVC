@@ -3,6 +3,7 @@ package com.ericlam.mc.eldgui.event;
 import com.ericlam.mc.eldgui.ELDGView;
 import com.ericlam.mc.eldgui.MVCInstallation;
 import com.ericlam.mc.eldgui.view.View;
+import com.google.common.collect.ImmutableMap;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.inventory.Inventory;
@@ -15,6 +16,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class ELDGEventHandler<A extends Annotation, E extends InventoryInteractEvent> {
 
+    private static final Map<Class<?>, Map<RequestMapping, Method>> controllerEventMap = new ConcurrentHashMap<>();
+
     protected final Map<RequestMapping, Method> eventMap = new ConcurrentHashMap<>();
     private final Object uiController;
     private final MethodParseManager parseManager;
@@ -25,22 +28,29 @@ public abstract class ELDGEventHandler<A extends Annotation, E extends Inventory
     public ELDGEventHandler(Object controller,
                             MethodParseManager parseManager,
                             ReturnTypeManager returnTypeManager,
-                            Map<Class<? extends Annotation>, MVCInstallation.QualifierFilter<? extends Annotation>> customQualifier) {
+                            Map<Class<? extends Annotation>, MVCInstallation.QualifierFilter<? extends Annotation>> customQualifier,
+                            Method[] declaredMethods
+    ) {
         this.uiController = controller;
         this.parseManager = parseManager;
         this.returnTypeManager = returnTypeManager;
         this.customQualifier = customQualifier;
-        this.loadAllCommonHandlers(controller);
-        this.loadAllHandlers(controller).forEach((k, v) -> eventMap.put(toRequestMapping(k), v));
+        if (controllerEventMap.containsKey(controller.getClass())){
+            this.eventMap.putAll(controllerEventMap.get(controller.getClass()));
+        }else{
+            this.loadAllCommonHandlers(declaredMethods);
+            this.loadAllHandlers(declaredMethods).forEach((k, v) -> eventMap.put(toRequestMapping(k), v));
+            controllerEventMap.put(controller.getClass(), ImmutableMap.copyOf(eventMap));
+        }
     }
 
-    private void loadAllCommonHandlers(Object controller) {
-        Arrays.stream(controller.getClass().getDeclaredMethods()).parallel()
+    private void loadAllCommonHandlers(Method[] declareMethods) {
+        Arrays.stream(declareMethods).parallel()
                 .filter(m -> m.isAnnotationPresent(RequestMapping.class))
                 .forEach(m -> eventMap.put(m.getAnnotation(RequestMapping.class), m));
     }
 
-    protected abstract Map<A, Method> loadAllHandlers(Object controller);
+    protected abstract Map<A, Method> loadAllHandlers(Method[] declaredMethods);
 
     public void unloadAllHandlers() {
         eventMap.clear();

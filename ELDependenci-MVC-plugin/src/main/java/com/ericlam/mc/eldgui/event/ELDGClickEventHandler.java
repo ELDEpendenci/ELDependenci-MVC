@@ -15,13 +15,13 @@ import java.util.stream.Collectors;
 public final class ELDGClickEventHandler extends ELDGEventHandler<ClickMapping, InventoryClickEvent> {
 
 
-    public ELDGClickEventHandler(Object controller, MethodParseManager parseManager, ReturnTypeManager returnTypeManager, Map<Class<? extends Annotation>, MVCInstallation.QualifierFilter<? extends Annotation>> customQualifier) {
-        super(controller, parseManager, returnTypeManager, customQualifier);
+    public ELDGClickEventHandler(Object controller, MethodParseManager parseManager, ReturnTypeManager returnTypeManager, Map<Class<? extends Annotation>, MVCInstallation.QualifierFilter<? extends Annotation>> customQualifier, Method[] declaredMethods) {
+        super(controller, parseManager, returnTypeManager, customQualifier, declaredMethods);
     }
 
     @Override
-    protected Map<ClickMapping, Method> loadAllHandlers(Object controller) {
-        return  Arrays.stream(controller.getClass().getDeclaredMethods()).parallel()
+    protected Map<ClickMapping, Method> loadAllHandlers(Method[] declaredMethods) {
+        return  Arrays.stream(declaredMethods).parallel()
                 .filter(m -> m.isAnnotationPresent(ClickMapping.class))
                 .collect(Collectors.toMap(m -> m.getAnnotation(ClickMapping.class), m -> m));
     }

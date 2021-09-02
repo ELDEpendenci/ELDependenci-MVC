@@ -15,7 +15,6 @@ import com.ericlam.mc.eldgui.lifecycle.PreDestroyView;
 import com.ericlam.mc.eldgui.view.BukkitRedirectView;
 import com.ericlam.mc.eldgui.view.BukkitView;
 import com.ericlam.mc.eldgui.view.LoadingView;
-import com.ericlam.mc.eldgui.view.View;
 import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
 import org.bukkit.Bukkit;
@@ -39,6 +38,7 @@ import java.util.stream.Collectors;
 
 public final class ELDGUI {
 
+    private static final Map<Class<?>, Method[]> declaredMethodMap = new ConcurrentHashMap<>();
     private static final Logger LOGGER = LoggerFactory.getLogger(ELDGUI.class);
 
 
@@ -49,7 +49,6 @@ public final class ELDGUI {
     private final LifeCycleManager lifeCycleManager;
 
     private final Class<?> controllerCls;
-    private final Object controller;
     private final Injector injector;
     private final UISession session;
     private final Player owner;
@@ -61,6 +60,7 @@ public final class ELDGUI {
     private final Consumer<Player> onDestroy;
     private final ViewJumper goTo;
     private final BukkitView<? extends LoadingView, Void> loadingView;
+    private final Method[] declaredMethods;
 
 
     private ELDGView<?> currentView;
@@ -79,7 +79,6 @@ public final class ELDGUI {
     ) {
 
         this.session = session;
-        this.controller = controller;
         this.injector = injector;
         this.owner = owner;
         this.onDestroy = onDestroy;
@@ -91,15 +90,21 @@ public final class ELDGUI {
         methodParseManager = managerFactory.buildParseManager(this::initMethodParseManager);
         returnTypeManager = managerFactory.buildReturnTypeManager(this::initReturnTypeManager);
         this.lifeCycleManager = new LifeCycleManager(controller, methodParseManager);
+        this.controllerCls = controller.getClass();
+
+        if (declaredMethodMap.containsKey(controllerCls)) {
+            this.declaredMethods = declaredMethodMap.get(controllerCls);
+        } else {
+            this.declaredMethods = controllerCls.getDeclaredMethods();
+            declaredMethodMap.put(controllerCls, declaredMethods);
+        }
 
         var customQualifier = eldgmvcInstallation.getQualifierMap();
-        this.eventHandlerMap.put(InventoryClickEvent.class, new ELDGClickEventHandler(controller, methodParseManager, returnTypeManager, customQualifier));
-        this.eventHandlerMap.put(InventoryDragEvent.class, new ELDGDragEventHandler(controller, methodParseManager, returnTypeManager, customQualifier));
+        this.eventHandlerMap.put(InventoryClickEvent.class, new ELDGClickEventHandler(controller, methodParseManager, returnTypeManager, customQualifier, declaredMethods));
+        this.eventHandlerMap.put(InventoryDragEvent.class, new ELDGDragEventHandler(controller, methodParseManager, returnTypeManager, customQualifier, declaredMethods));
         this.itemGetterMap.put(InventoryClickEvent.class.getSimpleName(), e -> ((InventoryClickEvent) e).getCurrentItem());
         this.itemGetterMap.put(InventoryDragEvent.class.getSimpleName(), e -> ((InventoryDragEvent) e).getOldCursor());
 
-
-        this.controllerCls = controller.getClass();
 
         this.lifeCycleManager.onLifeCycle(PostConstruct.class);
 
@@ -140,7 +145,7 @@ public final class ELDGUI {
     public void initIndexView(Object controller) {
         LOGGER.debug("initializing index view"); // debug
         try {
-            Optional<Method> indexMethod = Arrays.stream(controllerCls.getDeclaredMethods()).filter(m -> m.getName().equalsIgnoreCase("index")).findAny();
+            Optional<Method> indexMethod = Arrays.stream(declaredMethods).filter(m -> m.getName().equalsIgnoreCase("index")).findAny();
             if (indexMethod.isEmpty())
                 throw new IllegalStateException("cannot find index method from " + controllerCls);
             Method index = indexMethod.get();
@@ -203,7 +208,7 @@ public final class ELDGUI {
             FromPattern pattern = (FromPattern) Arrays.stream(annotations).filter(a -> a.annotationType() == FromPattern.class).findAny().orElseThrow(() -> new IllegalStateException("cannot find @FromPattern in List<ItemStack> parameters"));
             if (t instanceof ParameterizedType) {
                 var parat = (ParameterizedType) t;
-                if (parat.getActualTypeArguments()[0] == ItemStack.class && parat.getRawType() == List.class){
+                if (parat.getActualTypeArguments()[0] == ItemStack.class && parat.getRawType() == List.class) {
                     return this.currentView.getEldgContext().getItems(pattern.value());
                 }
             }
@@ -244,8 +249,8 @@ public final class ELDGUI {
                     MapAttribute attribute = (MapAttribute) Arrays.stream(annotations).filter(a -> a.annotationType() == MapAttribute.class).findAny().orElseThrow(() -> new IllegalStateException("cannot find MapAttribute annotation"));
                     var context = this.currentView.getEldgContext();
                     boolean isMap = false;
-                    if (type instanceof ParameterizedType){
-                        var parat = (ParameterizedType)type;
+                    if (type instanceof ParameterizedType) {
+                        var parat = (ParameterizedType) type;
                         isMap = parat.getRawType() == Map.class && parat.getActualTypeArguments()[0] == String.class && parat.getActualTypeArguments()[1] == Object.class;
                     }
 
@@ -315,7 +320,12 @@ public final class ELDGUI {
         Class<? extends ExceptionViewHandler> exceptionViewHandler = exceptionViewHandlerOpt.orElseGet(eldgmvcInstallation::getDefaultExceptionHandler);
         ExceptionViewHandler viewHandlerIns = injector.getInstance(exceptionViewHandler);
         UIController fromController = controllerCls.getAnnotation(UIController.class);
-        Arrays.stream(exceptionViewHandler.getDeclaredMethods())
+        Method[] declaredMethods = Optional.ofNullable(declaredMethodMap.get(exceptionViewHandler)).orElseGet(() -> {
+            var methods = exceptionViewHandler.getDeclaredMethods();
+            declaredMethodMap.put(exceptionViewHandler, methods);
+            return methods;
+        });
+        Arrays.stream(declaredMethods)
                 .filter(m -> m.isAnnotationPresent(HandleException.class))
                 .filter(m -> Arrays.stream(m.getAnnotation(HandleException.class).value()).anyMatch(v -> {
                     Class<?> superCls = ex.getClass();

@@ -13,12 +13,16 @@ public class TestModel {
 
     public LocalTime testTime;
 
+    // test null
+    public String txt;
+
     @Override
     public String toString() {
         return "TestModel{" +
-                "testColor=" + testColor.toString() +
-                ", testDate=" + testDate.toString() +
-                ", testTime=" + testTime.toString() +
+                "testColor=" + testColor +
+                ", testDate=" + testDate +
+                ", testTime=" + testTime +
+                ", txt='" + txt + '\'' +
                 '}';
     }
 }

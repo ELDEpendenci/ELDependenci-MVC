@@ -15,13 +15,13 @@ import java.util.stream.Collectors;
 public final class ELDGDragEventHandler extends ELDGEventHandler<DragMapping, InventoryDragEvent> {
 
 
-    public ELDGDragEventHandler(Object controller, MethodParseManager parseManager, ReturnTypeManager returnTypeManager, Map<Class<? extends Annotation>, MVCInstallation.QualifierFilter<? extends Annotation>> customQualifier) {
-        super(controller, parseManager, returnTypeManager, customQualifier);
+    public ELDGDragEventHandler(Object controller, MethodParseManager parseManager, ReturnTypeManager returnTypeManager, Map<Class<? extends Annotation>, MVCInstallation.QualifierFilter<? extends Annotation>> customQualifier, Method[] declaredMethods) {
+        super(controller, parseManager, returnTypeManager, customQualifier, declaredMethods);
     }
 
     @Override
-    protected Map<DragMapping, Method> loadAllHandlers(Object controller) {
-        return Arrays.stream(controller.getClass().getDeclaredMethods())
+    protected Map<DragMapping, Method> loadAllHandlers(Method[] declaredMethods) {
+        return Arrays.stream(declaredMethods)
                 .parallel()
                 .filter(m -> m.isAnnotationPresent(DragMapping.class))
                 .collect(Collectors.toMap(m -> m.getAnnotation(DragMapping.class), m -> m));

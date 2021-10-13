@@ -357,7 +357,9 @@ public final class ELDGUI {
         LOGGER.debug("destroying controller"); //debug
         eventHandlerMap.values().forEach(ELDGEventHandler::unloadAllHandlers);
         lifeCycleManager.onLifeCycle(PreDestroy.class);
-        this.currentView.destroyView();
+        if (this.currentView != null){
+            this.currentView.destroyView();
+        }
         this.onDestroy.accept(owner);
     }
 

@@ -10,7 +10,6 @@ import com.ericlam.mc.eldgui.component.modifier.Clickable;
 import com.ericlam.mc.eldgui.component.modifier.Disable;
 import com.ericlam.mc.eldgui.component.modifier.Listenable;
 import com.ericlam.mc.eldgui.view.*;
-import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -115,7 +114,7 @@ public final class ELDGView<T> {
         this.nativeInventory.clear();
         this.componentListeners.forEach(HandlerList::unregisterAll);
         if (waitingTask != null && !waitingTask.isCancelled()) waitingTask.cancel();
-        this.componentMap.values().stream().flatMap(Collection::stream).filter(c -> c instanceof Animatable && ((Animatable) c).isAnimating()).forEach(animate -> ((Animatable)animate).stopAnimation());
+        this.componentMap.values().stream().flatMap(Collection::stream).filter(c -> c instanceof Animatable && ((Animatable) c).isAnimating()).forEach(animate -> ((Animatable) animate).stopAnimation());
     }
 
     // boolean: pass to controller or not
@@ -233,7 +232,15 @@ public final class ELDGView<T> {
                     .amount(itemDescriptor.amount);
             if (!itemDescriptor.name.isBlank()) itemBuilder.display(itemDescriptor.name);
             if (!itemDescriptor.lore.isEmpty()) itemBuilder.lore(itemDescriptor.lore);
-            if (itemDescriptor.glowing) itemBuilder.enchant(Enchantment.DURABILITY, 1);
+            if (itemDescriptor.glowing) {
+                Arrays.stream(Enchantment.values())
+                        .filter(e -> e.canEnchantItem(itemBuilder.getItem()))
+                        .findAny()
+                        .ifPresentOrElse(
+                                e -> itemBuilder.enchant(e, e.getStartLevel()),
+                                () -> LOGGER.warn("{} has no available enchantments.", itemBuilder.getItem().getType())
+                        );
+            }
             var item = itemBuilder.getItem();
             for (Integer slot : slots) {
                 this.nativeInventory.setItem(slot, item);
@@ -272,8 +279,10 @@ public final class ELDGView<T> {
                 componentMap.get(pattern).add(component);
                 inventoryContext.fillItem(pattern, component);
                 if (component instanceof Animatable) ((Animatable) component).startAnimation();
-                String id = inventoryContext.getIdFromItem(component.getItem());
-                componentsIdMap.put(id, component);
+                if (component.getItem().hasItemMeta()) {
+                    String id = inventoryContext.getIdFromItem(component.getItem());
+                    componentsIdMap.put(id, component);
+                }
                 return this;
             }
 
@@ -284,8 +293,10 @@ public final class ELDGView<T> {
                     componentMap.get(pattern).add(component);
                     inventoryContext.addItem(pattern, component);
                     if (component instanceof Animatable) ((Animatable) component).startAnimation();
-                    String id = inventoryContext.getIdFromItem(component.getItem());
-                    componentsIdMap.put(id, component);
+                    if (component.getItem().hasItemMeta()) {
+                        String id = inventoryContext.getIdFromItem(component.getItem());
+                        componentsIdMap.put(id, component);
+                    }
                 }
                 return this;
             }
@@ -296,8 +307,10 @@ public final class ELDGView<T> {
                 componentMap.get(pattern).add(component);
                 inventoryContext.setItem(pattern, pos, component);
                 if (component instanceof Animatable) ((Animatable) component).startAnimation();
-                String id = inventoryContext.getIdFromItem(component.getItem());
-                componentsIdMap.put(id, component);
+                if (component.getItem().hasItemMeta()) {
+                    String id = inventoryContext.getIdFromItem(component.getItem());
+                    componentsIdMap.put(id, component);
+                }
                 return this;
             }
 
@@ -339,7 +352,11 @@ public final class ELDGView<T> {
         @Override
         public synchronized <C> C getAttribute(ItemStack item, String key) {
             // instead of using persist data type, use map
-            //return getObjectAttribute(item, key);
+            // return getObjectAttribute(item, key);
+            if (!item.hasItemMeta()){
+                LOGGER.warn("{} has no item meta, return null.", item.getType());
+                return null;
+            }
             String id = getIdFromItem(item);
             attributeMap.putIfAbsent(id, new HashMap<>());
             LOGGER.debug("item (" + item.getType() + ") is now: " + getAsMap(item).toString());

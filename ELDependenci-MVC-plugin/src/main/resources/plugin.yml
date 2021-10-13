@@ -1,4 +1,4 @@
-name: ELDepdendenci-MVC
+name: ELDependenci-MVC
 main: com.ericlam.mc.eldgui.ELDGPlugin
 version: ${project.version}
 api-version: "1.16"

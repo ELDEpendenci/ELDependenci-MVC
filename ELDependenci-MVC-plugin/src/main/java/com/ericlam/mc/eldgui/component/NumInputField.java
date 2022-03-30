@@ -9,8 +9,8 @@ import org.apache.commons.lang.text.StrSubstitutor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -22,7 +22,8 @@ import java.util.function.Function;
 public final class NumInputField<T extends Number> extends AbstractComponent implements Clickable, Listenable<AsyncChatEvent> {
 
     private final static Map<Class<? extends Number>, MathCalculate<? extends Number>> valueMap = new ConcurrentHashMap<>();
-    private static <N extends Number> void addNumberType(Class<N> type, MathCalculate<N> math){
+
+    private static <N extends Number> void addNumberType(Class<N> type, MathCalculate<N> math) {
         valueMap.put(type, math);
     }
 
@@ -73,8 +74,8 @@ public final class NumInputField<T extends Number> extends AbstractComponent imp
         ));
 
         addNumberType(Byte.class, new MathCalculate<>(
-                (a, b) -> (byte)(a + b),
-                (a, b) -> (byte)(a - b),
+                (a, b) -> (byte) (a + b),
+                (a, b) -> (byte) (a - b),
                 Number::byteValue,
                 (value, max) -> value > max,
                 (value, min) -> value < min,
@@ -157,7 +158,8 @@ public final class NumInputField<T extends Number> extends AbstractComponent imp
         String msg = ((TextComponent) event.message()).content();
         try {
             T value = math.parseNum.apply(msg);
-            if (math.smallerThan.apply(value, min) || math.biggerThan.apply(value, max)) throw new NumberFormatException();
+            if (math.smallerThan.apply(value, min) || math.biggerThan.apply(value, max))
+                throw new NumberFormatException();
             this.updateValue(value);
         } catch (NumberFormatException e) {
             event.getPlayer().sendMessage(errorMessage);

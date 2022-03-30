@@ -12,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -33,12 +32,13 @@ public class PersistDataUtils {
     public static final PersistentDataType<String, Map> MAP_DATA_TYPE = new MapDataType();
     private static final Map<Class<?>, PersistentDataType<?, ?>> PRIMITIVE_MAP = new ConcurrentHashMap<>();
 
-    public static <C> PersistentDataType<?, C> getPersistentDataType(Class<C> type){
+    public static <C> PersistentDataType<?, C> getPersistentDataType(Class<C> type) {
         if (type.isInterface()) throw new IllegalStateException("type cannot be interface");
         if (PRIMITIVE_MAP.containsKey(type)) return (PersistentDataType<?, C>) PRIMITIVE_MAP.get(type);
         return (PersistentDataType<?, C>) GENERIC_DATA_TYPE;
     }
-    public static PersistentDataType<byte[], Object> getPersistentDataType(){
+
+    public static PersistentDataType<byte[], Object> getPersistentDataType() {
         return GENERIC_DATA_TYPE;
     }
 
@@ -118,8 +118,9 @@ public class PersistDataUtils {
 
     public static Map<String, Object> reflectToMap(Object model) {
         try {
-            return OBJECT_MAPPER.convertValue(model, new TypeReference<>() {});
-        }catch (Exception e){
+            return OBJECT_MAPPER.convertValue(model, new TypeReference<>() {
+            });
+        } catch (Exception e) {
             return Map.of();
         }
     }
@@ -127,33 +128,33 @@ public class PersistDataUtils {
     public static <T> T mapToObject(Map<String, Object> map, Class<T> beanClass) {
         T obj;
         try {
-             obj = beanClass.getConstructor().newInstance();
-        }catch (InvocationTargetException | InstantiationException e) {
+            obj = beanClass.getConstructor().newInstance();
+        } catch (InvocationTargetException | InstantiationException e) {
             throw new IllegalStateException(e);
         } catch (IllegalAccessException e) {
-            throw new IllegalStateException("The no arg constructor is private of type: "+beanClass);
+            throw new IllegalStateException("The no arg constructor is private of type: " + beanClass);
         } catch (NoSuchMethodException e) {
-            throw new IllegalStateException("Cannot find no arg constructor on type: "+beanClass);
+            throw new IllegalStateException("Cannot find no arg constructor on type: " + beanClass);
         }
         Field[] fields = beanClass.getDeclaredFields();
         for (Field field : fields) {
             int mod = field.getModifiers();
-            if (Modifier.isFinal(mod) || Modifier.isStatic(mod) || field.isAnnotationPresent(JsonIgnore.class)){
+            if (Modifier.isFinal(mod) || Modifier.isStatic(mod) || field.isAnnotationPresent(JsonIgnore.class)) {
                 continue;
             }
             field.setAccessible(true);
             Object value = map.get(field.getName());
-            if (value instanceof Map<?, ?> && field.getType() != Map.class){
+            if (value instanceof Map<?, ?> && field.getType() != Map.class) {
                 Map<String, Object> m = (Map<String, Object>) value;
                 value = mapToObject(m, field.getType());
             }
-            if (value == null && field.isAnnotationPresent(Nonnull.class)){
+            if (value == null && field.isAnnotationPresent(NotNull.class)) {
                 throw new IllegalStateException("property assigned @Nonnull but setting null value.");
             }
             try {
                 field.set(obj, value);
-            }catch (IllegalAccessException e) {
-                LOGGER.warn("Error while setting field "+field.getName()+" to "+value+", type: "+field.getType(), e);
+            } catch (IllegalAccessException e) {
+                LOGGER.warn("Error while setting field " + field.getName() + " to " + value + ", type: " + field.getType(), e);
             }
         }
         return obj;

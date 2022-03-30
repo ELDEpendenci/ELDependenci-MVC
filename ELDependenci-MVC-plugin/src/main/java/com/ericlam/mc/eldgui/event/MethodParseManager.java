@@ -1,8 +1,8 @@
 package com.ericlam.mc.eldgui.event;
 
 import org.bukkit.event.inventory.InventoryEvent;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;

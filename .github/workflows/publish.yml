@@ -19,37 +19,11 @@ jobs:
       - name: Checkout Source Code
         id: checkout-source
         uses: actions/checkout@v2
-      - name: Set up JDK 16
-        id: setup-java
-        uses: actions/setup-java@v1
+      - uses: eric2788/maven-jar-publish@v2
         with:
           java-version: 16
-      - name: Build with Maven
-        run: mvn -B package --file pom.xml
-      - name: Delete tag and release
-        id: delete-tag-release
-        uses: dev-drprasad/delete-tag-and-release@v0.1.2
-        with:
-          tag_name: ${{ env.version }}
-          delete_release: true
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        with:
-          tag_name: ${{ env.version }}
-          release_name: Release ${{ github.repository }}-${{ env.version }}
-          body: |
-            版本更新請到[這裏](https://eric2788.gitbook.io/eldependenci-mvc/references/update/v0.1.3)查看。
-          draft: false
-          prerelease: false
-      - name: Upload Release jar
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-          asset_path: ./${{env.plugin_name}}/target/${{env.plugin_name}}-${{env.version}}.jar # 請根據你插件名稱進行的修改
-          asset_name: ${{env.plugin_name}}-${{ env.version }}.jar # 請根據你插件名稱進行的修改
-          asset_content_type: application/java-archive
+          body: 版本更新請到[這裏](https://eric2788.gitbook.io/eldependenci-mvc/references/update/v0.1.3)查看。
+          upload-module: './ELDependenci-MVC-plugin'
       - name: 'Update javadocs'
         id: update-javadoc
         uses: eric2788/push-javadoc-branch@main

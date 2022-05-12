@@ -13,6 +13,11 @@
         <module>ELDependenci-MVC-plugin</module>
     </modules>
 
+    <properties>
+        <maven.compiler.target>18</maven.compiler.target>
+        <maven.compiler.source>18</maven.compiler.source>
+    </properties>
+
     <repositories>
         <repository>
             <id>papermc</id>
@@ -90,7 +95,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.2.0</version>
+                    <version>3.3.2</version>
                     <executions>
                         <execution>
                             <id>attach-javadocs</id>
@@ -115,7 +120,7 @@
                         <version>true</version>
                         <linksource>true</linksource>
                         <notimestamp>true</notimestamp>
-                        <bottom><![CDATA[<b>© ELDependenci-MVC - 2021</b>]]></bottom>
+                        <bottom><![CDATA[<b>© ELDependenci-MVC - 2022</b>]]></bottom>
                         <reportOutputDirectory>${project.build.directory}</reportOutputDirectory>
                         <outputDirectory>../javadocs</outputDirectory>
                         <detectJavaApiLink>true</detectJavaApiLink>

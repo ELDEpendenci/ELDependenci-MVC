@@ -1,17 +1,14 @@
 package how.to.use.in.external;
 
-import com.ericlam.mc.eldgui.component.Component;
-import com.ericlam.mc.eldgui.component.factory.SelectionFactory;
 import com.ericlam.mc.eldgui.controller.UIController;
 import com.ericlam.mc.eldgui.demo.ELDGExceptionViewHandler;
 import com.ericlam.mc.eldgui.demo.error.ErrorView;
 import com.ericlam.mc.eldgui.exception.ExceptionViewHandler;
 import com.ericlam.mc.eldgui.view.BukkitView;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
-import org.bukkit.Material;
-import org.junit.Assert;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -26,7 +23,7 @@ public class TestMain {
 
 
     public static void main(String[] args) {
-       // check user controller to see how to use
+        // check user controller to see how to use
     }
 
     // @Test
@@ -47,21 +44,6 @@ public class TestMain {
         Object o = mapper.readValue(bb, Object.class);
         System.out.println(o instanceof UUID);
         System.out.println(o.getClass());
-    }
-
-    // @Test
-    public void testJacksonConvert() {
-        //ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule()).disable(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES);
-        Gson gson = new Gson();
-        Map<String, Object> map = Map.of(
-                "date", LocalDate.now(),
-                "time", LocalTime.now()
-        );
-        Map<String, Object> result = nester(map);
-        System.out.println(result);
-        JsonElement element = gson.toJsonTree(result);
-        TestModel test = gson.fromJson(element, TestModel.class);
-        System.out.println(test);
     }
 
     private static Map<String, Object> nester(Map<String, Object> map) {
@@ -112,9 +94,6 @@ public class TestMain {
         };
         System.out.println(fakeAnnotation.annotationType());
         System.out.println(fakeAnnotation.value());
-
-        Assert.assertEquals(fakeAnnotation.annotationType(), realAnnotation.annotationType());
-        Assert.assertEquals(fakeAnnotation.value(), realAnnotation.value());
     }
 
 

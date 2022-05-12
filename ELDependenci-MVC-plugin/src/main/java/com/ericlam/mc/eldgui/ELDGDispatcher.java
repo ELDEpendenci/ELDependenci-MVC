@@ -81,6 +81,7 @@ public class ELDGDispatcher implements UIDispatcher, Listener {
 
     @Override
     public void openForGlobal(Player player) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public synchronized void onClose() {

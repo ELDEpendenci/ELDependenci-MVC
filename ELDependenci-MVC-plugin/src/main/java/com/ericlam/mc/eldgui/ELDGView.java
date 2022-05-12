@@ -290,8 +290,12 @@ public final class ELDGView<T> {
             public PatternComponentBuilder components(Component... components) {
                 for (Component component : components) {
                     componentMap.putIfAbsent(pattern, new ArrayList<>());
+                    if (!inventoryContext.addItem(pattern, component)){
+                        LOGGER.warn("無法在界面 {} 的 Pattern {} 中新增組件 {}, 位置已滿。",
+                                view.getClass().getSimpleName(), pattern, component.getClass().getSimpleName()
+                        );
+                    }
                     componentMap.get(pattern).add(component);
-                    inventoryContext.addItem(pattern, component);
                     if (component instanceof Animatable) ((Animatable) component).startAnimation();
                     if (component.getItem().hasItemMeta()) {
                         String id = inventoryContext.getIdFromItem(component.getItem());
@@ -304,8 +308,13 @@ public final class ELDGView<T> {
             @Override
             public PatternComponentBuilder component(int pos, Component component) {
                 componentMap.putIfAbsent(pattern, new ArrayList<>());
+                if (!inventoryContext.setItem(pattern, pos, component)){
+                    LOGGER.warn("無法在界面 {} 的 Pattern {} 中設置組件 {} 到位置 {}, 此位置無效。",
+                            view.getClass().getSimpleName(), pattern, component.getClass().getSimpleName(), pos
+                    );
+                    return this;
+                }
                 componentMap.get(pattern).add(component);
-                inventoryContext.setItem(pattern, pos, component);
                 if (component instanceof Animatable) ((Animatable) component).startAnimation();
                 if (component.getItem().hasItemMeta()) {
                     String id = inventoryContext.getIdFromItem(component.getItem());

@@ -2,6 +2,7 @@ package com.ericlam.mc.eldgui.event;
 
 import com.ericlam.mc.eldgui.ELDGView;
 import com.ericlam.mc.eldgui.MVCInstallation;
+import com.ericlam.mc.eldgui.view.AnyView;
 import com.ericlam.mc.eldgui.view.View;
 import com.google.common.collect.ImmutableMap;
 import org.bukkit.entity.Player;
@@ -84,7 +85,7 @@ public abstract class ELDGEventHandler<A extends Annotation, E extends Inventory
                     }
                     return requestMapper.pattern() == patternClicked
                             && requestMapper.event() == e.getClass()
-                            && requestMapper.view() == currentView.getClass();
+                            && ( requestMapper.view() == AnyView.class || requestMapper.view() == currentView.getClass() );
                 })
                 .filter((en) -> {
                     Method method = en.getValue();

@@ -336,6 +336,12 @@ public final class ELDGUI {
     }
 
     private void handleException(Exception ex) {
+
+        if (ex.getCause() != null && ex.getCause() instanceof Exception e) {
+            this.handleException(e);
+            return;
+        }
+
         LOGGER.debug("on exception handle: " + ex.getClass()); // debug
         Optional<Class<? extends ExceptionViewHandler>> exceptionViewHandlerOpt = Optional
                 .ofNullable(eldgmvcInstallation.getExceptionHandlerMap().get(controllerCls));
@@ -404,7 +410,7 @@ public final class ELDGUI {
         var primaryThread = Bukkit.getServer().isPrimaryThread();
         if (primaryThread) {
             runnable.run();
-        }else{
+        } else {
             Bukkit.getScheduler().runTask(eldgPlugin, runnable);
         }
     }

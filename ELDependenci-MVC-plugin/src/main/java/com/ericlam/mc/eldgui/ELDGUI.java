@@ -172,8 +172,8 @@ public final class ELDGUI {
         returnTypeManager.registerReturnType(t -> {
             if (t instanceof ParameterizedType parat) {
                 var inside = parat.getActualTypeArguments()[0];
-                return (inside == BukkitView.class || inside == new TypeLiteral<BukkitView<?, ?>>() {
-                }.getType()) && parat.getRawType() == CompletableFuture.class;
+                return (inside == BukkitView.class || inside.equals(new TypeLiteral<BukkitView<?, ?>>() {
+                }.getType())) && parat.getRawType() == CompletableFuture.class;
             }
             return false;
         }, (result, annos) -> {

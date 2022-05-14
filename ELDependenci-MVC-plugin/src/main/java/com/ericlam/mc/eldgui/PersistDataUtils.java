@@ -145,16 +145,19 @@ public class PersistDataUtils {
         for (Field field : fields) {
 
             int mod = field.getModifiers();
-            if (Modifier.isStatic(mod) || field.isAnnotationPresent(JsonIgnore.class)) {
+            if (Modifier.isTransient(mod) || Modifier.isStatic(mod) || field.isAnnotationPresent(JsonIgnore.class)) {
                 continue;
             }
 
             try {
+                if (!field.trySetAccessible()){
+                    continue;
+                }
                 field.setAccessible(true);
                 var value = field.get(model);
                 map.put(field.getName(), value.toString());
             } catch (Exception e) {
-                LOGGER.warn("Cannot get field {} from {}: {}", field.getName(), model.getClass(), e.getMessage());
+                LOGGER.warn("Cannot get field {} from {}: {} ({})", field.getName(), model.getClass(), e.getMessage(), e.getClass().getSimpleName());
             }
         }
 

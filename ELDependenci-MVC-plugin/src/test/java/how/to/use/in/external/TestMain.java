@@ -5,13 +5,14 @@ import com.ericlam.mc.eldgui.demo.ELDGExceptionViewHandler;
 import com.ericlam.mc.eldgui.demo.error.ErrorView;
 import com.ericlam.mc.eldgui.exception.ExceptionViewHandler;
 import com.ericlam.mc.eldgui.view.BukkitView;
-import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -24,6 +25,58 @@ public class TestMain {
 
     public static void main(String[] args) {
         // check user controller to see how to use
+        System.out.println(reflectToMap(new Exception("123")));
+        var student = new Student(
+                "studen1",
+                "Chan",
+                "Tai Man",
+                19,
+                "1234544",
+                5);
+        System.out.println(reflectToMap(student));
+    }
+
+
+    public static  <T> Map<String, Object> reflectToMap(T model) {
+
+        if (model == null) return Map.of();
+
+        var map = new LinkedHashMap<String, Object>();
+
+
+        for (Field field : getDeclaredFieldsUpToStatic(model.getClass(), null)) {
+
+            int mod = field.getModifiers();
+            if (Modifier.isTransient(mod) || Modifier.isStatic(mod) || field.isAnnotationPresent(JsonIgnore.class)) {
+                continue;
+            }
+
+            try {
+                if (!field.trySetAccessible()) {
+                    continue;
+                }
+                field.setAccessible(true);
+                var value = field.get(model);
+                map.put(field.getName(), value.toString());
+            } catch (Exception e) {
+                System.out.printf("Cannot get field %s from %s: %s (%s)", field.getName(), model.getClass(), e.getMessage(), e.getClass().getSimpleName());
+            }
+        }
+
+        return map;
+    }
+
+    public static List<Field> getDeclaredFieldsUpToStatic(Class<?> startClass, Class<?> exclusiveParent) {
+        List<Field> currentClassFields = Lists.newArrayList(startClass.getDeclaredFields());
+        Class<?> parentClass = startClass.getSuperclass();
+
+        if (parentClass != null && !(parentClass.equals(exclusiveParent))) {
+            List<Field> parentClassFields =
+                    (List<Field>) getDeclaredFieldsUpToStatic(parentClass, exclusiveParent);
+            currentClassFields.addAll(parentClassFields);
+        }
+
+        return currentClassFields;
     }
 
     // @Test

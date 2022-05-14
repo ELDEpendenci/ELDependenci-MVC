@@ -54,6 +54,8 @@ public final class ELDGView<T> {
     private boolean doNotDestroyView = false;
     private BukkitTask waitingTask = null;
 
+    private final BukkitView<View<T>, T> bukkitView;
+
 
     public ELDGView(
             BukkitView<View<T>, T> bukkitView,
@@ -61,6 +63,7 @@ public final class ELDGView<T> {
             ItemStackService itemStackService,
             Map<Class<? extends ComponentFactory<?>>, Class<? extends ComponentFactory<?>>> componentFactory
     ) {
+        this.bukkitView = bukkitView;
         componentFactory.forEach((f, impl) -> {
             try {
                 var constructor = impl.getConstructor(ItemStackService.class, AttributeController.class);
@@ -495,5 +498,9 @@ public final class ELDGView<T> {
             runner.run();
         }
 
+    }
+
+    public BukkitView<View<T>, T> getBukkitView() {
+        return bukkitView;
     }
 }

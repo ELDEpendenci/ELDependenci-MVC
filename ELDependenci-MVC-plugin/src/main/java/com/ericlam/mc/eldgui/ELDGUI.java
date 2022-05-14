@@ -28,6 +28,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -165,12 +166,46 @@ public final class ELDGUI {
                 this.jumpToController((BukkitRedirectView) bukkitView);
             } else {
                 BukkitView<?, ?> bv = (BukkitView<?, ?>) bukkitView;
-                this.updateView(bv);
+                runTaskOrNot(() -> this.updateView(bv));
             }
         });
         returnTypeManager.registerReturnType(t -> {
-            if (t instanceof ParameterizedType) {
-                var parat = (ParameterizedType) t;
+            if (t instanceof ParameterizedType parat) {
+                var inside = parat.getActualTypeArguments()[0];
+                return (inside == BukkitView.class || inside == new TypeLiteral<BukkitView<?, ?>>() {
+                }.getType()) && parat.getRawType() == CompletableFuture.class;
+            }
+            return false;
+        }, (result, annos) -> {
+            // loading view start
+            Arrays.stream(annos)
+                    .filter(a -> a.annotationType() == AsyncLoadingView.class)
+                    .findAny()
+                    .map(a -> ((AsyncLoadingView) a).value())
+                    .map(BukkitView::new)
+                    .ifPresentOrElse(this::updateView, () -> this.updateView(this.loadingView));
+
+            CompletableFuture<BukkitView<?, ?>> future = (CompletableFuture<BukkitView<?, ?>>) result;
+            future.whenComplete((bukkitView, ex) -> {
+
+                if (ex != null) {
+                    if (ex instanceof Exception e) {
+                        runTaskOrNot(() -> handleException(e));
+                    } else {
+                        LOGGER.warn("Error while handling returning result", ex);
+                    }
+                    return;
+                }
+
+                if (bukkitView instanceof BukkitRedirectView) {
+                    this.jumpToController((BukkitRedirectView) bukkitView);
+                } else {
+                    runTaskOrNot(() -> this.updateView(bukkitView));
+                }
+            });
+        });
+        returnTypeManager.registerReturnType(t -> {
+            if (t instanceof ParameterizedType parat) {
                 var inside = parat.getActualTypeArguments()[0];
                 return (inside == BukkitView.class || inside.equals(new TypeLiteral<BukkitView<?, ?>>() {
                 }.getType()))
@@ -190,12 +225,14 @@ public final class ELDGUI {
                 if (bukkitView instanceof BukkitRedirectView) {
                     this.jumpToController((BukkitRedirectView) bukkitView);
                 } else {
+                    // must in primary thread
                     this.updateView(bukkitView);
                 }
             }).join();
         });
         returnTypeManager.registerReturnType(type -> type == void.class, (view, a) -> {
         });
+
     }
 
     private void initMethodParseManager(MethodParseManager parser) {
@@ -245,7 +282,7 @@ public final class ELDGUI {
                 });
     }
 
-    private Map<String, Object> getFieldMap(char pattern){
+    private Map<String, Object> getFieldMap(char pattern) {
         if (this.currentView == null) throw new IllegalStateException("currentView is null");
         var context = this.currentView.getEldgContext();
         Map<String, Object> fieldMap = new HashMap<>();
@@ -356,10 +393,20 @@ public final class ELDGUI {
         LOGGER.debug("destroying controller"); //debug
         eventHandlerMap.values().forEach(ELDGEventHandler::unloadAllHandlers);
         lifeCycleManager.onLifeCycle(PreDestroy.class);
-        if (this.currentView != null){
+        if (this.currentView != null) {
             this.currentView.destroyView();
         }
         this.onDestroy.accept(owner);
+    }
+
+
+    private void runTaskOrNot(Runnable runnable) {
+        var primaryThread = Bukkit.getServer().isPrimaryThread();
+        if (primaryThread) {
+            runnable.run();
+        }else{
+            Bukkit.getScheduler().runTask(eldgPlugin, runnable);
+        }
     }
 
 

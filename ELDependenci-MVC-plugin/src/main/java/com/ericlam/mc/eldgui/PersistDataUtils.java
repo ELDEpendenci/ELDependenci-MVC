@@ -145,7 +145,7 @@ public class PersistDataUtils {
         for (Field field : fields) {
 
             int mod = field.getModifiers();
-            if (Modifier.isFinal(mod) || Modifier.isStatic(mod) || field.isAnnotationPresent(JsonIgnore.class)) {
+            if (Modifier.isStatic(mod) || field.isAnnotationPresent(JsonIgnore.class)) {
                 continue;
             }
 

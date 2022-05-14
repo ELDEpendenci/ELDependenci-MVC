@@ -138,7 +138,7 @@ public class TestMain {
     }
 
     public static Map<String, Object> objectFieldsToMap(Object model) {
-        return Arrays.stream(model.getClass().getFields()).collect(Collectors.toMap(Field::getName, f -> {
+        return Arrays.stream(model.getClass().getDeclaredFields()).collect(Collectors.toMap(Field::getName, f -> {
             try {
                 f.setAccessible(true);
                 return f.get(model);

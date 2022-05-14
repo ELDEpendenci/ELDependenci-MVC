@@ -4,8 +4,6 @@ import com.ericlam.mc.eld.ELDependenci;
 import com.ericlam.mc.eld.ReflectionService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import org.bukkit.persistence.PersistentDataAdapterContext;
@@ -135,7 +133,9 @@ public class PersistDataUtils {
     }
 
 
-    public static Map<String, Object> reflectToMap(Object model) {
+    public static <T> Map<String, Object> reflectToMap(T model) {
+
+        if (model == null) return Map.of();
 
         var map = new LinkedHashMap<String, Object>();
 
@@ -149,11 +149,11 @@ public class PersistDataUtils {
                 continue;
             }
 
-            field.setAccessible(true);
             try {
+                field.setAccessible(true);
                 var value = field.get(model);
                 map.put(field.getName(), value.toString());
-            }catch (Exception e){
+            } catch (Exception e) {
                 LOGGER.warn("Cannot get field {} from {}: {}", field.getName(), model.getClass(), e.getMessage());
             }
         }

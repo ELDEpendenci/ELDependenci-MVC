@@ -31,7 +31,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public final class ELDGUI {
 
@@ -57,7 +56,7 @@ public final class ELDGUI {
     private final Consumer<Player> onDestroy;
     private final ViewJumper goTo;
     private final BukkitView<? extends LoadingView, Void> loadingView;
-    private final Method[] declaredMethods;
+    private final Method[] controllerMethods;
 
 
     private ELDGView<?> currentView;
@@ -90,15 +89,15 @@ public final class ELDGUI {
         this.controllerCls = controller.getClass();
 
         if (declaredMethodMap.containsKey(controllerCls)) {
-            this.declaredMethods = declaredMethodMap.get(controllerCls);
+            this.controllerMethods = declaredMethodMap.get(controllerCls);
         } else {
-            this.declaredMethods = controllerCls.getDeclaredMethods();
-            declaredMethodMap.put(controllerCls, declaredMethods);
+            this.controllerMethods = controllerCls.getMethods();
+            declaredMethodMap.put(controllerCls, controllerMethods);
         }
 
         var customQualifier = eldgmvcInstallation.getQualifierMap();
-        this.eventHandlerMap.put(InventoryClickEvent.class, new ELDGClickEventHandler(controller, methodParseManager, returnTypeManager, customQualifier, declaredMethods));
-        this.eventHandlerMap.put(InventoryDragEvent.class, new ELDGDragEventHandler(controller, methodParseManager, returnTypeManager, customQualifier, declaredMethods));
+        this.eventHandlerMap.put(InventoryClickEvent.class, new ELDGClickEventHandler(controller, methodParseManager, returnTypeManager, customQualifier, controllerMethods));
+        this.eventHandlerMap.put(InventoryDragEvent.class, new ELDGDragEventHandler(controller, methodParseManager, returnTypeManager, customQualifier, controllerMethods));
         this.itemGetterMap.put(InventoryClickEvent.class.getSimpleName(), e -> ((InventoryClickEvent) e).getCurrentItem());
         this.itemGetterMap.put(InventoryDragEvent.class.getSimpleName(), e -> ((InventoryDragEvent) e).getOldCursor());
 
@@ -142,7 +141,7 @@ public final class ELDGUI {
     public void initIndexView(Object controller) {
         LOGGER.debug("initializing index view"); // debug
         try {
-            Optional<Method> indexMethod = Arrays.stream(declaredMethods).filter(m -> m.getName().equalsIgnoreCase("index")).findAny();
+            Optional<Method> indexMethod = Arrays.stream(controllerMethods).filter(m -> m.getName().equalsIgnoreCase("index")).findAny();
             if (indexMethod.isEmpty())
                 throw new IllegalStateException("cannot find index method from " + controllerCls);
             Method index = indexMethod.get();
@@ -312,7 +311,7 @@ public final class ELDGUI {
         ExceptionViewHandler viewHandlerIns = injector.getInstance(exceptionViewHandler);
         UIController fromController = controllerCls.getAnnotation(UIController.class);
         Method[] declaredMethods = Optional.ofNullable(declaredMethodMap.get(exceptionViewHandler)).orElseGet(() -> {
-            var methods = exceptionViewHandler.getDeclaredMethods();
+            var methods = exceptionViewHandler.getMethods();
             declaredMethodMap.put(exceptionViewHandler, methods);
             return methods;
         });

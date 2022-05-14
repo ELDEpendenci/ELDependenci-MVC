@@ -36,7 +36,7 @@ public final class LifeCycleManager {
 
 
     private <A extends Annotation> void loadLifeCycle(Class<A> lifeCycle) {
-        List<Method> methods = Arrays.stream(controller.getClass().getDeclaredMethods()).filter(m -> m.isAnnotationPresent(lifeCycle)).collect(Collectors.toList());
+        List<Method> methods = Arrays.stream(controller.getClass().getMethods()).filter(m -> m.isAnnotationPresent(lifeCycle)).collect(Collectors.toList());
         if (methods.size() > 1)
             throw new IllegalStateException(lifeCycle.getName() + " lifecycle must at most once in each controller.");
         if (!methods.isEmpty()) {
@@ -46,7 +46,7 @@ public final class LifeCycleManager {
 
     private <A extends Annotation> void loadViewLifeCycle(Class<A> lifeCycle, LifeCycleFilter<A> filter){
         this.viewLifeCycleFilterMap.put(lifeCycle, filter);
-        List<Method> methods = Arrays.stream(controller.getClass().getDeclaredMethods()).filter(m -> m.isAnnotationPresent(lifeCycle)).collect(Collectors.toList());
+        List<Method> methods = Arrays.stream(controller.getClass().getMethods()).filter(m -> m.isAnnotationPresent(lifeCycle)).collect(Collectors.toList());
         if (methods.isEmpty()) return;
         this.viewLifeCycleMap.put(lifeCycle, methods);
     }

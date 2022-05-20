@@ -1,0 +1,26 @@
+name: build plugin
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  build_plugin:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v3
+        with:
+          java-version: '18'
+          distribution: 'adopt'
+      - name: Build with Maven
+        run: mvn --batch-mode clean package
+      - name: upload artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: plugin
+          path: ./ELDependenci-MVC-plugin/target

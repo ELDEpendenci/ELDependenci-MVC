@@ -1,7 +1,7 @@
 package com.ericlam.mc.eldgui;
 
 import com.ericlam.mc.eld.ELDependenci;
-import com.ericlam.mc.eld.ReflectionService;
+import com.ericlam.mc.eld.services.ReflectionService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -150,7 +150,7 @@ public class PersistDataUtils {
             }
 
             try {
-                if (!field.trySetAccessible()){
+                if (!field.trySetAccessible()) {
                     continue;
                 }
                 field.setAccessible(true);

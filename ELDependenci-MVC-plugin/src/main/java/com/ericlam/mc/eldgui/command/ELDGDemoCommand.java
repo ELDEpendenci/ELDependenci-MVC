@@ -2,7 +2,7 @@ package com.ericlam.mc.eldgui.command;
 
 import com.ericlam.mc.eld.annotations.CommandArg;
 import com.ericlam.mc.eld.annotations.Commander;
-import com.ericlam.mc.eld.components.CommandNode;
+import com.ericlam.mc.eld.components.BukkitCommand;
 import com.ericlam.mc.eldgui.ELDGMVCInstallation;
 import com.ericlam.mc.eldgui.InventoryService;
 import com.ericlam.mc.eldgui.UINotFoundException;
@@ -18,7 +18,7 @@ import java.util.List;
         description = "打開界面demo指令",
         playerOnly = true
 )
-public class ELDGDemoCommand implements CommandNode {
+public class ELDGDemoCommand implements BukkitCommand {
 
     @Inject
     private InventoryService inventoryService;

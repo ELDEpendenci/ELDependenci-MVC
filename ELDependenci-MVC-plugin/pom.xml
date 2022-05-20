@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>ELDependenci-MVC-plugin</artifactId>
-    <version>${project.parent.version}.4</version>
+    <version>0.2.0-SNAPSHOT</version>
 
     <dependencies>
         <dependency>

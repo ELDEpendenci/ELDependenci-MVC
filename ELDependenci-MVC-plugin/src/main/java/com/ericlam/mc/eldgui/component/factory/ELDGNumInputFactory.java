@@ -4,7 +4,6 @@ import com.ericlam.mc.eld.services.ItemStackService;
 import com.ericlam.mc.eldgui.component.AttributeController;
 import com.ericlam.mc.eldgui.component.Component;
 import com.ericlam.mc.eldgui.component.NumInputField;
-import org.apache.commons.lang.Validate;
 
 import java.util.Optional;
 

@@ -9,7 +9,6 @@ import com.ericlam.mc.eldgui.lifecycle.PostUpdateView;
 import com.ericlam.mc.eldgui.lifecycle.PreDestroyView;
 import com.ericlam.mc.eldgui.view.BukkitRedirectView;
 import com.ericlam.mc.eldgui.view.BukkitView;
-import com.ericlam.mc.eldgui.view.View;
 import org.bukkit.entity.Player;
 
 import javax.inject.Inject;

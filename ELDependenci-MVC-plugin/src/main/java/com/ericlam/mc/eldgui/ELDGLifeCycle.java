@@ -1,11 +1,11 @@
 package com.ericlam.mc.eldgui;
 
-import com.ericlam.mc.eld.BukkitLifeCycle;
+import com.ericlam.mc.eld.bukkit.ELDLifeCycle;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.inject.Inject;
 
-public class ELDGLifeCycle implements BukkitLifeCycle {
+public class ELDGLifeCycle implements ELDLifeCycle {
 
     @Inject
     private InventoryService inventoryService;

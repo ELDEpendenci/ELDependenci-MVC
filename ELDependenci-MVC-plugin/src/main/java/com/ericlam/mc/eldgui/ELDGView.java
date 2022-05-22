@@ -472,6 +472,21 @@ public final class ELDGView<T> {
             return List.copyOf(items);
         }
 
+        public Map<Integer, ItemStack> getItemMap(char pattern){
+            var slots = patternMasks.get(pattern);
+            if (slots == null) return Map.of();
+            Map<Integer, ItemStack> items = new HashMap<>();
+            int order = 0;
+            for (int s : slots) {
+                var item = nativeInventory.getItem(s);
+                if (item != null){
+                    items.put(order, item);
+                }
+                order++;
+            }
+            return Map.copyOf(items);
+        }
+
         public boolean addItem(char pattern, Component component) {
             var slots = patternMasks.get(pattern);
             if (slots == null) return false;

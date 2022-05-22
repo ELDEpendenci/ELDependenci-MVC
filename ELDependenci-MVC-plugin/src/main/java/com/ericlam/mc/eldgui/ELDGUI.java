@@ -239,13 +239,14 @@ public final class ELDGUI {
         parser.registerParser((t, annos) -> t.equals(UISession.class), (annotations, t, e) -> session);
         parser.registerParser((t, annos) -> Arrays.stream(annos).anyMatch(a -> a.annotationType() == FromPattern.class), (annotations, t, e) -> {
             FromPattern pattern = (FromPattern) Arrays.stream(annotations).filter(a -> a.annotationType() == FromPattern.class).findAny().orElseThrow(() -> new IllegalStateException("cannot find @FromPattern in List<ItemStack> parameters"));
-            if (t instanceof ParameterizedType) {
-                var parat = (ParameterizedType) t;
+            if (t instanceof ParameterizedType parat) {
                 if (parat.getActualTypeArguments()[0] == ItemStack.class && parat.getRawType() == List.class) {
                     return this.currentView.getEldgContext().getItems(pattern.value());
+                } else if (parat.getRawType() == Map.class && parat.getActualTypeArguments()[0] == Integer.class && parat.getActualTypeArguments()[1] == ItemStack.class) {
+                    return this.currentView.getEldgContext().getItemMap(pattern.value());
                 }
             }
-            throw new IllegalStateException("@FromPattern 必須使用 List<ItemStack> 作為其類型");
+            throw new IllegalStateException("@FromPattern 必須使用 List<ItemStack> 或 Map<Integer, ItemStack> 作為其類型");
         });
         //parser.registerParser((t, annos) -> t.equals(UIRequest.class), (annotations, t, e) -> eldgContext);
         parser.registerParser((t, annos) -> t.equals(Player.class), (annotations, t, e) -> owner);

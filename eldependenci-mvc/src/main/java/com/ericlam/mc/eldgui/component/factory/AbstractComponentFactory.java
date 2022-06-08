@@ -5,6 +5,7 @@ import com.ericlam.mc.eldgui.component.AttributeController;
 import com.ericlam.mc.eldgui.component.Component;
 import com.ericlam.mc.eldgui.component.ComponentFactory;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.function.Consumer;
 
@@ -49,6 +50,12 @@ public abstract class AbstractComponentFactory<Factory extends ComponentFactory<
     @Override
     public Factory number(int amount) {
         this.itemFactory.amount(amount);
+        return factory;
+    }
+
+    @Override
+    public Factory mirror(ItemStack item) {
+        this.itemFactory = itemStackService.edit(item);
         return factory;
     }
 

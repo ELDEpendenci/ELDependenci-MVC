@@ -20,7 +20,7 @@ jobs:
       - uses: eric2788/maven-jar-publish@v2
         with:
           java-version: 18
-          body: 版本更新請到[這裏](https://eric2788.gitbook.io/eldependenci-mvc/references/update/v0.1.4)查看。
+          body: 版本更新請到[這裏](https://eric2788.gitbook.io/eldependenci-mvc/references/update)查看。
           upload-module: './ELDependenci-MVC-plugin'
       - name: 'Update javadocs'
         id: update-javadoc
@@ -37,11 +37,19 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v2
+      - uses: actions-ecosystem/action-get-latest-tag@v1
+        id: latest-tag
+      - uses: jungwinter/split@v2
+        id: version
+        with:
+          msg: ${{ steps.latest-tag.outputs.tag }}
+          separator: '.'
       - uses: actions/setup-java@v2
         with:
           java-version: '18'
           distribution: 'adopt'
       - name: Publish package
-        run: mvn --batch-mode deploy
+        run: mvn --batch-mode clean deploy
+        if: ${{ steps.version.outputs.length <= 3 }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -169,6 +169,43 @@ public final class ELDGUI {
                 runTaskOrNot(() -> this.updateView(bv));
             }
         });
+
+        returnTypeManager.registerReturnType(t -> {
+            if (t instanceof ParameterizedType parat) {
+                var inside = parat.getActualTypeArguments()[0];
+                return (inside == void.class || inside == Void.class)  && parat.getRawType() == CompletableFuture.class;
+            }
+            return false;
+        }, (result, annos) -> {
+            // loading view start
+            Arrays.stream(annos)
+                    .filter(a -> a.annotationType() == AsyncLoadingView.class)
+                    .findAny()
+                    .map(a -> ((AsyncLoadingView) a).value())
+                    .map(BukkitView::new)
+                    .ifPresentOrElse(this::updateView, () -> this.updateView(this.loadingView));
+
+            CompletableFuture<Void> future = (CompletableFuture<Void>) result;
+            future.whenComplete((v, ex) -> {
+
+                if (ex != null) {
+                    if (ex instanceof Exception e) {
+                        runTaskOrNot(() -> handleException(e));
+                    } else {
+                        LOGGER.warn("Error while handling returning result", ex);
+                    }
+                    return;
+                }
+
+                if (currentView != null){
+                    runTaskOrNot(() -> this.updateView(currentView.getBukkitView()));
+                } else {
+                    LOGGER.warn("current view is null, cannot return current view.");
+                }
+
+            });
+
+        });
         returnTypeManager.registerReturnType(t -> {
             if (t instanceof ParameterizedType parat) {
                 var inside = parat.getActualTypeArguments()[0];
@@ -204,6 +241,37 @@ public final class ELDGUI {
                 }
             });
         });
+
+        returnTypeManager.registerReturnType(t -> {
+            if (t instanceof ParameterizedType parat) {
+                var inside = parat.getActualTypeArguments()[0];
+                return (inside == void.class || inside == Void.class) && parat.getRawType() == ScheduleService.BukkitPromise.class;
+            }
+            return false;
+        }, (result, annos) -> {
+            // loading view start
+            Arrays.stream(annos)
+                    .filter(a -> a.annotationType() == AsyncLoadingView.class)
+                    .findAny()
+                    .map(a -> ((AsyncLoadingView) a).value())
+                    .map(BukkitView::new)
+                    .ifPresentOrElse(this::updateView, () -> this.updateView(this.loadingView));
+            ScheduleService.BukkitPromise<Void> promise = (ScheduleService.BukkitPromise<Void>) result;
+            promise.thenRunSync(v -> {
+                if (currentView != null) {
+                    runTaskOrNot(() -> this.updateView(currentView.getBukkitView()));
+                } else {
+                    LOGGER.warn("current view is null, cannot return current view.");
+                }
+            }).joinWithCatch(ex -> {
+                if (ex instanceof Exception e) {
+                    runTaskOrNot(() -> handleException(e));
+                } else {
+                    LOGGER.warn("Error while handling returning result", ex);
+                }
+            });
+        });
+
         returnTypeManager.registerReturnType(t -> {
             if (t instanceof ParameterizedType parat) {
                 var inside = parat.getActualTypeArguments()[0];
@@ -228,9 +296,15 @@ public final class ELDGUI {
                     // must in primary thread
                     this.updateView(bukkitView);
                 }
-            }).join();
+            }).joinWithCatch(ex -> {
+                if (ex instanceof Exception e) {
+                    runTaskOrNot(() -> handleException(e));
+                } else {
+                    LOGGER.warn("Error while handling returning result", ex);
+                }
+            });
         });
-        returnTypeManager.registerReturnType(type -> type == void.class, (view, a) -> {
+        returnTypeManager.registerReturnType(type -> (type == void.class || type == Void.class), (view, a) -> {
         });
 
     }
@@ -272,9 +346,10 @@ public final class ELDGUI {
                 (annotations, type, event) -> {
                     MapAttribute attribute = (MapAttribute) Arrays.stream(annotations).filter(a -> a.annotationType() == MapAttribute.class).findAny().orElseThrow(() -> new IllegalStateException("cannot find MapAttribute annotation"));
                     boolean isMap = false;
-                    if (type instanceof ParameterizedType) {
-                        var parat = (ParameterizedType) type;
-                        isMap = parat.getRawType() == Map.class && parat.getActualTypeArguments()[0] == String.class && parat.getActualTypeArguments()[1] == Object.class;
+                    if (type instanceof ParameterizedType parat) {
+                        isMap = parat.getRawType() == Map.class &&
+                                parat.getActualTypeArguments()[0] == String.class &&
+                                parat.getActualTypeArguments()[1] == Object.class;
                     }
 
                     if (!isMap) throw new IllegalStateException("@MapAttribute 必須使用 Map<String, Object> 作為其類型");

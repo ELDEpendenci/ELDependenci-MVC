@@ -6,17 +6,22 @@ import com.ericlam.mc.eldgui.demo.error.ErrorView;
 import com.ericlam.mc.eldgui.exception.ExceptionViewHandler;
 import com.ericlam.mc.eldgui.view.BukkitView;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @UIController("1234")
@@ -34,6 +39,13 @@ public class TestMain {
                 "1234544",
                 5);
         System.out.println(reflectToMap(student));
+
+
+        Type type = new TypeReference<CompletableFuture<Void>>() {
+        }.getType();
+
+        System.out.println(type);
+        System.out.println(type instanceof ParameterizedType);
     }
 
 

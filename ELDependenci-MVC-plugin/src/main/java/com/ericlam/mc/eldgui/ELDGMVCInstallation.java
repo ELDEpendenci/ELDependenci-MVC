@@ -6,6 +6,7 @@ import com.ericlam.mc.eldgui.demo.ELDGExceptionViewHandler;
 import com.ericlam.mc.eldgui.demo.ELDGLoadingView;
 import com.ericlam.mc.eldgui.exception.ExceptionViewHandler;
 import com.ericlam.mc.eldgui.exception.HandleForControllers;
+import com.ericlam.mc.eldgui.middleware.MiddleWare;
 import com.ericlam.mc.eldgui.view.LoadingView;
 
 import java.lang.annotation.Annotation;
@@ -15,10 +16,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ELDGMVCInstallation implements MVCInstallation{
+public class ELDGMVCInstallation implements MVCInstallation {
 
     private final Map<String, Class<?>> controllerMap = new ConcurrentHashMap<>();
     private final Map<Class<? extends Annotation>, QualifierFilter<? extends Annotation>> qualifierMap = new ConcurrentHashMap<>();
+    private final Map<Class<? extends Annotation>, Class<? extends MiddleWare<? extends Annotation>>> middleWares = new ConcurrentHashMap<>();
+
     private final Map<Class<?>, Class<? extends ExceptionViewHandler>> exceptionHandlerMap = new ConcurrentHashMap<>();
     private final Set<Class<? extends ExceptionViewHandler>> scopedExceptionHandlerSet = new HashSet<>();
     private final Map<Class<? extends ComponentFactory<?>>, Class<? extends ComponentFactory<?>>> componentFactoryMap = new ConcurrentHashMap<>();
@@ -37,10 +40,16 @@ public class ELDGMVCInstallation implements MVCInstallation{
     }
 
     @Override
+    public <A extends Annotation, M extends MiddleWare<A>> void registerMiddleWare(Class<A> qualifier, Class<M> middleWareClass) {
+        this.middleWares.put(qualifier, middleWareClass);
+    }
+
+
+    @Override
     public void registerControllers(Class<?>... controllers) {
         for (Class<?> controller : controllers) {
             if (!controller.isAnnotationPresent(UIController.class)) {
-                plugin.getLogger().warning("controller "+controller+" do not have @UIController, skipped");
+                plugin.getLogger().warning("controller " + controller + " do not have @UIController, skipped");
                 continue;
             }
             UIController uic = controller.getAnnotation(UIController.class);
@@ -52,7 +61,7 @@ public class ELDGMVCInstallation implements MVCInstallation{
     public final void addExceptionViewHandlers(List<Class<? extends ExceptionViewHandler>> exceptionHandlers) {
         for (Class<? extends ExceptionViewHandler> handler : exceptionHandlers) {
             if (!handler.isAnnotationPresent(HandleForControllers.class)) {
-                plugin.getLogger().info("exception view handler "+handler+" do not have @HandleForControllers, will use it as plugin scoped");
+                plugin.getLogger().info("exception view handler " + handler + " do not have @HandleForControllers, will use it as plugin scoped");
                 this.scopedExceptionHandlerSet.add(handler);
                 continue;
             }
@@ -105,5 +114,9 @@ public class ELDGMVCInstallation implements MVCInstallation{
 
     public Map<Class<? extends ComponentFactory<?>>, Class<? extends ComponentFactory<?>>> getComponentFactoryMap() {
         return componentFactoryMap;
+    }
+
+    public Map<Class<? extends Annotation>, Class<? extends MiddleWare<? extends Annotation>>> getMiddleWares() {
+        return middleWares;
     }
 }

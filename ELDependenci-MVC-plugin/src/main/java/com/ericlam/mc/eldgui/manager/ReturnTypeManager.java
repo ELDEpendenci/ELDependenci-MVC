@@ -1,4 +1,4 @@
-package com.ericlam.mc.eldgui.event;
+package com.ericlam.mc.eldgui.manager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,13 +16,20 @@ public final class ReturnTypeManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(ReturnTypeManager.class);
     private final Map<Function<Type, Boolean>, BiConsumer<Object, Annotation[]>> supplierMap = new ConcurrentHashMap<>();
 
+
+    private final ReflectionCacheManager cacheManager;
+
+    public ReturnTypeManager(ReflectionCacheManager cacheManager) {
+        this.cacheManager = cacheManager;
+    }
+
     public void registerReturnType(Function<Type, Boolean> define, BiConsumer<Object, Annotation[]> consumer) {
         supplierMap.put(define, consumer);
     }
 
     public boolean handleReturnResult(Method method, Object result) {
         if (method == null || result == null) return false;
-        final Annotation[] annotations = method.getDeclaredAnnotations();
+        final Annotation[] annotations = cacheManager.getDeclaredAnnotations(method);
         final Type returnType = method.getGenericReturnType();
         return this.handleReturnResult(returnType, result, annotations);
     }

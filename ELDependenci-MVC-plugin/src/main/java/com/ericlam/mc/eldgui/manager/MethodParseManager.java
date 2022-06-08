@@ -1,4 +1,4 @@
-package com.ericlam.mc.eldgui.event;
+package com.ericlam.mc.eldgui.manager;
 
 import org.bukkit.event.inventory.InventoryEvent;
 import org.jetbrains.annotations.Nullable;
@@ -16,14 +16,20 @@ public final class MethodParseManager {
 
     private final Map<BiFunction<Type, Annotation[], Boolean>, MethodParser> supplierMap = new ConcurrentHashMap<>();
 
+    private final ReflectionCacheManager cacheManager;
+
+    public MethodParseManager(ReflectionCacheManager cacheManager) {
+        this.cacheManager = cacheManager;
+    }
+
     public void registerParser(BiFunction<Type, Annotation[], Boolean> define, MethodParser parser) {
         supplierMap.put(define, parser);
     }
 
     public Object[] getMethodParameters(Method method, @Nullable InventoryEvent event) {
-        Type[] paras = method.getGenericParameterTypes();
+        Type[] paras = cacheManager.getParameterTypes(method);
         Object[] results = new Object[paras.length];
-        Annotation[][] annotations = method.getParameterAnnotations();
+        Annotation[][] annotations = cacheManager.getParameterAnnotations(method);
         for (int i = 0; i < paras.length; i++) {
             Type cls = paras[i];
             Annotation[] annos = annotations[i];

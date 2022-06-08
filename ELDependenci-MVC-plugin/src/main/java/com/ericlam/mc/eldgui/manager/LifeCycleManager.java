@@ -1,4 +1,4 @@
-package com.ericlam.mc.eldgui.event;
+package com.ericlam.mc.eldgui.manager;
 
 import com.ericlam.mc.eldgui.lifecycle.PostConstruct;
 import com.ericlam.mc.eldgui.lifecycle.PostUpdateView;

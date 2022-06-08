@@ -7,8 +7,14 @@ import com.ericlam.mc.eldgui.config.ELDGLanguage;
 import com.ericlam.mc.eldgui.demo.DemoInventories;
 import com.ericlam.mc.eldgui.demo.async.AsyncController;
 import com.ericlam.mc.eldgui.demo.error.ErrorController;
+import com.ericlam.mc.eldgui.demo.login.LoginController;
+import com.ericlam.mc.eldgui.demo.middlewares.AuthenticateMiddleWare;
+import com.ericlam.mc.eldgui.demo.middlewares.AuthorizeMiddleWare;
+import com.ericlam.mc.eldgui.demo.middlewares.RequireAdmin;
+import com.ericlam.mc.eldgui.demo.middlewares.RequireLogin;
 import com.ericlam.mc.eldgui.demo.test.TestController;
 import com.ericlam.mc.eldgui.demo.user.UserController;
+import com.ericlam.mc.eldgui.manager.ReflectionCacheManager;
 
 @ELDBukkit(
         lifeCycle = ELDGLifeCycle.class,
@@ -22,7 +28,7 @@ public final class ELDGPlugin extends ELDBukkitPlugin {
     @Override
     public void bindServices(ServiceCollection serviceCollection) {
         serviceCollection.bindService(InventoryService.class, ELDGInventoryService.class);
-        serviceCollection.addSingleton(ManagerFactory.class);
+        serviceCollection.addSingleton(ReflectionCacheManager.class);
         serviceCollection.addGroupConfiguration(DemoInventories.class);
         serviceCollection.addConfiguration(ELDGLanguage.class);
         serviceCollection.addConfiguration(ELDGConfig.class);
@@ -42,6 +48,7 @@ public final class ELDGPlugin extends ELDBukkitPlugin {
         eldgmvcInstallation.addComponentFactory(BukkitItemFactory.class, ELDGBukkitItemFactory.class);
         eldgmvcInstallation.addComponentFactory(DateSelectorFactory.class, ELDGDateSelectorFactory.class);
         eldgmvcInstallation.addComponentFactory(TimeSelectorFactory.class, ELDGTimeSelectorFactory.class);
+        eldgmvcInstallation.addComponentFactory(PasswordInputFactory.class, ELDGPasswordInputFactory.class);
 
         // install module
         addonManager.installModule(new ELDGMVCModule(eldgmvcInstallation));
@@ -59,8 +66,12 @@ public final class ELDGPlugin extends ELDBukkitPlugin {
                     UserController.class,
                     ErrorController.class,
                     TestController.class,
-                    AsyncController.class
+                    AsyncController.class,
+                    LoginController.class
             );
+
+            eldgmvcInstallation.registerMiddleWare(RequireLogin.class, AuthenticateMiddleWare.class);
+            eldgmvcInstallation.registerMiddleWare(RequireAdmin.class, AuthorizeMiddleWare.class);
         }
 
     }

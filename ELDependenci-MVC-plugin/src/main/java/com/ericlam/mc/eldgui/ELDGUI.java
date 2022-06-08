@@ -5,13 +5,20 @@ import com.ericlam.mc.eld.services.ItemStackService;
 import com.ericlam.mc.eld.services.ScheduleService;
 import com.ericlam.mc.eldgui.component.AttributeController;
 import com.ericlam.mc.eldgui.controller.*;
-import com.ericlam.mc.eldgui.event.*;
+import com.ericlam.mc.eldgui.event.ELDGClickEventHandler;
+import com.ericlam.mc.eldgui.event.ELDGDragEventHandler;
+import com.ericlam.mc.eldgui.event.ELDGEventHandler;
 import com.ericlam.mc.eldgui.exception.ExceptionViewHandler;
 import com.ericlam.mc.eldgui.exception.HandleException;
 import com.ericlam.mc.eldgui.lifecycle.PostConstruct;
 import com.ericlam.mc.eldgui.lifecycle.PostUpdateView;
 import com.ericlam.mc.eldgui.lifecycle.PreDestroy;
 import com.ericlam.mc.eldgui.lifecycle.PreDestroyView;
+import com.ericlam.mc.eldgui.manager.LifeCycleManager;
+import com.ericlam.mc.eldgui.manager.MethodParseManager;
+import com.ericlam.mc.eldgui.manager.ReflectionCacheManager;
+import com.ericlam.mc.eldgui.manager.ReturnTypeManager;
+import com.ericlam.mc.eldgui.middleware.MiddleWareManager;
 import com.ericlam.mc.eldgui.view.BukkitRedirectView;
 import com.ericlam.mc.eldgui.view.BukkitView;
 import com.ericlam.mc.eldgui.view.LoadingView;
@@ -34,10 +41,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public final class ELDGUI {
-
-    private static final Map<Class<?>, Method[]> declaredMethodMap = new ConcurrentHashMap<>();
     private static final Logger LOGGER = LoggerFactory.getLogger(ELDGUI.class);
-
 
     private final Map<Class<? extends InventoryEvent>, ELDGEventHandler<? extends Annotation, ? extends InventoryEvent>> eventHandlerMap = new ConcurrentHashMap<>();
     private final Map<String, Function<InventoryEvent, ItemStack>> itemGetterMap = new ConcurrentHashMap<>();
@@ -59,6 +63,9 @@ public final class ELDGUI {
     private final BukkitView<? extends LoadingView, Void> loadingView;
     private final Method[] controllerMethods;
 
+    private final ReflectionCacheManager reflectionCacheManager;
+
+    private final MiddleWareManager middleWareManager;
 
     private ELDGView<?> currentView;
 
@@ -67,12 +74,12 @@ public final class ELDGUI {
             Injector injector,
             UISession session,
             Player owner,
-            ManagerFactory managerFactory,
             Consumer<Player> onDestroy,
             ViewJumper goTo,
             ELDGMVCInstallation eldgmvcInstallation,
             ConfigPoolService configPoolService,
-            ItemStackService itemStackService
+            ItemStackService itemStackService,
+            ReflectionCacheManager reflectionCacheManager
     ) {
 
         this.session = session;
@@ -83,25 +90,26 @@ public final class ELDGUI {
         this.eldgmvcInstallation = eldgmvcInstallation;
         this.configPoolService = configPoolService;
         this.itemStackService = itemStackService;
+        this.reflectionCacheManager = reflectionCacheManager;
 
-        methodParseManager = managerFactory.buildParseManager(this::initMethodParseManager);
-        returnTypeManager = managerFactory.buildReturnTypeManager(this::initReturnTypeManager);
+        methodParseManager = new MethodParseManager(reflectionCacheManager);
+        this.initMethodParseManager(this.methodParseManager);
+
+        returnTypeManager = new ReturnTypeManager(reflectionCacheManager);
+        this.initReturnTypeManager(this.returnTypeManager);
+
         this.lifeCycleManager = new LifeCycleManager(controller, methodParseManager);
         this.controllerCls = controller.getClass();
 
-        if (declaredMethodMap.containsKey(controllerCls)) {
-            this.controllerMethods = declaredMethodMap.get(controllerCls);
-        } else {
-            this.controllerMethods = controllerCls.getMethods();
-            declaredMethodMap.put(controllerCls, controllerMethods);
-        }
+        this.controllerMethods = reflectionCacheManager.getMethods(controllerCls);
+
+        this.middleWareManager = new MiddleWareManager(reflectionCacheManager, eldgmvcInstallation, injector, this.controllerCls, owner, session);
 
         var customQualifier = eldgmvcInstallation.getQualifierMap();
-        this.eventHandlerMap.put(InventoryClickEvent.class, new ELDGClickEventHandler(controller, methodParseManager, returnTypeManager, customQualifier, controllerMethods));
-        this.eventHandlerMap.put(InventoryDragEvent.class, new ELDGDragEventHandler(controller, methodParseManager, returnTypeManager, customQualifier, controllerMethods));
+        this.eventHandlerMap.put(InventoryClickEvent.class, new ELDGClickEventHandler(controller, methodParseManager, returnTypeManager, middleWareManager, customQualifier, controllerMethods));
+        this.eventHandlerMap.put(InventoryDragEvent.class, new ELDGDragEventHandler(controller, methodParseManager, returnTypeManager, middleWareManager, customQualifier, controllerMethods));
         this.itemGetterMap.put(InventoryClickEvent.class.getSimpleName(), e -> ((InventoryClickEvent) e).getCurrentItem());
         this.itemGetterMap.put(InventoryDragEvent.class.getSimpleName(), e -> ((InventoryDragEvent) e).getOldCursor());
-
 
         this.lifeCycleManager.onLifeCycle(PostConstruct.class);
 
@@ -148,6 +156,10 @@ public final class ELDGUI {
             Method index = indexMethod.get();
             if (index.getGenericReturnType() == Void.class || index.getGenericReturnType() == void.class)
                 throw new IllegalStateException("index method cannot return void");
+
+
+            var view = middleWareManager.intercept(index);
+            if (returnTypeManager.handleReturnResult(BukkitView.class, view)) return;
             Object[] objects = methodParseManager.getMethodParameters(index, null);
             Object result = index.invoke(controller, objects);
             if (!returnTypeManager.handleReturnResult(index, result)) {
@@ -173,7 +185,7 @@ public final class ELDGUI {
         returnTypeManager.registerReturnType(t -> {
             if (t instanceof ParameterizedType parat) {
                 var inside = parat.getActualTypeArguments()[0];
-                return (inside == void.class || inside == Void.class)  && parat.getRawType() == CompletableFuture.class;
+                return (inside == void.class || inside == Void.class) && parat.getRawType() == CompletableFuture.class;
             }
             return false;
         }, (result, annos) -> {
@@ -197,7 +209,7 @@ public final class ELDGUI {
                     return;
                 }
 
-                if (currentView != null){
+                if (currentView != null) {
                     runTaskOrNot(() -> this.updateView(currentView.getBukkitView()));
                 } else {
                     LOGGER.warn("current view is null, cannot return current view.");
@@ -311,6 +323,15 @@ public final class ELDGUI {
 
     private void initMethodParseManager(MethodParseManager parser) {
         parser.registerParser((t, annos) -> t.equals(UISession.class), (annotations, t, e) -> session);
+        parser.registerParser((t, annos) -> Arrays.stream(annos).anyMatch(a -> a.annotationType() == FromSession.class), (annotations, type, event) -> {
+            FromSession session = (FromSession) Arrays.stream(annotations).filter(a -> a.annotationType() == FromSession.class).findAny().orElseThrow(() -> new IllegalStateException("cannot find @FromSession"));
+            var key = session.value();
+            if (session.poll()) {
+                return this.session.pollAttribute(key);
+            } else {
+                return this.session.getAttribute(key);
+            }
+        });
         parser.registerParser((t, annos) -> Arrays.stream(annos).anyMatch(a -> a.annotationType() == FromPattern.class), (annotations, t, e) -> {
             FromPattern pattern = (FromPattern) Arrays.stream(annotations).filter(a -> a.annotationType() == FromPattern.class).findAny().orElseThrow(() -> new IllegalStateException("cannot find @FromPattern in List<ItemStack> parameters"));
             if (t instanceof ParameterizedType parat) {
@@ -429,11 +450,7 @@ public final class ELDGUI {
         Class<? extends ExceptionViewHandler> exceptionViewHandler = exceptionViewHandlerOpt.orElseGet(eldgmvcInstallation::getDefaultExceptionHandler);
         ExceptionViewHandler viewHandlerIns = injector.getInstance(exceptionViewHandler);
         UIController fromController = controllerCls.getAnnotation(UIController.class);
-        Method[] declaredMethods = Optional.ofNullable(declaredMethodMap.get(exceptionViewHandler)).orElseGet(() -> {
-            var methods = exceptionViewHandler.getMethods();
-            declaredMethodMap.put(exceptionViewHandler, methods);
-            return methods;
-        });
+        Method[] declaredMethods = reflectionCacheManager.getMethods(exceptionViewHandler);
         Arrays.stream(declaredMethods)
                 .filter(m -> m.isAnnotationPresent(HandleException.class))
                 .filter(m -> Arrays.stream(m.getAnnotation(HandleException.class).value()).anyMatch(v -> {

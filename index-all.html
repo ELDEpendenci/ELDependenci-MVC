@@ -119,6 +119,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">綁定該 pattern 内所有物品的屬性</div>
 </dd>
+<dt><a href="com/ericlam/mc/eldgui/component/factory/PasswordInputFactory.html#bindInput(java.lang.String)" class="member-name-link">bindInput(String)</a> - Method in interface com.ericlam.mc.eldgui.component.factory.<a href="com/ericlam/mc/eldgui/component/factory/PasswordInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">PasswordInputFactory</a></dt>
+<dd>
+<div class="block">綁定屬性。由於是密碼，所以沒有初始數值。</div>
+</dd>
 <dt><a href="com/ericlam/mc/eldgui/component/factory/CheckboxFactory.html#bindInput(java.lang.String,boolean)" class="member-name-link">bindInput(String, boolean)</a> - Method in interface com.ericlam.mc.eldgui.component.factory.<a href="com/ericlam/mc/eldgui/component/factory/CheckboxFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">CheckboxFactory</a></dt>
 <dd>
 <div class="block">綁定組件與 Model 屬性</div>
@@ -256,6 +260,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">控制器和界面生命周期類</div>
 </dd>
+<dt><a href="com/ericlam/mc/eldgui/middleware/package-summary.html">com.ericlam.mc.eldgui.middleware</a> - package com.ericlam.mc.eldgui.middleware</dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/ericlam/mc/eldgui/view/package-summary.html">com.ericlam.mc.eldgui.view</a> - package com.ericlam.mc.eldgui.view</dt>
 <dd>
 <div class="block">界面類</div>
@@ -308,6 +314,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/ericlam/mc/eldgui/component/factory/NumInputFactory.html#disabled()" class="member-name-link">disabled()</a> - Method in interface com.ericlam.mc.eldgui.component.factory.<a href="com/ericlam/mc/eldgui/component/factory/NumInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">NumInputFactory</a></dt>
 <dd>
 <div class="block">設置禁用</div>
+</dd>
+<dt><a href="com/ericlam/mc/eldgui/component/factory/PasswordInputFactory.html#disabled()" class="member-name-link">disabled()</a> - Method in interface com.ericlam.mc.eldgui.component.factory.<a href="com/ericlam/mc/eldgui/component/factory/PasswordInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">PasswordInputFactory</a></dt>
+<dd>
+<div class="block">設置禁用組件</div>
 </dd>
 <dt><a href="com/ericlam/mc/eldgui/component/factory/RGBSelectorFactory.html#disabled()" class="member-name-link">disabled()</a> - Method in interface com.ericlam.mc.eldgui.component.factory.<a href="com/ericlam/mc/eldgui/component/factory/RGBSelectorFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">RGBSelectorFactory</a></dt>
 <dd>
@@ -362,6 +372,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">獲取指定 pattern 内的所有物品，使用 <code>List&lt;ItemStack&gt;</code> 返回</div>
 </dd>
+<dt><a href="com/ericlam/mc/eldgui/controller/FromSession.html" class="type-name-link" title="annotation interface in com.ericlam.mc.eldgui.controller">FromSession</a> - Annotation Interface in <a href="com/ericlam/mc/eldgui/controller/package-summary.html">com.ericlam.mc.eldgui.controller</a></dt>
+<dd>&nbsp;</dd>
 </dl>
 <h2 class="title" id="I:G">G</h2>
 <dl class="index">
@@ -385,8 +397,16 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/ericlam/mc/eldgui/view/BukkitView.html#getModel()" class="member-name-link">getModel()</a> - Method in class com.ericlam.mc.eldgui.view.<a href="com/ericlam/mc/eldgui/view/BukkitView.html" title="class in com.ericlam.mc.eldgui.view">BukkitView</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/ericlam/mc/eldgui/middleware/InterceptContext.html#getPlayer()" class="member-name-link">getPlayer()</a> - Method in interface com.ericlam.mc.eldgui.middleware.<a href="com/ericlam/mc/eldgui/middleware/InterceptContext.html" title="interface in com.ericlam.mc.eldgui.middleware">InterceptContext</a></dt>
+<dd>
+<div class="block">獲取玩家</div>
+</dd>
 <dt><a href="com/ericlam/mc/eldgui/view/BukkitRedirectView.html#getRedirectTo()" class="member-name-link">getRedirectTo()</a> - Method in class com.ericlam.mc.eldgui.view.<a href="com/ericlam/mc/eldgui/view/BukkitRedirectView.html" title="class in com.ericlam.mc.eldgui.view">BukkitRedirectView</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/ericlam/mc/eldgui/middleware/InterceptContext.html#getSession()" class="member-name-link">getSession()</a> - Method in interface com.ericlam.mc.eldgui.middleware.<a href="com/ericlam/mc/eldgui/middleware/InterceptContext.html" title="interface in com.ericlam.mc.eldgui.middleware">InterceptContext</a></dt>
+<dd>
+<div class="block">獲取 session 容器</div>
+</dd>
 <dt><a href="com/ericlam/mc/eldgui/InventoryService.html#getUIDispatcher(java.lang.String)" class="member-name-link">getUIDispatcher(String)</a> - Method in interface com.ericlam.mc.eldgui.<a href="com/ericlam/mc/eldgui/InventoryService.html" title="interface in com.ericlam.mc.eldgui">InventoryService</a></dt>
 <dd>
 <div class="block">獲取界面調度器</div>
@@ -408,10 +428,18 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">用於標注 <a href="com/ericlam/mc/eldgui/exception/ExceptionViewHandler.html" title="interface in com.ericlam.mc.eldgui.exception"><code>ExceptionViewHandler</code></a>, 表示本處理器只處理特定 controllers 所抛出的異常</div>
 </dd>
+<dt><a href="com/ericlam/mc/eldgui/component/factory/PasswordInputFactory.html#hashType(com.ericlam.mc.eldgui.component.factory.PasswordInputFactory.HashType)" class="member-name-link">hashType(PasswordInputFactory.HashType)</a> - Method in interface com.ericlam.mc.eldgui.component.factory.<a href="com/ericlam/mc/eldgui/component/factory/PasswordInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">PasswordInputFactory</a></dt>
+<dd>
+<div class="block">設置密碼混淆類型</div>
+</dd>
 <dt><a href="com/ericlam/mc/eldgui/CircuitIterator.html#hasNext()" class="member-name-link">hasNext()</a> - Method in class com.ericlam.mc.eldgui.<a href="com/ericlam/mc/eldgui/CircuitIterator.html" title="class in com.ericlam.mc.eldgui">CircuitIterator</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/ericlam/mc/eldgui/CircuitIterator.html#hasPrevious()" class="member-name-link">hasPrevious()</a> - Method in class com.ericlam.mc.eldgui.<a href="com/ericlam/mc/eldgui/CircuitIterator.html" title="class in com.ericlam.mc.eldgui">CircuitIterator</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/ericlam/mc/eldgui/component/factory/PasswordInputFactory.html#hidePasswordTxt(java.lang.String)" class="member-name-link">hidePasswordTxt(String)</a> - Method in interface com.ericlam.mc.eldgui.component.factory.<a href="com/ericlam/mc/eldgui/component/factory/PasswordInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">PasswordInputFactory</a></dt>
+<dd>
+<div class="block">隱藏密碼文字</div>
+</dd>
 </dl>
 <h2 class="title" id="I:I">I</h2>
 <dl class="index">
@@ -433,6 +461,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/ericlam/mc/eldgui/component/factory/DateSelectorFactory.html#inputMessage(java.lang.String)" class="member-name-link">inputMessage(String)</a> - Method in interface com.ericlam.mc.eldgui.component.factory.<a href="com/ericlam/mc/eldgui/component/factory/DateSelectorFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">DateSelectorFactory</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/ericlam/mc/eldgui/component/factory/PasswordInputFactory.html#inputMessage(java.lang.String)" class="member-name-link">inputMessage(String)</a> - Method in interface com.ericlam.mc.eldgui.component.factory.<a href="com/ericlam/mc/eldgui/component/factory/PasswordInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">PasswordInputFactory</a></dt>
+<dd>
+<div class="block">設置輸入提示訊息</div>
+</dd>
 <dt><a href="com/ericlam/mc/eldgui/component/factory/RGBSelectorFactory.html#inputMessage(java.lang.String)" class="member-name-link">inputMessage(String)</a> - Method in interface com.ericlam.mc.eldgui.component.factory.<a href="com/ericlam/mc/eldgui/component/factory/RGBSelectorFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">RGBSelectorFactory</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/ericlam/mc/eldgui/component/factory/TimeSelectorFactory.html#inputMessage(java.lang.String)" class="member-name-link">inputMessage(String)</a> - Method in interface com.ericlam.mc.eldgui.component.factory.<a href="com/ericlam/mc/eldgui/component/factory/TimeSelectorFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">TimeSelectorFactory</a></dt>
@@ -441,10 +473,22 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">插入選擇元素</div>
 </dd>
+<dt><a href="com/ericlam/mc/eldgui/middleware/MiddleWare.html#intercept(com.ericlam.mc.eldgui.middleware.InterceptContext,A)" class="member-name-link">intercept(InterceptContext, A)</a> - Method in interface com.ericlam.mc.eldgui.middleware.<a href="com/ericlam/mc/eldgui/middleware/MiddleWare.html" title="interface in com.ericlam.mc.eldgui.middleware">MiddleWare</a></dt>
+<dd>
+<div class="block">攔截方法</div>
+</dd>
+<dt><a href="com/ericlam/mc/eldgui/middleware/InterceptContext.html" class="type-name-link" title="interface in com.ericlam.mc.eldgui.middleware">InterceptContext</a> - Interface in <a href="com/ericlam/mc/eldgui/middleware/package-summary.html">com.ericlam.mc.eldgui.middleware</a></dt>
+<dd>
+<div class="block">MiddleWare 專用的 context</div>
+</dd>
 <dt><a href="com/ericlam/mc/eldgui/component/factory/AnimatedButtonFactory.html#interval(int)" class="member-name-link">interval(int)</a> - Method in interface com.ericlam.mc.eldgui.component.factory.<a href="com/ericlam/mc/eldgui/component/factory/AnimatedButtonFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">AnimatedButtonFactory</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/ericlam/mc/eldgui/component/factory/DateSelectorFactory.html#invalidMessage(java.lang.String)" class="member-name-link">invalidMessage(String)</a> - Method in interface com.ericlam.mc.eldgui.component.factory.<a href="com/ericlam/mc/eldgui/component/factory/DateSelectorFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">DateSelectorFactory</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/ericlam/mc/eldgui/component/factory/PasswordInputFactory.html#invalidMessage(java.lang.String)" class="member-name-link">invalidMessage(String)</a> - Method in interface com.ericlam.mc.eldgui.component.factory.<a href="com/ericlam/mc/eldgui/component/factory/PasswordInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">PasswordInputFactory</a></dt>
+<dd>
+<div class="block">設置無效提示訊息</div>
+</dd>
 <dt><a href="com/ericlam/mc/eldgui/component/factory/RGBSelectorFactory.html#invalidMessage(java.lang.String)" class="member-name-link">invalidMessage(String)</a> - Method in interface com.ericlam.mc.eldgui.component.factory.<a href="com/ericlam/mc/eldgui/component/factory/RGBSelectorFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">RGBSelectorFactory</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/ericlam/mc/eldgui/component/factory/TimeSelectorFactory.html#invalidMessage(java.lang.String)" class="member-name-link">invalidMessage(String)</a> - Method in interface com.ericlam.mc.eldgui.component.factory.<a href="com/ericlam/mc/eldgui/component/factory/TimeSelectorFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">TimeSelectorFactory</a></dt>
@@ -482,6 +526,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/ericlam/mc/eldgui/component/factory/NumInputFactory.html#label(java.lang.String)" class="member-name-link">label(String)</a> - Method in interface com.ericlam.mc.eldgui.component.factory.<a href="com/ericlam/mc/eldgui/component/factory/NumInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">NumInputFactory</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/ericlam/mc/eldgui/component/factory/PasswordInputFactory.html#label(java.lang.String)" class="member-name-link">label(String)</a> - Method in interface com.ericlam.mc.eldgui.component.factory.<a href="com/ericlam/mc/eldgui/component/factory/PasswordInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">PasswordInputFactory</a></dt>
+<dd>
+<div class="block">設置標題顯示</div>
+</dd>
 <dt><a href="com/ericlam/mc/eldgui/component/factory/RGBSelectorFactory.html#label(java.lang.String)" class="member-name-link">label(String)</a> - Method in interface com.ericlam.mc.eldgui.component.factory.<a href="com/ericlam/mc/eldgui/component/factory/RGBSelectorFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">RGBSelectorFactory</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/ericlam/mc/eldgui/component/factory/SelectionFactory.html#label(java.lang.String)" class="member-name-link">label(String)</a> - Method in interface com.ericlam.mc.eldgui.component.factory.<a href="com/ericlam/mc/eldgui/component/factory/SelectionFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">SelectionFactory</a></dt>
@@ -511,22 +559,42 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">獲取指定 Pattern 的 所有數值，必須需要使用 <code>Map&lt;String, Object&gt;</code> 來裝載。</div>
 </dd>
+<dt><a href="com/ericlam/mc/eldgui/component/factory/PasswordInputFactory.html#mask(char)" class="member-name-link">mask(char)</a> - Method in interface com.ericlam.mc.eldgui.component.factory.<a href="com/ericlam/mc/eldgui/component/factory/PasswordInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">PasswordInputFactory</a></dt>
+<dd>
+<div class="block">設置遮罩文字</div>
+</dd>
 <dt><a href="com/ericlam/mc/eldgui/InventoryTemplate.ItemDescriptor.html#material" class="member-name-link">material</a> - Variable in class com.ericlam.mc.eldgui.<a href="com/ericlam/mc/eldgui/InventoryTemplate.ItemDescriptor.html" title="class in com.ericlam.mc.eldgui">InventoryTemplate.ItemDescriptor</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/ericlam/mc/eldgui/component/factory/NumInputFactory.NumberTypeFactory.html#max(T)" class="member-name-link">max(T)</a> - Method in interface com.ericlam.mc.eldgui.component.factory.<a href="com/ericlam/mc/eldgui/component/factory/NumInputFactory.NumberTypeFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">NumInputFactory.NumberTypeFactory</a></dt>
 <dd>
 <div class="block">默認數值為 64</div>
 </dd>
+<dt><a href="com/ericlam/mc/eldgui/component/factory/PasswordInputFactory.html#maxWait(long)" class="member-name-link">maxWait(long)</a> - Method in interface com.ericlam.mc.eldgui.component.factory.<a href="com/ericlam/mc/eldgui/component/factory/PasswordInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">PasswordInputFactory</a></dt>
+<dd>
+<div class="block">設置等待最大輸入時間</div>
+</dd>
+<dt><a href="com/ericlam/mc/eldgui/component/factory/PasswordInputFactory.HashType.html#MD5" class="member-name-link">MD5</a> - Enum constant in enum class com.ericlam.mc.eldgui.component.factory.<a href="com/ericlam/mc/eldgui/component/factory/PasswordInputFactory.HashType.html" title="enum class in com.ericlam.mc.eldgui.component.factory">PasswordInputFactory.HashType</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/ericlam/mc/eldgui/component/factory/NumInputFactory.html#messageInput(java.lang.String)" class="member-name-link">messageInput(String)</a> - Method in interface com.ericlam.mc.eldgui.component.factory.<a href="com/ericlam/mc/eldgui/component/factory/NumInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">NumInputFactory</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/ericlam/mc/eldgui/component/factory/TextInputFactory.html#messageInput(java.lang.String)" class="member-name-link">messageInput(String)</a> - Method in interface com.ericlam.mc.eldgui.component.factory.<a href="com/ericlam/mc/eldgui/component/factory/TextInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">TextInputFactory</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/ericlam/mc/eldgui/component/factory/NumInputFactory.html#messageInvalidNumber(java.lang.String)" class="member-name-link">messageInvalidNumber(String)</a> - Method in interface com.ericlam.mc.eldgui.component.factory.<a href="com/ericlam/mc/eldgui/component/factory/NumInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">NumInputFactory</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/ericlam/mc/eldgui/middleware/MiddleWare.html" class="type-name-link" title="interface in com.ericlam.mc.eldgui.middleware">MiddleWare</a>&lt;<a href="com/ericlam/mc/eldgui/middleware/MiddleWare.html" title="type parameter in MiddleWare">A</a> extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/annotation/Annotation.html" title="class or interface in java.lang.annotation" class="external-link">Annotation</a>&gt; - Interface in <a href="com/ericlam/mc/eldgui/middleware/package-summary.html">com.ericlam.mc.eldgui.middleware</a></dt>
+<dd>
+<div class="block">中間件攔截器</div>
+</dd>
 <dt><a href="com/ericlam/mc/eldgui/component/factory/NumInputFactory.NumberTypeFactory.html#min(T)" class="member-name-link">min(T)</a> - Method in interface com.ericlam.mc.eldgui.component.factory.<a href="com/ericlam/mc/eldgui/component/factory/NumInputFactory.NumberTypeFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">NumInputFactory.NumberTypeFactory</a></dt>
 <dd>
 <div class="block">默認數值為 0</div>
 </dd>
+<dt><a href="com/ericlam/mc/eldgui/component/ComponentFactory.html#mirror(org.bukkit.inventory.ItemStack)" class="member-name-link">mirror(ItemStack)</a> - Method in interface com.ericlam.mc.eldgui.component.<a href="com/ericlam/mc/eldgui/component/ComponentFactory.html" title="interface in com.ericlam.mc.eldgui.component">ComponentFactory</a></dt>
+<dd>
+<div class="block">以該物品為組件外觀原型。注意此舉將會覆蓋之前的所有設定 (包括綁定數值和外觀等)</div>
+</dd>
+<dt><a href="com/ericlam/mc/eldgui/component/factory/AbstractComponentFactory.html#mirror(org.bukkit.inventory.ItemStack)" class="member-name-link">mirror(ItemStack)</a> - Method in class com.ericlam.mc.eldgui.component.factory.<a href="com/ericlam/mc/eldgui/component/factory/AbstractComponentFactory.html" title="class in com.ericlam.mc.eldgui.component.factory">AbstractComponentFactory</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/ericlam/mc/eldgui/controller/ModelAttribute.html" class="type-name-link" title="annotation interface in com.ericlam.mc.eldgui.controller">ModelAttribute</a> - Annotation Interface in <a href="com/ericlam/mc/eldgui/controller/package-summary.html">com.ericlam.mc.eldgui.controller</a></dt>
 <dd>
 <div class="block">透過指定 pattern 返回 指定類型的 POJO，系統會自動提取 pattern 内所有組件内的綁定屬性並返回新的 POJO 實例</div>
@@ -594,6 +662,12 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:P">P</h2>
 <dl class="index">
+<dt><a href="com/ericlam/mc/eldgui/component/factory/PasswordInputFactory.html" class="type-name-link" title="interface in com.ericlam.mc.eldgui.component.factory">PasswordInputFactory</a> - Interface in <a href="com/ericlam/mc/eldgui/component/factory/package-summary.html">com.ericlam.mc.eldgui.component.factory</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/ericlam/mc/eldgui/component/factory/PasswordInputFactory.HashType.html" class="type-name-link" title="enum class in com.ericlam.mc.eldgui.component.factory">PasswordInputFactory.HashType</a> - Enum Class in <a href="com/ericlam/mc/eldgui/component/factory/package-summary.html">com.ericlam.mc.eldgui.component.factory</a></dt>
+<dd>
+<div class="block">hash類型</div>
+</dd>
 <dt><a href="com/ericlam/mc/eldgui/InventoryTemplate.html#pattern" class="member-name-link">pattern</a> - Variable in class com.ericlam.mc.eldgui.<a href="com/ericlam/mc/eldgui/InventoryTemplate.html" title="class in com.ericlam.mc.eldgui">InventoryTemplate</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/ericlam/mc/eldgui/event/ClickMapping.html#pattern()" class="member-name-link">pattern()</a> - Element in annotation interface com.ericlam.mc.eldgui.event.<a href="com/ericlam/mc/eldgui/event/ClickMapping.html" title="annotation interface in com.ericlam.mc.eldgui.event">ClickMapping</a></dt>
@@ -608,6 +682,10 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/ericlam/mc/eldgui/view/ViewDescriptor.html#patterns()" class="member-name-link">patterns()</a> - Element in annotation interface com.ericlam.mc.eldgui.view.<a href="com/ericlam/mc/eldgui/view/ViewDescriptor.html" title="annotation interface in com.ericlam.mc.eldgui.view">ViewDescriptor</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/ericlam/mc/eldgui/controller/FromSession.html#poll()" class="member-name-link">poll()</a> - Element in annotation interface com.ericlam.mc.eldgui.controller.<a href="com/ericlam/mc/eldgui/controller/FromSession.html" title="annotation interface in com.ericlam.mc.eldgui.controller">FromSession</a></dt>
+<dd>
+<div class="block">是否使用 pollAttribute 方法</div>
+</dd>
 <dt><a href="com/ericlam/mc/eldgui/UISession.html#pollAttribute(java.lang.String)" class="member-name-link">pollAttribute(String)</a> - Method in interface com.ericlam.mc.eldgui.<a href="com/ericlam/mc/eldgui/UISession.html" title="interface in com.ericlam.mc.eldgui">UISession</a></dt>
 <dd>
 <div class="block">透過 key 提取數據並在 Session 中刪除</div>
@@ -635,10 +713,16 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:R">R</h2>
 <dl class="index">
+<dt><a href="com/ericlam/mc/eldgui/component/factory/PasswordInputFactory.html#regex(java.lang.String)" class="member-name-link">regex(String)</a> - Method in interface com.ericlam.mc.eldgui.component.factory.<a href="com/ericlam/mc/eldgui/component/factory/PasswordInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">PasswordInputFactory</a></dt>
+<dd>
+<div class="block">設置 regex 來規限密碼格式</div>
+</dd>
 <dt><a href="com/ericlam/mc/eldgui/MVCInstallation.html#registerControllers(java.lang.Class...)" class="member-name-link">registerControllers(Class&lt;?&gt;...)</a> - Method in interface com.ericlam.mc.eldgui.<a href="com/ericlam/mc/eldgui/MVCInstallation.html" title="interface in com.ericlam.mc.eldgui">MVCInstallation</a></dt>
 <dd>
 <div class="block">安裝 controllers (控制器)</div>
 </dd>
+<dt><a href="com/ericlam/mc/eldgui/MVCInstallation.html#registerMiddleWare(java.lang.Class,java.lang.Class)" class="member-name-link">registerMiddleWare(Class&lt;A&gt;, Class&lt;M&gt;)</a> - Method in interface com.ericlam.mc.eldgui.<a href="com/ericlam/mc/eldgui/MVCInstallation.html" title="interface in com.ericlam.mc.eldgui">MVCInstallation</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/ericlam/mc/eldgui/MVCInstallation.html#registerQualifier(java.lang.Class,com.ericlam.mc.eldgui.MVCInstallation.QualifierFilter)" class="member-name-link">registerQualifier(Class&lt;A&gt;, MVCInstallation.QualifierFilter&lt;A&gt;)</a> - Method in interface com.ericlam.mc.eldgui.<a href="com/ericlam/mc/eldgui/MVCInstallation.html" title="interface in com.ericlam.mc.eldgui">MVCInstallation</a></dt>
 <dd>
 <div class="block">安裝界面互動事件自定義過濾</div>
@@ -708,9 +792,13 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">設置全局異步加載界面</div>
 </dd>
+<dt><a href="com/ericlam/mc/eldgui/middleware/InterceptContext.html#setRedirect(com.ericlam.mc.eldgui.view.BukkitView)" class="member-name-link">setRedirect(BukkitView&lt;?, ?&gt;)</a> - Method in interface com.ericlam.mc.eldgui.middleware.<a href="com/ericlam/mc/eldgui/middleware/InterceptContext.html" title="interface in com.ericlam.mc.eldgui.middleware">InterceptContext</a></dt>
+<dd>
+<div class="block">設置要重導向的界面</div>
+</dd>
 <dt><a href="com/ericlam/mc/eldgui/component/factory/BukkitItemFactory.html#setupByItemFactory(java.util.function.Consumer)" class="member-name-link">setupByItemFactory(Consumer&lt;ItemStackService.ItemFactory&gt;)</a> - Method in interface com.ericlam.mc.eldgui.component.factory.<a href="com/ericlam/mc/eldgui/component/factory/BukkitItemFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">BukkitItemFactory</a></dt>
 <dd>
-<div class="block">根據 <a href="https://eldependenci.github.io/ELDependenci/com/ericlam/mc/eld/services/ItemStackService.ItemFactory.html" title="class or interface in com.ericlam.mc.eld.services" class="external-link"><code>ItemStackService.ItemFactory</code></a> 修改組件屬性</div>
+<div class="block">根據 <a href="https://eldependenci.github.io/ELDependenci/eldependenci-bukkit/com/ericlam/mc/eld/services/ItemStackService.ItemFactory.html" title="class or interface in com.ericlam.mc.eld.services" class="external-link"><code>ItemStackService.ItemFactory</code></a> 修改組件屬性</div>
 </dd>
 <dt><a href="com/ericlam/mc/eldgui/component/AbstractComponent.html#setUpdateHandler(java.lang.Runnable)" class="member-name-link">setUpdateHandler(Runnable)</a> - Method in class com.ericlam.mc.eldgui.component.<a href="com/ericlam/mc/eldgui/component/AbstractComponent.html" title="class in com.ericlam.mc.eldgui.component">AbstractComponent</a></dt>
 <dd>&nbsp;</dd>
@@ -718,8 +806,14 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">設置更新界面動作</div>
 </dd>
+<dt><a href="com/ericlam/mc/eldgui/component/factory/PasswordInputFactory.HashType.html#SHA_256" class="member-name-link">SHA_256</a> - Enum constant in enum class com.ericlam.mc.eldgui.component.factory.<a href="com/ericlam/mc/eldgui/component/factory/PasswordInputFactory.HashType.html" title="enum class in com.ericlam.mc.eldgui.component.factory">PasswordInputFactory.HashType</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/ericlam/mc/eldgui/component/modifier/Activatable.html#shouldActivate(org.bukkit.event.inventory.InventoryClickEvent)" class="member-name-link">shouldActivate(InventoryClickEvent)</a> - Method in interface com.ericlam.mc.eldgui.component.modifier.<a href="com/ericlam/mc/eldgui/component/modifier/Activatable.html" title="interface in com.ericlam.mc.eldgui.component.modifier">Activatable</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/ericlam/mc/eldgui/component/factory/PasswordInputFactory.html#showPasswordTxt(java.lang.String)" class="member-name-link">showPasswordTxt(String)</a> - Method in interface com.ericlam.mc.eldgui.component.factory.<a href="com/ericlam/mc/eldgui/component/factory/PasswordInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">PasswordInputFactory</a></dt>
+<dd>
+<div class="block">顯示密碼文字</div>
+</dd>
 <dt><a href="com/ericlam/mc/eldgui/component/modifier/Animatable.html#startAnimation()" class="member-name-link">startAnimation()</a> - Method in interface com.ericlam.mc.eldgui.component.modifier.<a href="com/ericlam/mc/eldgui/component/modifier/Animatable.html" title="interface in com.ericlam.mc.eldgui.component.modifier">Animatable</a></dt>
 <dd>
 <div class="block">執行動畫</div>
@@ -820,6 +914,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/ericlam/mc/eldgui/controller/FromPattern.html#value()" class="member-name-link">value()</a> - Element in annotation interface com.ericlam.mc.eldgui.controller.<a href="com/ericlam/mc/eldgui/controller/FromPattern.html" title="annotation interface in com.ericlam.mc.eldgui.controller">FromPattern</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/ericlam/mc/eldgui/controller/FromSession.html#value()" class="member-name-link">value()</a> - Element in annotation interface com.ericlam.mc.eldgui.controller.<a href="com/ericlam/mc/eldgui/controller/FromSession.html" title="annotation interface in com.ericlam.mc.eldgui.controller">FromSession</a></dt>
+<dd>
+<div class="block">從 UISession 提取該 key 的數值</div>
+</dd>
 <dt><a href="com/ericlam/mc/eldgui/controller/ItemAttribute.html#value()" class="member-name-link">value()</a> - Element in annotation interface com.ericlam.mc.eldgui.controller.<a href="com/ericlam/mc/eldgui/controller/ItemAttribute.html" title="annotation interface in com.ericlam.mc.eldgui.controller">ItemAttribute</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/ericlam/mc/eldgui/controller/MapAttribute.html#value()" class="member-name-link">value()</a> - Element in annotation interface com.ericlam.mc.eldgui.controller.<a href="com/ericlam/mc/eldgui/controller/MapAttribute.html" title="annotation interface in com.ericlam.mc.eldgui.controller">MapAttribute</a></dt>
@@ -839,6 +937,15 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/ericlam/mc/eldgui/component/AttributeController.html#VALUE_TAG" class="member-name-link">VALUE_TAG</a> - Static variable in interface com.ericlam.mc.eldgui.component.<a href="com/ericlam/mc/eldgui/component/AttributeController.html" title="interface in com.ericlam.mc.eldgui.component">AttributeController</a></dt>
 <dd>
 <div class="block">預設綁定 Model 屬性數值 的 標識文字</div>
+</dd>
+<dt><a href="com/ericlam/mc/eldgui/component/factory/PasswordInputFactory.HashType.html#valueOf(java.lang.String)" class="member-name-link">valueOf(String)</a> - Static method in enum class com.ericlam.mc.eldgui.component.factory.<a href="com/ericlam/mc/eldgui/component/factory/PasswordInputFactory.HashType.html" title="enum class in com.ericlam.mc.eldgui.component.factory">PasswordInputFactory.HashType</a></dt>
+<dd>
+<div class="block">Returns the enum constant of this class with the specified name.</div>
+</dd>
+<dt><a href="com/ericlam/mc/eldgui/component/factory/PasswordInputFactory.HashType.html#values()" class="member-name-link">values()</a> - Static method in enum class com.ericlam.mc.eldgui.component.factory.<a href="com/ericlam/mc/eldgui/component/factory/PasswordInputFactory.HashType.html" title="enum class in com.ericlam.mc.eldgui.component.factory">PasswordInputFactory.HashType</a></dt>
+<dd>
+<div class="block">Returns an array containing the constants of this enum class, in
+the order they are declared.</div>
 </dd>
 <dt><a href="com/ericlam/mc/eldgui/event/ClickMapping.html#view()" class="member-name-link">view()</a> - Element in annotation interface com.ericlam.mc.eldgui.event.<a href="com/ericlam/mc/eldgui/event/ClickMapping.html" title="annotation interface in com.ericlam.mc.eldgui.event">ClickMapping</a></dt>
 <dd>&nbsp;</dd>

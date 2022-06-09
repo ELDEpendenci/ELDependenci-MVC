@@ -93,7 +93,7 @@ loadScripts(document, 'script');</script>
 </div>
 <section class="class-description" id="class-description">
 <hr>
-<div class="type-signature"><span class="modifiers">public interface </span><span class="element-name"><a href="../../../../src-html/com/ericlam/mc/eldgui/MVCInstallation.html#line-14">MVCInstallation</a></span></div>
+<div class="type-signature"><span class="modifiers">public interface </span><span class="element-name"><a href="../../../../src-html/com/ericlam/mc/eldgui/MVCInstallation.html#line-15">MVCInstallation</a></span></div>
 <div class="block">ELDependenci-MVC 安裝器</div>
 </section>
 <section class="summary">
@@ -141,20 +141,25 @@ E extends T&gt;<br>void</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">安裝 controllers (控制器)</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>&lt;A extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/annotation/Annotation.html" title="class or interface in java.lang.annotation" class="external-link">Annotation</a>&gt;<br>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#registerQualifier(java.lang.Class,com.ericlam.mc.eldgui.MVCInstallation.QualifierFilter)" class="member-name-link">registerQualifier</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;A&gt;&nbsp;qualifier,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>&lt;A extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/annotation/Annotation.html" title="class or interface in java.lang.annotation" class="external-link">Annotation</a>,<wbr>
+M extends <a href="middleware/MiddleWare.html" title="interface in com.ericlam.mc.eldgui.middleware">MiddleWare</a>&lt;A&gt;&gt;<br>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#registerMiddleWare(java.lang.Class,java.lang.Class)" class="member-name-link">registerMiddleWare</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;A&gt;&nbsp;qualifier,
+ <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;M&gt;&nbsp;middleWareClass)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>&lt;A extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/annotation/Annotation.html" title="class or interface in java.lang.annotation" class="external-link">Annotation</a>&gt;<br>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#registerQualifier(java.lang.Class,com.ericlam.mc.eldgui.MVCInstallation.QualifierFilter)" class="member-name-link">registerQualifier</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;A&gt;&nbsp;qualifier,
  <a href="MVCInstallation.QualifierFilter.html" title="interface in com.ericlam.mc.eldgui">MVCInstallation.QualifierFilter</a>&lt;A&gt;&nbsp;predicate)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">安裝界面互動事件自定義過濾</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#setGlobalExceptionHandler(java.lang.Class)" class="member-name-link">setGlobalExceptionHandler</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;? extends <a href="exception/ExceptionViewHandler.html" title="interface in com.ericlam.mc.eldgui.exception">ExceptionViewHandler</a>&gt;&nbsp;exceptionHandler)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#setGlobalExceptionHandler(java.lang.Class)" class="member-name-link">setGlobalExceptionHandler</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;? extends <a href="exception/ExceptionViewHandler.html" title="interface in com.ericlam.mc.eldgui.exception">ExceptionViewHandler</a>&gt;&nbsp;exceptionHandler)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">設置全局異常處理器</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#setGlobalLoadingView(java.lang.Class)" class="member-name-link">setGlobalLoadingView</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;? extends <a href="view/LoadingView.html" title="interface in com.ericlam.mc.eldgui.view">LoadingView</a>&gt;&nbsp;loadingView)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#setGlobalLoadingView(java.lang.Class)" class="member-name-link">setGlobalLoadingView</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;? extends <a href="view/LoadingView.html" title="interface in com.ericlam.mc.eldgui.view">LoadingView</a>&gt;&nbsp;loadingView)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">設置全局異步加載界面</div>
 </div>
 </div>
@@ -174,7 +179,7 @@ E extends T&gt;<br>void</code></div>
 <li>
 <section class="detail" id="registerQualifier(java.lang.Class,com.ericlam.mc.eldgui.MVCInstallation.QualifierFilter)">
 <h3>registerQualifier</h3>
-<div class="member-signature"><span class="type-parameters">&lt;A extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/annotation/Annotation.html" title="class or interface in java.lang.annotation" class="external-link">Annotation</a>&gt;</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name"><a href="../../../../src-html/com/ericlam/mc/eldgui/MVCInstallation.html#line-23">registerQualifier</a></span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;A&gt;&nbsp;qualifier,
+<div class="member-signature"><span class="type-parameters">&lt;A extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/annotation/Annotation.html" title="class or interface in java.lang.annotation" class="external-link">Annotation</a>&gt;</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name"><a href="../../../../src-html/com/ericlam/mc/eldgui/MVCInstallation.html#line-24">registerQualifier</a></span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;A&gt;&nbsp;qualifier,
  <a href="MVCInstallation.QualifierFilter.html" title="interface in com.ericlam.mc.eldgui">MVCInstallation.QualifierFilter</a>&lt;A&gt;&nbsp;predicate)</span></div>
 <div class="block">安裝界面互動事件自定義過濾</div>
 <dl class="notes">
@@ -187,9 +192,17 @@ E extends T&gt;<br>void</code></div>
 </section>
 </li>
 <li>
+<section class="detail" id="registerMiddleWare(java.lang.Class,java.lang.Class)">
+<h3>registerMiddleWare</h3>
+<div class="member-signature"><span class="type-parameters">&lt;A extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/annotation/Annotation.html" title="class or interface in java.lang.annotation" class="external-link">Annotation</a>,<wbr>
+M extends <a href="middleware/MiddleWare.html" title="interface in com.ericlam.mc.eldgui.middleware">MiddleWare</a>&lt;A&gt;&gt;</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name"><a href="../../../../src-html/com/ericlam/mc/eldgui/MVCInstallation.html#line-26">registerMiddleWare</a></span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;A&gt;&nbsp;qualifier,
+ <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;M&gt;&nbsp;middleWareClass)</span></div>
+</section>
+</li>
+<li>
 <section class="detail" id="registerControllers(java.lang.Class...)">
 <h3>registerControllers</h3>
-<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name"><a href="../../../../src-html/com/ericlam/mc/eldgui/MVCInstallation.html#line-30">registerControllers</a></span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;...&nbsp;controllers)</span></div>
+<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name"><a href="../../../../src-html/com/ericlam/mc/eldgui/MVCInstallation.html#line-33">registerControllers</a></span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;...&nbsp;controllers)</span></div>
 <div class="block">安裝 controllers (控制器)</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -200,7 +213,7 @@ E extends T&gt;<br>void</code></div>
 <li>
 <section class="detail" id="addExceptionViewHandlers(java.util.List)">
 <h3>addExceptionViewHandlers</h3>
-<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name"><a href="../../../../src-html/com/ericlam/mc/eldgui/MVCInstallation.html#line-37">addExceptionViewHandlers</a></span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;? extends <a href="exception/ExceptionViewHandler.html" title="interface in com.ericlam.mc.eldgui.exception">ExceptionViewHandler</a>&gt;&gt;&nbsp;exceptionHandlers)</span></div>
+<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name"><a href="../../../../src-html/com/ericlam/mc/eldgui/MVCInstallation.html#line-40">addExceptionViewHandlers</a></span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;? extends <a href="exception/ExceptionViewHandler.html" title="interface in com.ericlam.mc.eldgui.exception">ExceptionViewHandler</a>&gt;&gt;&nbsp;exceptionHandlers)</span></div>
 <div class="block">新增自定義異常處理器</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -211,7 +224,7 @@ E extends T&gt;<br>void</code></div>
 <li>
 <section class="detail" id="setGlobalExceptionHandler(java.lang.Class)">
 <h3>setGlobalExceptionHandler</h3>
-<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name"><a href="../../../../src-html/com/ericlam/mc/eldgui/MVCInstallation.html#line-43">setGlobalExceptionHandler</a></span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;? extends <a href="exception/ExceptionViewHandler.html" title="interface in com.ericlam.mc.eldgui.exception">ExceptionViewHandler</a>&gt;&nbsp;exceptionHandler)</span></div>
+<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name"><a href="../../../../src-html/com/ericlam/mc/eldgui/MVCInstallation.html#line-46">setGlobalExceptionHandler</a></span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;? extends <a href="exception/ExceptionViewHandler.html" title="interface in com.ericlam.mc.eldgui.exception">ExceptionViewHandler</a>&gt;&nbsp;exceptionHandler)</span></div>
 <div class="block">設置全局異常處理器</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -222,7 +235,7 @@ E extends T&gt;<br>void</code></div>
 <li>
 <section class="detail" id="setGlobalLoadingView(java.lang.Class)">
 <h3>setGlobalLoadingView</h3>
-<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name"><a href="../../../../src-html/com/ericlam/mc/eldgui/MVCInstallation.html#line-49">setGlobalLoadingView</a></span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;? extends <a href="view/LoadingView.html" title="interface in com.ericlam.mc.eldgui.view">LoadingView</a>&gt;&nbsp;loadingView)</span></div>
+<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name"><a href="../../../../src-html/com/ericlam/mc/eldgui/MVCInstallation.html#line-52">setGlobalLoadingView</a></span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;? extends <a href="view/LoadingView.html" title="interface in com.ericlam.mc.eldgui.view">LoadingView</a>&gt;&nbsp;loadingView)</span></div>
 <div class="block">設置全局異步加載界面</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -234,7 +247,7 @@ E extends T&gt;<br>void</code></div>
 <section class="detail" id="addComponentFactory(java.lang.Class,java.lang.Class)">
 <h3>addComponentFactory</h3>
 <div class="member-signature"><span class="type-parameters">&lt;T extends <a href="component/ComponentFactory.html" title="interface in com.ericlam.mc.eldgui.component">ComponentFactory</a>&lt;T&gt;,<wbr>
-E extends T&gt;</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name"><a href="../../../../src-html/com/ericlam/mc/eldgui/MVCInstallation.html#line-58">addComponentFactory</a></span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;factory,
+E extends T&gt;</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name"><a href="../../../../src-html/com/ericlam/mc/eldgui/MVCInstallation.html#line-61">addComponentFactory</a></span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;factory,
  <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;E&gt;&nbsp;implement)</span></div>
 <div class="block">新增自定義組件工廠</div>
 <dl class="notes">

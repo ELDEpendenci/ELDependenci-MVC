@@ -18,66 +18,73 @@
 <span class="source-line-no">005</span><span id="line-5">import com.ericlam.mc.eldgui.component.Component;</span>
 <span class="source-line-no">006</span><span id="line-6">import com.ericlam.mc.eldgui.component.ComponentFactory;</span>
 <span class="source-line-no">007</span><span id="line-7">import org.bukkit.Material;</span>
-<span class="source-line-no">008</span><span id="line-8"></span>
-<span class="source-line-no">009</span><span id="line-9">import java.util.function.Consumer;</span>
-<span class="source-line-no">010</span><span id="line-10"></span>
-<span class="source-line-no">011</span><span id="line-11">/**</span>
-<span class="source-line-no">012</span><span id="line-12"> * 用於繼承組件工廠，預設了很多事先的邏輯，方便創建</span>
-<span class="source-line-no">013</span><span id="line-13"> * @param &lt;Factory&gt; 工廠</span>
-<span class="source-line-no">014</span><span id="line-14"> */</span>
-<span class="source-line-no">015</span><span id="line-15">public abstract class AbstractComponentFactory&lt;Factory extends ComponentFactory&lt;Factory&gt;&gt; implements ComponentFactory&lt;Factory&gt; {</span>
-<span class="source-line-no">016</span><span id="line-16"></span>
-<span class="source-line-no">017</span><span id="line-17">    private final ItemStackService itemStackService;</span>
-<span class="source-line-no">018</span><span id="line-18">    protected final AttributeController attributeController;</span>
-<span class="source-line-no">019</span><span id="line-19">    private ItemStackService.ItemFactory itemFactory;</span>
-<span class="source-line-no">020</span><span id="line-20"></span>
-<span class="source-line-no">021</span><span id="line-21">    private final Factory factory;</span>
-<span class="source-line-no">022</span><span id="line-22"></span>
-<span class="source-line-no">023</span><span id="line-23">    @SuppressWarnings("unchecked")</span>
-<span class="source-line-no">024</span><span id="line-24">    public AbstractComponentFactory(ItemStackService itemStackService, AttributeController attributeController) {</span>
-<span class="source-line-no">025</span><span id="line-25">        this.itemStackService = itemStackService;</span>
-<span class="source-line-no">026</span><span id="line-26">        this.attributeController = attributeController;</span>
-<span class="source-line-no">027</span><span id="line-27">        this.itemFactory = itemStackService.build(Material.STONE);</span>
-<span class="source-line-no">028</span><span id="line-28">        this.factory = (Factory) this;</span>
-<span class="source-line-no">029</span><span id="line-29">        this.defaultProperties();</span>
-<span class="source-line-no">030</span><span id="line-30">    }</span>
-<span class="source-line-no">031</span><span id="line-31"></span>
-<span class="source-line-no">032</span><span id="line-32">    protected final Factory editItemByFactory(Consumer&lt;ItemStackService.ItemFactory&gt; factoryConsumer){</span>
-<span class="source-line-no">033</span><span id="line-33">        factoryConsumer.accept(this.itemFactory);</span>
-<span class="source-line-no">034</span><span id="line-34">        return factory;</span>
-<span class="source-line-no">035</span><span id="line-35">    }</span>
-<span class="source-line-no">036</span><span id="line-36"></span>
-<span class="source-line-no">037</span><span id="line-37">    @Override</span>
-<span class="source-line-no">038</span><span id="line-38">    public Factory icon(Material material) {</span>
-<span class="source-line-no">039</span><span id="line-39">        this.itemFactory.material(material);</span>
-<span class="source-line-no">040</span><span id="line-40">        return factory;</span>
-<span class="source-line-no">041</span><span id="line-41">    }</span>
-<span class="source-line-no">042</span><span id="line-42"></span>
-<span class="source-line-no">043</span><span id="line-43">    @Override</span>
-<span class="source-line-no">044</span><span id="line-44">    public Factory bind(String key, Object value) {</span>
-<span class="source-line-no">045</span><span id="line-45">        attributeController.setAttribute(this.itemFactory.getItem(), key, value);</span>
-<span class="source-line-no">046</span><span id="line-46">        return factory;</span>
-<span class="source-line-no">047</span><span id="line-47">    }</span>
-<span class="source-line-no">048</span><span id="line-48"></span>
-<span class="source-line-no">049</span><span id="line-49">    @Override</span>
-<span class="source-line-no">050</span><span id="line-50">    public Factory number(int amount) {</span>
-<span class="source-line-no">051</span><span id="line-51">        this.itemFactory.amount(amount);</span>
-<span class="source-line-no">052</span><span id="line-52">        return factory;</span>
-<span class="source-line-no">053</span><span id="line-53">    }</span>
-<span class="source-line-no">054</span><span id="line-54"></span>
-<span class="source-line-no">055</span><span id="line-55">    @Override</span>
-<span class="source-line-no">056</span><span id="line-56">    public final Component create() {</span>
-<span class="source-line-no">057</span><span id="line-57">        Component component = build(this.itemFactory);</span>
-<span class="source-line-no">058</span><span id="line-58">        this.itemFactory = itemStackService.build(Material.STONE);</span>
-<span class="source-line-no">059</span><span id="line-59">        this.defaultProperties();</span>
-<span class="source-line-no">060</span><span id="line-60">        return component;</span>
-<span class="source-line-no">061</span><span id="line-61">    }</span>
-<span class="source-line-no">062</span><span id="line-62"></span>
-<span class="source-line-no">063</span><span id="line-63">    protected abstract void defaultProperties();</span>
-<span class="source-line-no">064</span><span id="line-64"></span>
-<span class="source-line-no">065</span><span id="line-65">    public abstract Component build(ItemStackService.ItemFactory itemFactory);</span>
-<span class="source-line-no">066</span><span id="line-66"></span>
-<span class="source-line-no">067</span><span id="line-67">}</span>
+<span class="source-line-no">008</span><span id="line-8">import org.bukkit.inventory.ItemStack;</span>
+<span class="source-line-no">009</span><span id="line-9"></span>
+<span class="source-line-no">010</span><span id="line-10">import java.util.function.Consumer;</span>
+<span class="source-line-no">011</span><span id="line-11"></span>
+<span class="source-line-no">012</span><span id="line-12">/**</span>
+<span class="source-line-no">013</span><span id="line-13"> * 用於繼承組件工廠，預設了很多事先的邏輯，方便創建</span>
+<span class="source-line-no">014</span><span id="line-14"> * @param &lt;Factory&gt; 工廠</span>
+<span class="source-line-no">015</span><span id="line-15"> */</span>
+<span class="source-line-no">016</span><span id="line-16">public abstract class AbstractComponentFactory&lt;Factory extends ComponentFactory&lt;Factory&gt;&gt; implements ComponentFactory&lt;Factory&gt; {</span>
+<span class="source-line-no">017</span><span id="line-17"></span>
+<span class="source-line-no">018</span><span id="line-18">    private final ItemStackService itemStackService;</span>
+<span class="source-line-no">019</span><span id="line-19">    protected final AttributeController attributeController;</span>
+<span class="source-line-no">020</span><span id="line-20">    private ItemStackService.ItemFactory itemFactory;</span>
+<span class="source-line-no">021</span><span id="line-21"></span>
+<span class="source-line-no">022</span><span id="line-22">    private final Factory factory;</span>
+<span class="source-line-no">023</span><span id="line-23"></span>
+<span class="source-line-no">024</span><span id="line-24">    @SuppressWarnings("unchecked")</span>
+<span class="source-line-no">025</span><span id="line-25">    public AbstractComponentFactory(ItemStackService itemStackService, AttributeController attributeController) {</span>
+<span class="source-line-no">026</span><span id="line-26">        this.itemStackService = itemStackService;</span>
+<span class="source-line-no">027</span><span id="line-27">        this.attributeController = attributeController;</span>
+<span class="source-line-no">028</span><span id="line-28">        this.itemFactory = itemStackService.build(Material.STONE);</span>
+<span class="source-line-no">029</span><span id="line-29">        this.factory = (Factory) this;</span>
+<span class="source-line-no">030</span><span id="line-30">        this.defaultProperties();</span>
+<span class="source-line-no">031</span><span id="line-31">    }</span>
+<span class="source-line-no">032</span><span id="line-32"></span>
+<span class="source-line-no">033</span><span id="line-33">    protected final Factory editItemByFactory(Consumer&lt;ItemStackService.ItemFactory&gt; factoryConsumer){</span>
+<span class="source-line-no">034</span><span id="line-34">        factoryConsumer.accept(this.itemFactory);</span>
+<span class="source-line-no">035</span><span id="line-35">        return factory;</span>
+<span class="source-line-no">036</span><span id="line-36">    }</span>
+<span class="source-line-no">037</span><span id="line-37"></span>
+<span class="source-line-no">038</span><span id="line-38">    @Override</span>
+<span class="source-line-no">039</span><span id="line-39">    public Factory icon(Material material) {</span>
+<span class="source-line-no">040</span><span id="line-40">        this.itemFactory.material(material);</span>
+<span class="source-line-no">041</span><span id="line-41">        return factory;</span>
+<span class="source-line-no">042</span><span id="line-42">    }</span>
+<span class="source-line-no">043</span><span id="line-43"></span>
+<span class="source-line-no">044</span><span id="line-44">    @Override</span>
+<span class="source-line-no">045</span><span id="line-45">    public Factory bind(String key, Object value) {</span>
+<span class="source-line-no">046</span><span id="line-46">        attributeController.setAttribute(this.itemFactory.getItem(), key, value);</span>
+<span class="source-line-no">047</span><span id="line-47">        return factory;</span>
+<span class="source-line-no">048</span><span id="line-48">    }</span>
+<span class="source-line-no">049</span><span id="line-49"></span>
+<span class="source-line-no">050</span><span id="line-50">    @Override</span>
+<span class="source-line-no">051</span><span id="line-51">    public Factory number(int amount) {</span>
+<span class="source-line-no">052</span><span id="line-52">        this.itemFactory.amount(amount);</span>
+<span class="source-line-no">053</span><span id="line-53">        return factory;</span>
+<span class="source-line-no">054</span><span id="line-54">    }</span>
+<span class="source-line-no">055</span><span id="line-55"></span>
+<span class="source-line-no">056</span><span id="line-56">    @Override</span>
+<span class="source-line-no">057</span><span id="line-57">    public Factory mirror(ItemStack item) {</span>
+<span class="source-line-no">058</span><span id="line-58">        this.itemFactory = itemStackService.edit(item);</span>
+<span class="source-line-no">059</span><span id="line-59">        return factory;</span>
+<span class="source-line-no">060</span><span id="line-60">    }</span>
+<span class="source-line-no">061</span><span id="line-61"></span>
+<span class="source-line-no">062</span><span id="line-62">    @Override</span>
+<span class="source-line-no">063</span><span id="line-63">    public final Component create() {</span>
+<span class="source-line-no">064</span><span id="line-64">        Component component = build(this.itemFactory);</span>
+<span class="source-line-no">065</span><span id="line-65">        this.itemFactory = itemStackService.build(Material.STONE);</span>
+<span class="source-line-no">066</span><span id="line-66">        this.defaultProperties();</span>
+<span class="source-line-no">067</span><span id="line-67">        return component;</span>
+<span class="source-line-no">068</span><span id="line-68">    }</span>
+<span class="source-line-no">069</span><span id="line-69"></span>
+<span class="source-line-no">070</span><span id="line-70">    protected abstract void defaultProperties();</span>
+<span class="source-line-no">071</span><span id="line-71"></span>
+<span class="source-line-no">072</span><span id="line-72">    public abstract Component build(ItemStackService.ItemFactory itemFactory);</span>
+<span class="source-line-no">073</span><span id="line-73"></span>
+<span class="source-line-no">074</span><span id="line-74">}</span>
 
 
 

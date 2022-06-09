@@ -98,14 +98,14 @@ loadScripts(document, 'script');</script>
 </dl>
 <dl class="notes">
 <dt>All Known Subinterfaces:</dt>
-<dd><code><a href="factory/AnimatedButtonFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">AnimatedButtonFactory</a></code>, <code><a href="factory/BukkitItemFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">BukkitItemFactory</a></code>, <code><a href="factory/ButtonFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">ButtonFactory</a></code>, <code><a href="factory/CheckboxFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">CheckboxFactory</a></code>, <code><a href="factory/DateSelectorFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">DateSelectorFactory</a></code>, <code><a href="factory/NumInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">NumInputFactory</a></code>, <code><a href="factory/RGBSelectorFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">RGBSelectorFactory</a></code>, <code><a href="factory/SelectionFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">SelectionFactory</a></code>, <code><a href="factory/TextInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">TextInputFactory</a></code>, <code><a href="factory/TimeSelectorFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">TimeSelectorFactory</a></code></dd>
+<dd><code><a href="factory/AnimatedButtonFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">AnimatedButtonFactory</a></code>, <code><a href="factory/BukkitItemFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">BukkitItemFactory</a></code>, <code><a href="factory/ButtonFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">ButtonFactory</a></code>, <code><a href="factory/CheckboxFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">CheckboxFactory</a></code>, <code><a href="factory/DateSelectorFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">DateSelectorFactory</a></code>, <code><a href="factory/NumInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">NumInputFactory</a></code>, <code><a href="factory/PasswordInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">PasswordInputFactory</a></code>, <code><a href="factory/RGBSelectorFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">RGBSelectorFactory</a></code>, <code><a href="factory/SelectionFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">SelectionFactory</a></code>, <code><a href="factory/TextInputFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">TextInputFactory</a></code>, <code><a href="factory/TimeSelectorFactory.html" title="interface in com.ericlam.mc.eldgui.component.factory">TimeSelectorFactory</a></code></dd>
 </dl>
 <dl class="notes">
 <dt>All Known Implementing Classes:</dt>
 <dd><code><a href="factory/AbstractComponentFactory.html" title="class in com.ericlam.mc.eldgui.component.factory">AbstractComponentFactory</a></code></dd>
 </dl>
 <hr>
-<div class="type-signature"><span class="modifiers">public interface </span><span class="element-name"><a href="../../../../../src-html/com/ericlam/mc/eldgui/component/ComponentFactory.html#line-9">ComponentFactory</a>&lt;Factory extends ComponentFactory&lt;Factory&gt;&gt;</span></div>
+<div class="type-signature"><span class="modifiers">public interface </span><span class="element-name"><a href="../../../../../src-html/com/ericlam/mc/eldgui/component/ComponentFactory.html#line-10">ComponentFactory</a>&lt;Factory extends ComponentFactory&lt;Factory&gt;&gt;</span></div>
 <div class="block">基礎組件工廠，所有組件工廠必須繼承此類</div>
 </section>
 <section class="summary">
@@ -136,8 +136,13 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#icon(org.bukkit.Material)" class="member-name-link">icon</a><wbr>(<a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html" title="class or interface in org.bukkit" class="external-link">Material</a>&nbsp;material)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="ComponentFactory.html" title="type parameter in ComponentFactory">Factory</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#number(int)" class="member-name-link">number</a><wbr>(int&nbsp;amount)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#mirror(org.bukkit.inventory.ItemStack)" class="member-name-link">mirror</a><wbr>(<a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link">ItemStack</a>&nbsp;item)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">以該物品為組件外觀原型。注意此舉將會覆蓋之前的所有設定 (包括綁定數值和外觀等)</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="ComponentFactory.html" title="type parameter in ComponentFactory">Factory</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#number(int)" class="member-name-link">number</a><wbr>(int&nbsp;amount)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -155,7 +160,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="icon(org.bukkit.Material)">
 <h3>icon</h3>
-<div class="member-signature"><span class="return-type"><a href="ComponentFactory.html" title="type parameter in ComponentFactory">Factory</a></span>&nbsp;<span class="element-name"><a href="../../../../../src-html/com/ericlam/mc/eldgui/component/ComponentFactory.html#line-16">icon</a></span><wbr><span class="parameters">(<a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html" title="class or interface in org.bukkit" class="external-link">Material</a>&nbsp;material)</span></div>
+<div class="member-signature"><span class="return-type"><a href="ComponentFactory.html" title="type parameter in ComponentFactory">Factory</a></span>&nbsp;<span class="element-name"><a href="../../../../../src-html/com/ericlam/mc/eldgui/component/ComponentFactory.html#line-17">icon</a></span><wbr><span class="parameters">(<a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html" title="class or interface in org.bukkit" class="external-link">Material</a>&nbsp;material)</span></div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>material</code> - 圖示</dd>
@@ -167,7 +172,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="number(int)">
 <h3>number</h3>
-<div class="member-signature"><span class="return-type"><a href="ComponentFactory.html" title="type parameter in ComponentFactory">Factory</a></span>&nbsp;<span class="element-name"><a href="../../../../../src-html/com/ericlam/mc/eldgui/component/ComponentFactory.html#line-23">number</a></span><wbr><span class="parameters">(int&nbsp;amount)</span></div>
+<div class="member-signature"><span class="return-type"><a href="ComponentFactory.html" title="type parameter in ComponentFactory">Factory</a></span>&nbsp;<span class="element-name"><a href="../../../../../src-html/com/ericlam/mc/eldgui/component/ComponentFactory.html#line-24">number</a></span><wbr><span class="parameters">(int&nbsp;amount)</span></div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>amount</code> - 數量</dd>
@@ -177,9 +182,22 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="mirror(org.bukkit.inventory.ItemStack)">
+<h3>mirror</h3>
+<div class="member-signature"><span class="return-type"><a href="ComponentFactory.html" title="type parameter in ComponentFactory">Factory</a></span>&nbsp;<span class="element-name"><a href="../../../../../src-html/com/ericlam/mc/eldgui/component/ComponentFactory.html#line-31">mirror</a></span><wbr><span class="parameters">(<a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link">ItemStack</a>&nbsp;item)</span></div>
+<div class="block">以該物品為組件外觀原型。注意此舉將會覆蓋之前的所有設定 (包括綁定數值和外觀等)</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>item</code> - bukkit 物品</dd>
+<dt>Returns:</dt>
+<dd>this</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="bind(java.lang.String,java.lang.Object)">
 <h3>bind</h3>
-<div class="member-signature"><span class="return-type"><a href="ComponentFactory.html" title="type parameter in ComponentFactory">Factory</a></span>&nbsp;<span class="element-name"><a href="../../../../../src-html/com/ericlam/mc/eldgui/component/ComponentFactory.html#line-31">bind</a></span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key,
+<div class="member-signature"><span class="return-type"><a href="ComponentFactory.html" title="type parameter in ComponentFactory">Factory</a></span>&nbsp;<span class="element-name"><a href="../../../../../src-html/com/ericlam/mc/eldgui/component/ComponentFactory.html#line-39">bind</a></span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key,
  <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;value)</span></div>
 <div class="block">綁定組件屬性</div>
 <dl class="notes">
@@ -194,7 +212,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="create()">
 <h3>create</h3>
-<div class="member-signature"><span class="return-type"><a href="Component.html" title="interface in com.ericlam.mc.eldgui.component">Component</a></span>&nbsp;<span class="element-name"><a href="../../../../../src-html/com/ericlam/mc/eldgui/component/ComponentFactory.html#line-37">create</a></span>()</div>
+<div class="member-signature"><span class="return-type"><a href="Component.html" title="interface in com.ericlam.mc.eldgui.component">Component</a></span>&nbsp;<span class="element-name"><a href="../../../../../src-html/com/ericlam/mc/eldgui/component/ComponentFactory.html#line-45">create</a></span>()</div>
 <div class="block">創建組件</div>
 <dl class="notes">
 <dt>Returns:</dt>

@@ -6,4 +6,5 @@ com.ericlam.mc.eldgui.controller
 com.ericlam.mc.eldgui.event
 com.ericlam.mc.eldgui.exception
 com.ericlam.mc.eldgui.lifecycle
+com.ericlam.mc.eldgui.middleware
 com.ericlam.mc.eldgui.view

@@ -12,11 +12,12 @@ import org.bukkit.entity.Player;
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MiddleWareManager {
-    private final Map<Class<? extends Annotation>, MiddleWare<? extends Annotation>> middleWareMap = new ConcurrentHashMap<>();
+    private static final Map<Class<? extends Annotation>, MiddleWare<? extends Annotation>> middleWareMap = new ConcurrentHashMap<>();
     private final Annotation[] controllerAnnotations;
 
 
@@ -37,10 +38,17 @@ public class MiddleWareManager {
         this.player = player;
         this.session = session;
 
-        installation.getMiddleWares().forEach((anno, middleWareClass) -> {
-            MiddleWare<? extends Annotation> middleWare = injector.getInstance(middleWareClass);
-            middleWareMap.put(anno, middleWare);
-        });
+        installation.getMiddleWares()
+                .entrySet()
+                .stream()
+                .filter(en -> middleWareMap.containsKey(en.getKey()))
+                .forEach(en -> {
+                    var anno = en.getKey();
+                    var middleWareClass = en.getValue();
+                    MiddleWare<? extends Annotation> middleWare = injector.getInstance(middleWareClass);
+                    middleWareMap.put(anno, middleWare);
+                });
+
         this.controllerAnnotations = reflectionCacheManager.getDeclaredAnnotations(controllerCls);
     }
 

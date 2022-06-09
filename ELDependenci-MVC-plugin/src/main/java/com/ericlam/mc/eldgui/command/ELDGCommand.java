@@ -1,7 +1,7 @@
 package com.ericlam.mc.eldgui.command;
 
 import com.ericlam.mc.eld.annotations.Commander;
-import com.ericlam.mc.eld.components.CommandNode;
+import com.ericlam.mc.eld.bukkit.CommandNode;
 import org.bukkit.command.CommandSender;
 
 @Commander(

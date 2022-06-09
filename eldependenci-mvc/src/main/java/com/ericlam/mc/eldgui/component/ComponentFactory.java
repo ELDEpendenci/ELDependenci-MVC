@@ -1,6 +1,7 @@
 package com.ericlam.mc.eldgui.component;
 
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * 基礎組件工廠，所有組件工廠必須繼承此類
@@ -21,6 +22,13 @@ public interface ComponentFactory<Factory extends ComponentFactory<Factory>> {
      * @return this
      */
     Factory number(int amount);
+
+    /**
+     * 以該物品為組件外觀原型。注意此舉將會覆蓋之前的所有設定 (包括綁定數值和外觀等)
+     * @param item bukkit 物品
+     * @return this
+     */
+    Factory mirror(ItemStack item);
 
     /**
      * 綁定組件屬性

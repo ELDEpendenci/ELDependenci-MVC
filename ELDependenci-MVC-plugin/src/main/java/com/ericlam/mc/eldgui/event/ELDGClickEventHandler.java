@@ -1,6 +1,9 @@
 package com.ericlam.mc.eldgui.event;
 
 import com.ericlam.mc.eldgui.MVCInstallation;
+import com.ericlam.mc.eldgui.manager.MethodParseManager;
+import com.ericlam.mc.eldgui.manager.ReturnTypeManager;
+import com.ericlam.mc.eldgui.middleware.MiddleWareManager;
 import com.ericlam.mc.eldgui.view.View;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryInteractEvent;
@@ -14,14 +17,13 @@ import java.util.stream.Collectors;
 
 public final class ELDGClickEventHandler extends ELDGEventHandler<ClickMapping, InventoryClickEvent> {
 
-
-    public ELDGClickEventHandler(Object controller, MethodParseManager parseManager, ReturnTypeManager returnTypeManager, Map<Class<? extends Annotation>, MVCInstallation.QualifierFilter<? extends Annotation>> customQualifier, Method[] declaredMethods) {
-        super(controller, parseManager, returnTypeManager, customQualifier, declaredMethods);
+    public ELDGClickEventHandler(Object controller, MethodParseManager parseManager, ReturnTypeManager returnTypeManager, MiddleWareManager middleWareManager, Map<Class<? extends Annotation>, MVCInstallation.QualifierFilter<? extends Annotation>> customQualifier, Method[] declaredMethods) {
+        super(controller, parseManager, returnTypeManager, middleWareManager, customQualifier, declaredMethods);
     }
 
     @Override
-    protected Map<ClickMapping, Method> loadAllHandlers(Method[] declaredMethods) {
-        return  Arrays.stream(declaredMethods).parallel()
+    protected Map<ClickMapping, Method> loadAllHandlers(Method[] controllerMethods) {
+        return  Arrays.stream(controllerMethods).parallel()
                 .filter(m -> m.isAnnotationPresent(ClickMapping.class))
                 .collect(Collectors.toMap(m -> m.getAnnotation(ClickMapping.class), m -> m));
     }

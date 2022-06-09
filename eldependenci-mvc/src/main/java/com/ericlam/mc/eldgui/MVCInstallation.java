@@ -2,6 +2,7 @@ package com.ericlam.mc.eldgui;
 
 import com.ericlam.mc.eldgui.component.ComponentFactory;
 import com.ericlam.mc.eldgui.exception.ExceptionViewHandler;
+import com.ericlam.mc.eldgui.middleware.MiddleWare;
 import com.ericlam.mc.eldgui.view.LoadingView;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 
@@ -21,6 +22,8 @@ public interface MVCInstallation {
      * @param <A>       標注類
      */
     <A extends Annotation> void registerQualifier(Class<A> qualifier, QualifierFilter<A> predicate);
+
+    <A extends Annotation, M extends MiddleWare<A>> void registerMiddleWare(Class<A> qualifier, Class<M> middleWareClass);
 
     /**
      * 安裝 controllers (控制器)

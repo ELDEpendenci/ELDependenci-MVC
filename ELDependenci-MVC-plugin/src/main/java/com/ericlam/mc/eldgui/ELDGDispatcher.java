@@ -2,6 +2,7 @@ package com.ericlam.mc.eldgui;
 
 import com.ericlam.mc.eld.services.ConfigPoolService;
 import com.ericlam.mc.eld.services.ItemStackService;
+import com.ericlam.mc.eldgui.manager.ReflectionCacheManager;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import org.bukkit.entity.Player;
@@ -29,13 +30,13 @@ public class ELDGDispatcher implements UIDispatcher, Listener {
     @Inject
     private Injector injector;
     @Inject
-    private ManagerFactory managerFactory;
-    @Inject
     private ELDGMVCInstallation eldgmvcInstallation;
     @Inject
     private ConfigPoolService configPoolService;
     @Inject
     private ItemStackService itemStackService;
+    @Inject
+    private ReflectionCacheManager reflectionCacheManager;
 
     public ELDGDispatcher(
             Object controller,
@@ -68,14 +69,13 @@ public class ELDGDispatcher implements UIDispatcher, Listener {
                 injector,
                 session,
                 player,
-                managerFactory,
                 guiSessionMap::remove,
                 goTo,
                 eldgmvcInstallation,
                 configPoolService,
-                itemStackService
+                itemStackService,
+                reflectionCacheManager
         );
-
         this.guiSessionMap.put(player, eldgui);
     }
 

@@ -1,9 +1,9 @@
 package com.ericlam.mc.eldgui;
 
+import com.ericlam.mc.eld.ELDependenci;
+import com.ericlam.mc.eld.services.ReflectionService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import org.bukkit.persistence.PersistentDataAdapterContext;
@@ -12,20 +12,37 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 @SuppressWarnings("unchecked")
 public class PersistDataUtils {
 
+    public static class ObjectMapperGetter {
+
+        @Inject
+        @Named("eld-json")
+        private ObjectMapper mapper;
+
+        public ObjectMapper getMapper() {
+            return mapper;
+        }
+    }
+
     private static final Logger LOGGER = LoggerFactory.getLogger(PersistDataUtils.class);
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+    private static final Supplier<ObjectMapper> MAPPER_GETTER = () -> {
+        var getter = ELDependenci.getApi().exposeService(ObjectMapperGetter.class);
+        return getter.getMapper();
+    };
+
     private static final Gson GSON = new Gson();
 
     public static final PersistentDataType<byte[], Object> GENERIC_DATA_TYPE = new GenericDataType();
@@ -99,7 +116,7 @@ public class PersistDataUtils {
         @Override
         public byte @NotNull [] toPrimitive(@NotNull Object o, @NotNull PersistentDataAdapterContext persistentDataAdapterContext) {
             try {
-                return OBJECT_MAPPER.writeValueAsBytes(o);
+                return MAPPER_GETTER.get().writeValueAsBytes(o);
             } catch (JsonProcessingException e) {
                 throw new IllegalStateException(e);
             }
@@ -108,7 +125,7 @@ public class PersistDataUtils {
         @Override
         public @NotNull Object fromPrimitive(byte @NotNull [] bb, @NotNull PersistentDataAdapterContext persistentDataAdapterContext) {
             try {
-                return OBJECT_MAPPER.readValue(bb, Object.class);
+                return MAPPER_GETTER.get().readValue(bb, Object.class);
             } catch (IOException e) {
                 throw new IllegalStateException(e);
             }
@@ -116,13 +133,35 @@ public class PersistDataUtils {
     }
 
 
-    public static Map<String, Object> reflectToMap(Object model) {
-        try {
-            return OBJECT_MAPPER.convertValue(model, new TypeReference<>() {
-            });
-        } catch (Exception e) {
-            return Map.of();
+    public static <T> Map<String, Object> reflectToMap(T model) {
+
+        if (model == null) return Map.of();
+
+        var map = new LinkedHashMap<String, Object>();
+
+        var reflecter = ELDependenci.getApi().exposeService(ReflectionService.class);
+        List<Field> fields = reflecter.getDeclaredFieldsUpTo(model.getClass(), null);
+
+        for (Field field : fields) {
+
+            int mod = field.getModifiers();
+            if (Modifier.isTransient(mod) || Modifier.isStatic(mod) || field.isAnnotationPresent(JsonIgnore.class)) {
+                continue;
+            }
+
+            try {
+                if (!field.trySetAccessible()) {
+                    continue;
+                }
+                field.setAccessible(true);
+                var value = field.get(model);
+                map.put(field.getName(), value.toString());
+            } catch (Exception e) {
+                LOGGER.warn("Cannot get field {} from {}: {} ({})", field.getName(), model.getClass(), e.getMessage(), e.getClass().getSimpleName());
+            }
         }
+
+        return map;
     }
 
     public static <T> T mapToObject(Map<String, Object> map, Class<T> beanClass) {
@@ -136,7 +175,8 @@ public class PersistDataUtils {
         } catch (NoSuchMethodException e) {
             throw new IllegalStateException("Cannot find no arg constructor on type: " + beanClass);
         }
-        Field[] fields = beanClass.getDeclaredFields();
+        var reflecter = ELDependenci.getApi().exposeService(ReflectionService.class);
+        List<Field> fields = reflecter.getDeclaredFieldsUpTo(beanClass, null);
         for (Field field : fields) {
             int mod = field.getModifiers();
             if (Modifier.isFinal(mod) || Modifier.isStatic(mod) || field.isAnnotationPresent(JsonIgnore.class)) {

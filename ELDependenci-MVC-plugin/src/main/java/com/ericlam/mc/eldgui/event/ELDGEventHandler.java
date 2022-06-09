@@ -2,7 +2,11 @@ package com.ericlam.mc.eldgui.event;
 
 import com.ericlam.mc.eldgui.ELDGView;
 import com.ericlam.mc.eldgui.MVCInstallation;
+import com.ericlam.mc.eldgui.manager.MethodParseManager;
+import com.ericlam.mc.eldgui.manager.ReturnTypeManager;
+import com.ericlam.mc.eldgui.middleware.MiddleWareManager;
 import com.ericlam.mc.eldgui.view.AnyView;
+import com.ericlam.mc.eldgui.view.BukkitView;
 import com.ericlam.mc.eldgui.view.View;
 import com.google.common.collect.ImmutableMap;
 import org.bukkit.entity.Player;
@@ -23,17 +27,20 @@ public abstract class ELDGEventHandler<A extends Annotation, E extends Inventory
     private final Object uiController;
     private final MethodParseManager parseManager;
     private final ReturnTypeManager returnTypeManager;
+    private final MiddleWareManager middleWareManager;
     private final Map<Class<? extends Annotation>, MVCInstallation.QualifierFilter<?>> customQualifier;
 
 
     public ELDGEventHandler(Object controller,
                             MethodParseManager parseManager,
                             ReturnTypeManager returnTypeManager,
+                            MiddleWareManager middleWareManager,
                             Map<Class<? extends Annotation>, MVCInstallation.QualifierFilter<? extends Annotation>> customQualifier,
                             Method[] declaredMethods
     ) {
         this.uiController = controller;
         this.parseManager = parseManager;
+        this.middleWareManager = middleWareManager;
         this.returnTypeManager = returnTypeManager;
         this.customQualifier = customQualifier;
         if (controllerEventMap.containsKey(controller.getClass())){
@@ -97,8 +104,10 @@ public abstract class ELDGEventHandler<A extends Annotation, E extends Inventory
                 .findFirst();
         if (targetMethod.isEmpty()) return false;
         Method m = targetMethod.get();
-        Object[] results = parseManager.getMethodParameters(m, e);
         try {
+            var redirect = middleWareManager.intercept(m);
+            if (returnTypeManager.handleReturnResult(BukkitView.class, redirect)) return true;
+            Object[] results = parseManager.getMethodParameters(m, e);
             Object returnType = m.invoke(uiController, results);
             return returnTypeManager.handleReturnResult(m, returnType);
         } catch (IllegalAccessException | InvocationTargetException ex) {

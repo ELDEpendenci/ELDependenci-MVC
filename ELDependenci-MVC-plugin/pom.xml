@@ -5,12 +5,11 @@
     <parent>
         <artifactId>eldependenci-mvc-module</artifactId>
         <groupId>org.eldependenci</groupId>
-        <version>0.1.4</version>
+        <version>0.1.5</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>ELDependenci-MVC-plugin</artifactId>
-    <version>${project.parent.version}</version>
 
     <dependencies>
         <dependency>
@@ -26,6 +25,10 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
         </dependency>
     </dependencies>
 

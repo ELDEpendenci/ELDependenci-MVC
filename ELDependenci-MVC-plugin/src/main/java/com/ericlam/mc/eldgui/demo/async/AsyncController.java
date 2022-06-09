@@ -10,6 +10,7 @@ import com.ericlam.mc.eldgui.view.BukkitView;
 import org.bukkit.entity.Player;
 
 import javax.inject.Inject;
+import java.util.concurrent.CompletableFuture;
 
 
 @UIController("async")
@@ -35,14 +36,14 @@ public final class AsyncController {
 
     @AsyncLoadingView(CustomLoadingView.class)
     @ClickMapping(view = AsyncView.class, pattern = 'A')
-    public ScheduleService.BukkitPromise<BukkitView<?, ?>> onClick(Player player){
-        player.sendMessage("3 seconds to go to the user view.");
-        return scheduleService.runAsync(plugin, () -> {
+    public CompletableFuture<BukkitView<?, ?>> onClick(Player player){
+        player.sendMessage("3 seconds to go to the user view with completableFuture");
+        return CompletableFuture.runAsync(() -> {
             try {
                 Thread.sleep(3000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }).thenApplySync(v -> new BukkitRedirectView("user"));
+        }).thenApply(v -> new BukkitRedirectView("user"));
     }
 }

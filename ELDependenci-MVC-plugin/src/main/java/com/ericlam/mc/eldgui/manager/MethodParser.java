@@ -1,4 +1,4 @@
-package com.ericlam.mc.eldgui.event;
+package com.ericlam.mc.eldgui.manager;
 
 import org.bukkit.event.inventory.InventoryEvent;
 import org.jetbrains.annotations.Nullable;

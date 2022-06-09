@@ -5,13 +5,20 @@ import com.ericlam.mc.eld.services.ItemStackService;
 import com.ericlam.mc.eld.services.ScheduleService;
 import com.ericlam.mc.eldgui.component.AttributeController;
 import com.ericlam.mc.eldgui.controller.*;
-import com.ericlam.mc.eldgui.event.*;
+import com.ericlam.mc.eldgui.event.ELDGClickEventHandler;
+import com.ericlam.mc.eldgui.event.ELDGDragEventHandler;
+import com.ericlam.mc.eldgui.event.ELDGEventHandler;
 import com.ericlam.mc.eldgui.exception.ExceptionViewHandler;
 import com.ericlam.mc.eldgui.exception.HandleException;
 import com.ericlam.mc.eldgui.lifecycle.PostConstruct;
 import com.ericlam.mc.eldgui.lifecycle.PostUpdateView;
 import com.ericlam.mc.eldgui.lifecycle.PreDestroy;
 import com.ericlam.mc.eldgui.lifecycle.PreDestroyView;
+import com.ericlam.mc.eldgui.manager.LifeCycleManager;
+import com.ericlam.mc.eldgui.manager.MethodParseManager;
+import com.ericlam.mc.eldgui.manager.ReflectionCacheManager;
+import com.ericlam.mc.eldgui.manager.ReturnTypeManager;
+import com.ericlam.mc.eldgui.middleware.MiddleWareManager;
 import com.ericlam.mc.eldgui.view.BukkitRedirectView;
 import com.ericlam.mc.eldgui.view.BukkitView;
 import com.ericlam.mc.eldgui.view.LoadingView;
@@ -28,16 +35,13 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public final class ELDGUI {
-
-    private static final Map<Class<?>, Method[]> declaredMethodMap = new ConcurrentHashMap<>();
     private static final Logger LOGGER = LoggerFactory.getLogger(ELDGUI.class);
-
 
     private final Map<Class<? extends InventoryEvent>, ELDGEventHandler<? extends Annotation, ? extends InventoryEvent>> eventHandlerMap = new ConcurrentHashMap<>();
     private final Map<String, Function<InventoryEvent, ItemStack>> itemGetterMap = new ConcurrentHashMap<>();
@@ -57,8 +61,11 @@ public final class ELDGUI {
     private final Consumer<Player> onDestroy;
     private final ViewJumper goTo;
     private final BukkitView<? extends LoadingView, Void> loadingView;
-    private final Method[] declaredMethods;
+    private final Method[] controllerMethods;
 
+    private final ReflectionCacheManager reflectionCacheManager;
+
+    private final MiddleWareManager middleWareManager;
 
     private ELDGView<?> currentView;
 
@@ -67,12 +74,12 @@ public final class ELDGUI {
             Injector injector,
             UISession session,
             Player owner,
-            ManagerFactory managerFactory,
             Consumer<Player> onDestroy,
             ViewJumper goTo,
             ELDGMVCInstallation eldgmvcInstallation,
             ConfigPoolService configPoolService,
-            ItemStackService itemStackService
+            ItemStackService itemStackService,
+            ReflectionCacheManager reflectionCacheManager
     ) {
 
         this.session = session;
@@ -83,25 +90,26 @@ public final class ELDGUI {
         this.eldgmvcInstallation = eldgmvcInstallation;
         this.configPoolService = configPoolService;
         this.itemStackService = itemStackService;
+        this.reflectionCacheManager = reflectionCacheManager;
 
-        methodParseManager = managerFactory.buildParseManager(this::initMethodParseManager);
-        returnTypeManager = managerFactory.buildReturnTypeManager(this::initReturnTypeManager);
+        methodParseManager = new MethodParseManager(reflectionCacheManager);
+        this.initMethodParseManager(this.methodParseManager);
+
+        returnTypeManager = new ReturnTypeManager(reflectionCacheManager);
+        this.initReturnTypeManager(this.returnTypeManager);
+
         this.lifeCycleManager = new LifeCycleManager(controller, methodParseManager);
         this.controllerCls = controller.getClass();
 
-        if (declaredMethodMap.containsKey(controllerCls)) {
-            this.declaredMethods = declaredMethodMap.get(controllerCls);
-        } else {
-            this.declaredMethods = controllerCls.getDeclaredMethods();
-            declaredMethodMap.put(controllerCls, declaredMethods);
-        }
+        this.controllerMethods = reflectionCacheManager.getMethods(controllerCls);
+
+        this.middleWareManager = new MiddleWareManager(reflectionCacheManager, eldgmvcInstallation, injector, this.controllerCls, owner, session);
 
         var customQualifier = eldgmvcInstallation.getQualifierMap();
-        this.eventHandlerMap.put(InventoryClickEvent.class, new ELDGClickEventHandler(controller, methodParseManager, returnTypeManager, customQualifier, declaredMethods));
-        this.eventHandlerMap.put(InventoryDragEvent.class, new ELDGDragEventHandler(controller, methodParseManager, returnTypeManager, customQualifier, declaredMethods));
+        this.eventHandlerMap.put(InventoryClickEvent.class, new ELDGClickEventHandler(controller, methodParseManager, returnTypeManager, middleWareManager, customQualifier, controllerMethods));
+        this.eventHandlerMap.put(InventoryDragEvent.class, new ELDGDragEventHandler(controller, methodParseManager, returnTypeManager, middleWareManager, customQualifier, controllerMethods));
         this.itemGetterMap.put(InventoryClickEvent.class.getSimpleName(), e -> ((InventoryClickEvent) e).getCurrentItem());
         this.itemGetterMap.put(InventoryDragEvent.class.getSimpleName(), e -> ((InventoryDragEvent) e).getOldCursor());
-
 
         this.lifeCycleManager.onLifeCycle(PostConstruct.class);
 
@@ -142,12 +150,16 @@ public final class ELDGUI {
     public void initIndexView(Object controller) {
         LOGGER.debug("initializing index view"); // debug
         try {
-            Optional<Method> indexMethod = Arrays.stream(declaredMethods).filter(m -> m.getName().equalsIgnoreCase("index")).findAny();
+            Optional<Method> indexMethod = Arrays.stream(controllerMethods).filter(m -> m.getName().equalsIgnoreCase("index")).findAny();
             if (indexMethod.isEmpty())
                 throw new IllegalStateException("cannot find index method from " + controllerCls);
             Method index = indexMethod.get();
             if (index.getGenericReturnType() == Void.class || index.getGenericReturnType() == void.class)
                 throw new IllegalStateException("index method cannot return void");
+
+
+            var view = middleWareManager.intercept(index);
+            if (returnTypeManager.handleReturnResult(BukkitView.class, view)) return;
             Object[] objects = methodParseManager.getMethodParameters(index, null);
             Object result = index.invoke(controller, objects);
             if (!returnTypeManager.handleReturnResult(index, result)) {
@@ -166,12 +178,114 @@ public final class ELDGUI {
                 this.jumpToController((BukkitRedirectView) bukkitView);
             } else {
                 BukkitView<?, ?> bv = (BukkitView<?, ?>) bukkitView;
-                this.updateView(bv);
+                runTaskOrNot(() -> this.updateView(bv));
             }
         });
+
         returnTypeManager.registerReturnType(t -> {
-            if (t instanceof ParameterizedType) {
-                var parat = (ParameterizedType) t;
+            if (t instanceof ParameterizedType parat) {
+                var inside = parat.getActualTypeArguments()[0];
+                return (inside == void.class || inside == Void.class) && parat.getRawType() == CompletableFuture.class;
+            }
+            return false;
+        }, (result, annos) -> {
+            // loading view start
+            Arrays.stream(annos)
+                    .filter(a -> a.annotationType() == AsyncLoadingView.class)
+                    .findAny()
+                    .map(a -> ((AsyncLoadingView) a).value())
+                    .map(BukkitView::new)
+                    .ifPresentOrElse(this::updateView, () -> this.updateView(this.loadingView));
+
+            CompletableFuture<Void> future = (CompletableFuture<Void>) result;
+            future.whenComplete((v, ex) -> {
+
+                if (ex != null) {
+                    if (ex instanceof Exception e) {
+                        runTaskOrNot(() -> handleException(e));
+                    } else {
+                        LOGGER.warn("Error while handling returning result", ex);
+                    }
+                    return;
+                }
+
+                if (currentView != null) {
+                    runTaskOrNot(() -> this.updateView(currentView.getBukkitView()));
+                } else {
+                    LOGGER.warn("current view is null, cannot return current view.");
+                }
+
+            });
+
+        });
+        returnTypeManager.registerReturnType(t -> {
+            if (t instanceof ParameterizedType parat) {
+                var inside = parat.getActualTypeArguments()[0];
+                return (inside == BukkitView.class || inside.equals(new TypeLiteral<BukkitView<?, ?>>() {
+                }.getType())) && parat.getRawType() == CompletableFuture.class;
+            }
+            return false;
+        }, (result, annos) -> {
+            // loading view start
+            Arrays.stream(annos)
+                    .filter(a -> a.annotationType() == AsyncLoadingView.class)
+                    .findAny()
+                    .map(a -> ((AsyncLoadingView) a).value())
+                    .map(BukkitView::new)
+                    .ifPresentOrElse(this::updateView, () -> this.updateView(this.loadingView));
+
+            CompletableFuture<BukkitView<?, ?>> future = (CompletableFuture<BukkitView<?, ?>>) result;
+            future.whenComplete((bukkitView, ex) -> {
+
+                if (ex != null) {
+                    if (ex instanceof Exception e) {
+                        runTaskOrNot(() -> handleException(e));
+                    } else {
+                        LOGGER.warn("Error while handling returning result", ex);
+                    }
+                    return;
+                }
+
+                if (bukkitView instanceof BukkitRedirectView) {
+                    this.jumpToController((BukkitRedirectView) bukkitView);
+                } else {
+                    runTaskOrNot(() -> this.updateView(bukkitView));
+                }
+            });
+        });
+
+        returnTypeManager.registerReturnType(t -> {
+            if (t instanceof ParameterizedType parat) {
+                var inside = parat.getActualTypeArguments()[0];
+                return (inside == void.class || inside == Void.class) && parat.getRawType() == ScheduleService.BukkitPromise.class;
+            }
+            return false;
+        }, (result, annos) -> {
+            // loading view start
+            Arrays.stream(annos)
+                    .filter(a -> a.annotationType() == AsyncLoadingView.class)
+                    .findAny()
+                    .map(a -> ((AsyncLoadingView) a).value())
+                    .map(BukkitView::new)
+                    .ifPresentOrElse(this::updateView, () -> this.updateView(this.loadingView));
+            ScheduleService.BukkitPromise<Void> promise = (ScheduleService.BukkitPromise<Void>) result;
+            promise.thenRunSync(v -> {
+                if (currentView != null) {
+                    runTaskOrNot(() -> this.updateView(currentView.getBukkitView()));
+                } else {
+                    LOGGER.warn("current view is null, cannot return current view.");
+                }
+            }).joinWithCatch(ex -> {
+                if (ex instanceof Exception e) {
+                    runTaskOrNot(() -> handleException(e));
+                } else {
+                    LOGGER.warn("Error while handling returning result", ex);
+                }
+            });
+        });
+
+        returnTypeManager.registerReturnType(t -> {
+            if (t instanceof ParameterizedType parat) {
                 var inside = parat.getActualTypeArguments()[0];
                 return (inside == BukkitView.class || inside.equals(new TypeLiteral<BukkitView<?, ?>>() {
                 }.getType()))
@@ -191,25 +305,43 @@ public final class ELDGUI {
                 if (bukkitView instanceof BukkitRedirectView) {
                     this.jumpToController((BukkitRedirectView) bukkitView);
                 } else {
+                    // must in primary thread
                     this.updateView(bukkitView);
                 }
-            }).join();
+            }).joinWithCatch(ex -> {
+                if (ex instanceof Exception e) {
+                    runTaskOrNot(() -> handleException(e));
+                } else {
+                    LOGGER.warn("Error while handling returning result", ex);
+                }
+            });
         });
-        returnTypeManager.registerReturnType(type -> type == void.class, (view, a) -> {
+        returnTypeManager.registerReturnType(type -> (type == void.class || type == Void.class), (view, a) -> {
         });
+
     }
 
     private void initMethodParseManager(MethodParseManager parser) {
         parser.registerParser((t, annos) -> t.equals(UISession.class), (annotations, t, e) -> session);
+        parser.registerParser((t, annos) -> Arrays.stream(annos).anyMatch(a -> a.annotationType() == FromSession.class), (annotations, type, event) -> {
+            FromSession session = (FromSession) Arrays.stream(annotations).filter(a -> a.annotationType() == FromSession.class).findAny().orElseThrow(() -> new IllegalStateException("cannot find @FromSession"));
+            var key = session.value();
+            if (session.poll()) {
+                return this.session.pollAttribute(key);
+            } else {
+                return this.session.getAttribute(key);
+            }
+        });
         parser.registerParser((t, annos) -> Arrays.stream(annos).anyMatch(a -> a.annotationType() == FromPattern.class), (annotations, t, e) -> {
             FromPattern pattern = (FromPattern) Arrays.stream(annotations).filter(a -> a.annotationType() == FromPattern.class).findAny().orElseThrow(() -> new IllegalStateException("cannot find @FromPattern in List<ItemStack> parameters"));
-            if (t instanceof ParameterizedType) {
-                var parat = (ParameterizedType) t;
+            if (t instanceof ParameterizedType parat) {
                 if (parat.getActualTypeArguments()[0] == ItemStack.class && parat.getRawType() == List.class) {
                     return this.currentView.getEldgContext().getItems(pattern.value());
+                } else if (parat.getRawType() == Map.class && parat.getActualTypeArguments()[0] == Integer.class && parat.getActualTypeArguments()[1] == ItemStack.class) {
+                    return this.currentView.getEldgContext().getItemMap(pattern.value());
                 }
             }
-            throw new IllegalStateException("@FromPattern 必須使用 List<ItemStack> 作為其類型");
+            throw new IllegalStateException("@FromPattern 必須使用 List<ItemStack> 或 Map<Integer, ItemStack> 作為其類型");
         });
         //parser.registerParser((t, annos) -> t.equals(UIRequest.class), (annotations, t, e) -> eldgContext);
         parser.registerParser((t, annos) -> t.equals(Player.class), (annotations, t, e) -> owner);
@@ -235,9 +367,10 @@ public final class ELDGUI {
                 (annotations, type, event) -> {
                     MapAttribute attribute = (MapAttribute) Arrays.stream(annotations).filter(a -> a.annotationType() == MapAttribute.class).findAny().orElseThrow(() -> new IllegalStateException("cannot find MapAttribute annotation"));
                     boolean isMap = false;
-                    if (type instanceof ParameterizedType) {
-                        var parat = (ParameterizedType) type;
-                        isMap = parat.getRawType() == Map.class && parat.getActualTypeArguments()[0] == String.class && parat.getActualTypeArguments()[1] == Object.class;
+                    if (type instanceof ParameterizedType parat) {
+                        isMap = parat.getRawType() == Map.class &&
+                                parat.getActualTypeArguments()[0] == String.class &&
+                                parat.getActualTypeArguments()[1] == Object.class;
                     }
 
                     if (!isMap) throw new IllegalStateException("@MapAttribute 必須使用 Map<String, Object> 作為其類型");
@@ -246,7 +379,7 @@ public final class ELDGUI {
                 });
     }
 
-    private Map<String, Object> getFieldMap(char pattern){
+    private Map<String, Object> getFieldMap(char pattern) {
         if (this.currentView == null) throw new IllegalStateException("currentView is null");
         var context = this.currentView.getEldgContext();
         Map<String, Object> fieldMap = new HashMap<>();
@@ -300,6 +433,12 @@ public final class ELDGUI {
     }
 
     private void handleException(Exception ex) {
+
+        if (ex.getCause() != null && ex.getCause() instanceof Exception e) {
+            this.handleException(e);
+            return;
+        }
+
         LOGGER.debug("on exception handle: " + ex.getClass()); // debug
         Optional<Class<? extends ExceptionViewHandler>> exceptionViewHandlerOpt = Optional
                 .ofNullable(eldgmvcInstallation.getExceptionHandlerMap().get(controllerCls));
@@ -311,11 +450,7 @@ public final class ELDGUI {
         Class<? extends ExceptionViewHandler> exceptionViewHandler = exceptionViewHandlerOpt.orElseGet(eldgmvcInstallation::getDefaultExceptionHandler);
         ExceptionViewHandler viewHandlerIns = injector.getInstance(exceptionViewHandler);
         UIController fromController = controllerCls.getAnnotation(UIController.class);
-        Method[] declaredMethods = Optional.ofNullable(declaredMethodMap.get(exceptionViewHandler)).orElseGet(() -> {
-            var methods = exceptionViewHandler.getDeclaredMethods();
-            declaredMethodMap.put(exceptionViewHandler, methods);
-            return methods;
-        });
+        Method[] declaredMethods = reflectionCacheManager.getMethods(exceptionViewHandler);
         Arrays.stream(declaredMethods)
                 .filter(m -> m.isAnnotationPresent(HandleException.class))
                 .filter(m -> Arrays.stream(m.getAnnotation(HandleException.class).value()).anyMatch(v -> {
@@ -357,10 +492,20 @@ public final class ELDGUI {
         LOGGER.debug("destroying controller"); //debug
         eventHandlerMap.values().forEach(ELDGEventHandler::unloadAllHandlers);
         lifeCycleManager.onLifeCycle(PreDestroy.class);
-        if (this.currentView != null){
+        if (this.currentView != null) {
             this.currentView.destroyView();
         }
         this.onDestroy.accept(owner);
+    }
+
+
+    private void runTaskOrNot(Runnable runnable) {
+        var primaryThread = Bukkit.getServer().isPrimaryThread();
+        if (primaryThread) {
+            runnable.run();
+        } else {
+            Bukkit.getScheduler().runTask(eldgPlugin, runnable);
+        }
     }
 
 
